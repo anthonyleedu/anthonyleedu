@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-import tempfile
-import zipfile
 
 from pptx import Presentation
 from pptx.chart.data import CategoryChartData
@@ -14,6 +12,7 @@ from pptx.util import Inches, Pt
 
 
 DECK_PATH = Path("/workspace/Samuel Space Organ and Tissue Engineering - Investor Presentation (2).pptx")
+ASSET_DIR = Path("/workspace/presentation_assets")
 
 BG = RGBColor(247, 249, 252)
 WHITE = RGBColor(255, 255, 255)
@@ -154,10 +153,7 @@ def add_multiline_textbox(
             run.font.name = font_name
             run.font.size = Pt(size)
             run.font.bold = bold
-            run.font.color.rgb = bullet_color if bullet and run.text.startswith("- ") else color
-        if bullet:
-            for run in paragraph.runs[1:]:
-                run.font.color.rgb = color
+            run.font.color.rgb = color
     return box
 
 
@@ -348,22 +344,21 @@ def add_manual_table(slide, x, y, widths, rows, row_heights, header_fill=NAVY):
 
 def extract_assets():
     asset_map = {
-        "cover": "ppt/media/image-1-1.png",
-        "close": "ppt/media/image-20-1.png",
-        "earth": "ppt/media/image-5-1.png",
-        "microgravity": "ppt/media/image-5-2.png",
-        "printer": "ppt/media/image-6-6.png",
-        "platform": "ppt/media/image-11-4.png",
-        "cardiac": "ppt/media/image-7-1.png",
-        "ortho": "ppt/media/image-7-2.png",
-        "retina": "ppt/media/image-7-3.png",
-        "wound": "ppt/media/image-7-4.png",
+        "cover": ASSET_DIR / "cover.png",
+        "close": ASSET_DIR / "cover.png",
+        "earth": ASSET_DIR / "earth.png",
+        "microgravity": ASSET_DIR / "microgravity.png",
+        "printer": ASSET_DIR / "printer.png",
+        "platform": ASSET_DIR / "platform.png",
+        "cardiac": ASSET_DIR / "cardiac.png",
+        "ortho": ASSET_DIR / "ortho.png",
+        "retina": ASSET_DIR / "retina.png",
+        "wound": ASSET_DIR / "wound.png",
     }
-    temp_dir = Path(tempfile.mkdtemp(prefix="samuel-space-assets-"))
-    with zipfile.ZipFile(DECK_PATH) as source:
-        for key, member in asset_map.items():
-            (temp_dir / f"{key}.png").write_bytes(source.read(member))
-    return {key: temp_dir / f"{key}.png" for key in asset_map}
+    missing = [str(path) for path in asset_map.values() if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"Missing presentation assets: {missing}")
+    return asset_map
 
 
 def add_cover_slide(prs, assets):
@@ -919,9 +914,18 @@ def add_appendix_slide(prs):
         color=TEXT,
         bullet=True,
     )
-    add_box(slide, 0.78, 6.08, 11.77, 0.7, fill=SOFT_BLUE, line=SOFT_BLUE)
-    add_textbox(slide, 1.0, 6.23, 1.9, 0.18, "A Note on Methodology", size=10.8, color=NAVY, bold=True)
-    add_textbox(slide, 2.52, 6.2, 9.7, 0.22, "All third-party scientific milestones, dates, and figures in this presentation are drawn from the public sources listed above and were current as of the citation date shown. References to NASA, Redwire, LambdaVision, ROSCOSMOS, and ESA/DLR describe industry validation of the underlying science, not partnerships, endorsements, or affiliations with Samuel Space.", size=8.8, color=TEXT)
+    add_box(slide, 0.78, 6.02, 11.77, 0.82, fill=SOFT_BLUE, line=SOFT_BLUE)
+    add_textbox(slide, 1.0, 6.18, 2.3, 0.16, "A Note on Methodology", size=10.2, color=NAVY, bold=True)
+    add_textbox(
+        slide,
+        1.0,
+        6.4,
+        11.18,
+        0.18,
+        "All third-party scientific milestones, dates, and figures in this presentation are drawn from the public sources listed above and were current as of the citation date shown. References to NASA, Redwire, LambdaVision, ROSCOSMOS, and ESA/DLR describe industry validation of the underlying science, not partnerships, endorsements, or affiliations with Samuel Space.",
+        size=8.4,
+        color=TEXT,
+    )
 
 
 def main():
