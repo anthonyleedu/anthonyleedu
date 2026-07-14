@@ -740,7 +740,7 @@ for x, label, sub, bullets, micro, accent, fill in comparison:
 slide = base_slide("The Technology", "How Space-Based Bioprinting Works: Five-Step Process", 6)
 steps = [
     ("01", "Cell Harvest", "Biopsy yields patient-specific cells, reducing immunological rejection risk."),
-    ("02", "Stem Cell Reprogramming", "The iPSC method converts adult cells into pluripotent stem cells."),
+    ("02", "Stem Cell Reprogramming", "The Nobel-winning iPSC method converts adult cells into pluripotent stem cells."),
     ("03", "Bioink Formulation", "Cells are suspended in hydrogel tuned for viscosity and viability."),
     ("04", "In-Orbit Printing", "Layer-by-layer deposition in microgravity requires no scaffold."),
     ("05", "Tissue Maturation", "Bioreactor conditioning differentiates cells into target tissue."),
@@ -861,13 +861,13 @@ add_text(
     valign=MSO_ANCHOR.MIDDLE,
 )
 events = [
-    ("2018", "ROSCOSMOS Organ.Aut", "First magnetic 3D bioprinter on ISS; tissue constructs created 2018–2020."),
-    ("2019", "Redwire BFF launched", "BioFabrication Facility reaches ISS; later named a Popular Science 2023 innovation."),
-    ("DEC '21", "ESA Bioprint FirstAid", "Handheld bioprinter demonstrated aboard the Cosmic Kiss mission."),
-    ("SEP '23", "First knee meniscus", "Redwire prints the first human knee meniscus in orbit."),
-    ("MAY '24", "First cardiac tissue", "Redwire returns live 3D-bioprinted human cardiac tissue from ISS."),
-    ("SEP '25", "Grants + contracts", "LambdaVision wins NASA InSPA Phase 2; Redwire receives $25M NASA IDIQ."),
-    ("2026", "Commercial pivot", "LambdaVision closes $7M seed as commercial-station payload slots open."),
+    ("2018", "ROSCOSMOS Organ.Aut", "First magnetic bioprinter reaches ISS; constructs prove the approach."),
+    ("2019", "Redwire BFF launched", "BioFabrication Facility reaches ISS; later recognised by Popular Science."),
+    ("DEC '21", "ESA Bioprint FirstAid", "Handheld skin-patch bioprinter demonstrated on Cosmic Kiss."),
+    ("SEP '23", "First knee meniscus", "First human knee meniscus is printed in orbit."),
+    ("MAY '24", "First cardiac tissue", "First live 3D-bioprinted human cardiac tissue returns."),
+    ("SEP '25", "Grants + contracts", "InSPA Phase 2 and a $25M NASA IDIQ expand the field."),
+    ("2026", "Commercial pivot", "$7M seed and payload reservations signal commercial transition."),
 ]
 add_line(slide, 1.0, 4.28, 12.35, 4.28, TEAL_DARK, 1.5)
 for idx, (date, title, body) in enumerate(events):
@@ -882,8 +882,8 @@ for idx, (date, title, body) in enumerate(events):
         yy = 4.73
     card(slide, cx - 0.73, yy, 1.46, 1.38, WHITE, LINE)
     pill(slide, date, cx - 0.57, yy + 0.15, 1.14, 0.29, MINT, TEAL_DARK, 7.1)
-    add_text(slide, title, cx - 0.57, yy + 0.56, 1.14, 0.31, 8.3, NAVY, True, align=PP_ALIGN.CENTER)
-    add_text(slide, body, cx - 0.58, yy + 0.9, 1.16, 0.38, 6.5, SLATE, align=PP_ALIGN.CENTER, line_spacing=0.9)
+    add_text(slide, title, cx - 0.59, yy + 0.55, 1.18, 0.31, 8.2, NAVY, True, align=PP_ALIGN.CENTER)
+    add_text(slide, body, cx - 0.62, yy + 0.9, 1.24, 0.4, 7.0, SLATE, align=PP_ALIGN.CENTER, line_spacing=0.9)
 add_text(slide, "SCIENCE VALIDATED", 0.68, 6.75, 2.1, 0.16, 7.1, MUTED, True)
 add_text(slide, "COMMERCIAL ACCESS EMERGING", 10.08, 6.75, 2.54, 0.16, 7.1, TEAL_DARK, True, align=PP_ALIGN.RIGHT)
 
@@ -1065,8 +1065,8 @@ add_line(slide, matrix_x + matrix_w / 2, matrix_y, matrix_x + matrix_w / 2, matr
 add_line(slide, matrix_x, matrix_y + matrix_h / 2, matrix_x + matrix_w, matrix_y + matrix_h / 2, "B7C6CE", 1.0)
 pill(slide, "EARTH-BASED", matrix_x + 0.25, matrix_y + 0.2, 1.4, 0.3, WHITE, SLATE, 7.4)
 pill(slide, "SPACE-BASED", matrix_x + matrix_w - 1.65, matrix_y + 0.2, 1.4, 0.3, TEAL, WHITE, 7.4)
-add_text(slide, "CLINICAL / COMMERCIAL", 0.58, 2.0, 0.44, 1.95, 7, SLATE, True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE).rotation = 270
-add_text(slide, "EARLY RESEARCH", 0.58, 4.68, 0.44, 1.45, 7, SLATE, True, align=PP_ALIGN.CENTER, valign=MSO_ANCHOR.MIDDLE).rotation = 270
+add_text(slide, "CLINICAL / COMMERCIAL", matrix_x + 0.25, matrix_y + 0.72, 1.7, 0.18, 6.6, SLATE, True)
+add_text(slide, "EARLY RESEARCH", matrix_x + 0.25, matrix_y + matrix_h / 2 + 0.28, 1.35, 0.18, 6.6, SLATE, True)
 points = [
     ("Cellink / BICO", 3.05, 3.25, NAVY),
     ("Organovo", 3.3, 4.82, NAVY),
@@ -1209,8 +1209,8 @@ add_line(slide, 0.86, 3.67, 3.38, 3.67, "3B5064", 0.8)
 ask_metrics = [("~30 months", "Runway to next value-inflection"), ("2", "Product verticals reaching clinical pilot"), ("3–5", "Target commercial flight missions secured")]
 for idx, (value, label) in enumerate(ask_metrics):
     yy = 3.95 + idx * 0.88
-    add_text(slide, value, 0.86, yy, 1.08, 0.31, 13, TEAL, True)
-    add_text(slide, label, 1.72, yy - 0.01, 1.63, 0.49, 8, "C7D2DB", line_spacing=0.93)
+    add_text(slide, value, 0.86, yy, 2.18, 0.3, 12.5, TEAL, True)
+    add_text(slide, label, 0.86, yy + 0.35, 2.18, 0.34, 7.6, "C7D2DB", line_spacing=0.93)
 
 card(slide, 3.94, 1.56, 4.1, 5.41, WHITE, LINE)
 add_text(slide, "USE OF FUNDS", 4.23, 1.86, 2.0, 0.22, 8.2, NAVY, True)
