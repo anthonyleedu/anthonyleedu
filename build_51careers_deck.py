@@ -201,6 +201,7 @@ def section_header(slide, eyebrow: str, title: str, subtitle: str | None = None)
 
 def style_chart(chart, has_legend=True, point_colors=None):
     chart.has_legend = has_legend
+    chart.has_title = False
     if has_legend:
         chart.legend.include_in_layout = False
         chart.legend.position = XL_LEGEND_POSITION.BOTTOM
@@ -252,7 +253,7 @@ def style_chart(chart, has_legend=True, point_colors=None):
         pass
 
 
-def add_chart(slide, chart_type, left, top, width, height, categories, series_data, legend=True, point_colors=None):
+def add_chart(slide, chart_type, left, top, width, height, categories, series_data, legend=True, point_colors=None, value_max=None):
     """series_data: list of (name, values)"""
     data = CategoryChartData()
     data.categories = categories
@@ -260,6 +261,12 @@ def add_chart(slide, chart_type, left, top, width, height, categories, series_da
         data.add_series(name, values)
     chart_shape = slide.shapes.add_chart(chart_type, left, top, width, height, data)
     style_chart(chart_shape.chart, has_legend=legend, point_colors=point_colors)
+    if value_max is not None:
+        try:
+            chart_shape.chart.value_axis.maximum_scale = value_max
+            chart_shape.chart.value_axis.minimum_scale = 0
+        except Exception:
+            pass
     return chart_shape
 
 
@@ -294,7 +301,7 @@ def slide_cover(prs):
     )
     textbox(
         slide, Inches(0.7), Inches(2.45), Inches(11.5), Inches(0.55),
-        [{"text": "Who we are — An AI career platform from the 51 Careers team: mock interviews, a 100K+ question bank, and a new AI résumé builder — free today, built for global professionals.",
+        [{"text": "Who we are — An AI career platform from the 51Careers team: mock interviews, a 100K+ question bank, and a new AI résumé builder — free today, built for global professionals.",
           "size": 13, "color": RGBColor(0xA8, 0xBE, 0xCC)}],
     )
     textbox(
@@ -381,7 +388,7 @@ def slide_highlights(prs):
     section_header(slide, "Executive Summary", "Who We Are & Why Now")
     items = [
         ("01", "Who We Are",
-         "51Careers.AI is the AI-powered career platform from the 51 Careers team — helping professionals worldwide prepare, apply, and compete for great jobs."),
+         "51Careers.AI is the AI-powered career platform from the 51Careers team — helping professionals worldwide prepare, apply, and compete for great jobs."),
         ("02", "Our Product",
          "AI mock interviews, a proprietary 100K+ interview-question database, and a new AI résumé builder — plus coaching pathways as users grow."),
         ("03", "Proven Demand Base",
@@ -459,31 +466,31 @@ def slide_market(prs):
 
     markets = [
         ("TOTAL ADDRESSABLE MARKET", "US$200B+", "Global recruitment, talent-acquisition, and career-development spend worldwide.", TEAL, 1.0),
-        ("SERVICEABLE MARKET", "US$30B+", "Global AI-enabled hiring technology and digital career preparation.", BLUE, 0.55),
-        ("NEAR-TERM FOCUS", "US$5B+", "Global early-career and mid-career professionals seeking AI prep, résumés, and interview readiness.", BRONZE, 0.32),
+        ("SERVICEABLE MARKET", "US$30B+", "Global AI-enabled hiring technology and digital career preparation.", BLUE, 0.58),
+        ("NEAR-TERM FOCUS", "US$5B+", "Global professionals seeking AI prep, résumés, and interview readiness.", BRONZE, 0.34),
     ]
-    y = 1.35
+    y = 1.32
     for label, value, desc, color, width_frac in markets:
-        round_rect(slide, Inches(0.55), Inches(y), Inches(6.4), Inches(1.35), fill=WHITE, line=LINE)
-        bar_w = Inches(5.9 * width_frac)
-        rect(slide, Inches(0.75), Inches(y + 1.0), bar_w, Inches(0.16), fill=color)
-        textbox(slide, Inches(0.75), Inches(y + 0.12), Inches(5.9), Inches(0.25),
+        round_rect(slide, Inches(0.55), Inches(y), Inches(6.4), Inches(1.48), fill=WHITE, line=LINE)
+        textbox(slide, Inches(0.75), Inches(y + 0.12), Inches(5.9), Inches(0.22),
                 [{"text": label, "size": 9, "bold": True, "color": MUTED}])
-        textbox(slide, Inches(0.75), Inches(y + 0.35), Inches(5.9), Inches(0.4),
+        textbox(slide, Inches(0.75), Inches(y + 0.36), Inches(5.9), Inches(0.4),
                 [{"text": value, "size": 26, "bold": True, "color": NAVY, "font": FONT_DISPLAY}])
-        textbox(slide, Inches(0.75), Inches(y + 0.72), Inches(5.9), Inches(0.28),
-                [{"text": desc, "size": 10, "color": BODY}])
-        y += 1.5
+        textbox(slide, Inches(0.75), Inches(y + 0.82), Inches(5.9), Inches(0.35),
+                [{"text": desc, "size": 11, "color": BODY}])
+        bar_w = Inches(5.9 * width_frac)
+        rect(slide, Inches(0.75), Inches(y + 1.22), bar_w, Inches(0.14), fill=color)
+        y += 1.58
 
-    round_rect(slide, Inches(7.15), Inches(1.35), Inches(5.6), Inches(4.55), fill=WHITE, line=LINE)
-    textbox(slide, Inches(7.35), Inches(1.5), Inches(5.2), Inches(0.35),
+    round_rect(slide, Inches(7.15), Inches(1.32), Inches(5.6), Inches(4.72), fill=WHITE, line=LINE)
+    textbox(slide, Inches(7.35), Inches(1.45), Inches(5.2), Inches(0.3),
             [{"text": "Global AI career-tech spend (illustrative, US$B)", "size": 12, "bold": True, "color": NAVY}])
     add_chart(
         slide,
         XL_CHART_TYPE.COLUMN_CLUSTERED,
-        Inches(7.25), Inches(1.9), Inches(5.35), Inches(3.7),
+        Inches(7.25), Inches(1.85), Inches(5.35), Inches(3.95),
         ["2024", "2025E", "2026E", "2027E", "2028E"],
-        [("Global AI hiring & career tech", (18, 23, 29, 37, 46))],
+        [("Spend", (18, 23, 29, 37, 46))],
         legend=False,
     )
     textbox(slide, Inches(0.55), Inches(6.35), Inches(12), Inches(0.3),
@@ -505,7 +512,7 @@ def slide_platform(prs):
 
     products = [
         ("AI Mock Interviews", "Role- and company-specific practice with personalized feedback powered by career-domain intelligence.", TEAL),
-        ("100K+ Question Database", "Proprietary library of real interview questions built from years of coaching and candidate preparation.", BLUE),
+        ("100K+ Question Bank", "Proprietary library of real interview questions built from years of coaching and candidate preparation.", BLUE),
         ("AI Résumé Builder", "New AI feature that drafts and refines résumés tailored to roles, industries, and hiring expectations.", BRONZE),
         ("Career Pathways", "Coaching and education pathways ready to monetize via membership, consulting, and education fees.", SLATE),
     ]
@@ -532,47 +539,46 @@ def slide_tech(prs):
     slide = blank_slide(prs)
     section_header(slide, "Technology", "Enterprise-Grade AI, Built with Alibaba Cloud")
 
-    round_rect(slide, Inches(0.55), Inches(1.35), Inches(7.4), Inches(2.55), fill=WHITE, line=LINE)
-    textbox(slide, Inches(0.8), Inches(1.5), Inches(7.0), Inches(0.35),
+    round_rect(slide, Inches(0.55), Inches(1.28), Inches(7.4), Inches(2.7), fill=WHITE, line=LINE)
+    textbox(slide, Inches(0.8), Inches(1.4), Inches(7.0), Inches(0.32),
             [{"text": "Alibaba Cloud AI partnership — July 2025", "size": 14, "bold": True, "color": TEAL}])
-    textbox(slide, Inches(0.8), Inches(1.95), Inches(6.9), Inches(1.1),
-            [{"text": "A deep collaboration integrating frontier AI capability across the platform — the Tongyi large language model, natural-language processing, LLM inference, intelligent recommendation, and semantic search — on enterprise-grade compute and security infrastructure.",
+    textbox(slide, Inches(0.8), Inches(1.8), Inches(6.9), Inches(0.95),
+            [{"text": "A deep collaboration integrating frontier AI across the platform — Tongyi LLM, NLP, inference, recommendation, and semantic search — on enterprise-grade compute and security infrastructure.",
               "size": 12, "color": BODY}])
     bullets = [
         "AI mock interviews and career advisor with personalized recommendations",
         "AI résumé builder tuned for real hiring workflows",
         "Enterprise-grade data security protecting user privacy",
     ]
-    y = 3.15
+    y = 2.85
     for b in bullets:
-        textbox(slide, Inches(0.8), Inches(y), Inches(6.9), Inches(0.28),
+        textbox(slide, Inches(0.8), Inches(y), Inches(6.9), Inches(0.3),
                 [{"text": "▸  " + b, "size": 11, "color": INK}])
-        y += 0.28
+        y += 0.32
 
-    round_rect(slide, Inches(8.15), Inches(1.35), Inches(4.65), Inches(2.55), fill=NAVY)
-    textbox(slide, Inches(8.4), Inches(1.55), Inches(4.2), Inches(0.35),
-            [{"text": "Proprietary data moat", "size": 14, "bold": True, "color": WHITE, "font": FONT_DISPLAY}])
-    textbox(slide, Inches(8.4), Inches(2.1), Inches(4.2), Inches(1.5),
+    round_rect(slide, Inches(8.15), Inches(1.28), Inches(4.65), Inches(2.7), fill=NAVY)
+    textbox(slide, Inches(8.4), Inches(1.5), Inches(4.2), Inches(0.35),
+            [{"text": "Proprietary data moat", "size": 15, "bold": True, "color": WHITE, "font": FONT_DISPLAY}])
+    textbox(slide, Inches(8.4), Inches(2.05), Inches(4.2), Inches(1.6),
             [{"text": "100K+ proprietary interview questions and eight years of candidate-prep insight — assets that general-purpose models like ChatGPT or Gemini cannot readily replicate.",
               "size": 12, "color": RGBColor(0xC5, 0xD5, 0xE0)}])
 
-    # Architecture stack visual
+    textbox(slide, Inches(0.55), Inches(4.15), Inches(8), Inches(0.28),
+            [{"text": "Platform architecture (simplified)", "size": 12, "bold": True, "color": NAVY}])
     layers = [
         ("APPLICATIONS", "Mock Interviews · AI Résumé Builder · Career Advisor · Question Bank", TEAL),
         ("INTELLIGENCE", "Tongyi LLM · NLP · Semantic Search · Recommendation", BLUE),
         ("DATA & INFRASTRUCTURE", "100K+ question corpus · 8-year coaching data · Alibaba Cloud", BRONZE),
     ]
-    y = 4.15
-    textbox(slide, Inches(0.55), Inches(4.05), Inches(6), Inches(0.3),
-            [{"text": "Platform architecture (simplified)", "size": 12, "bold": True, "color": NAVY}])
+    y = 4.5
     for label, detail, color in layers:
-        round_rect(slide, Inches(0.55), Inches(y), Inches(12.25), Inches(0.7), fill=WHITE, line=LINE)
-        rect(slide, Inches(0.55), Inches(y), Inches(0.12), Inches(0.7), fill=color)
-        textbox(slide, Inches(0.9), Inches(y + 0.08), Inches(3.5), Inches(0.28),
+        round_rect(slide, Inches(0.55), Inches(y), Inches(12.25), Inches(0.58), fill=WHITE, line=LINE)
+        rect(slide, Inches(0.55), Inches(y), Inches(0.12), Inches(0.58), fill=color)
+        textbox(slide, Inches(0.9), Inches(y + 0.14), Inches(3.5), Inches(0.3),
                 [{"text": label, "size": 11, "bold": True, "color": color}])
-        textbox(slide, Inches(4.5), Inches(y + 0.18), Inches(8.0), Inches(0.35),
+        textbox(slide, Inches(4.5), Inches(y + 0.14), Inches(8.0), Inches(0.3),
                 [{"text": detail, "size": 12, "color": BODY}])
-        y += 0.8
+        y += 0.65
     footer(slide, 7)
 
 
@@ -606,24 +612,24 @@ def slide_model(prs):
         x += 4.15
 
     round_rect(slide, Inches(0.55), Inches(4.45), Inches(12.25), Inches(2.15), fill=WHITE, line=LINE)
-    textbox(slide, Inches(0.75), Inches(4.55), Inches(6), Inches(0.3),
+    textbox(slide, Inches(0.75), Inches(4.55), Inches(7.5), Inches(0.3),
             [{"text": "Illustrative monetization mix once paid conversion begins (%)", "size": 12, "bold": True, "color": NAVY}])
     add_chart(
         slide,
         XL_CHART_TYPE.COLUMN_STACKED_100,
-        Inches(0.7), Inches(4.8), Inches(8.2), Inches(1.7),
-        ["Launch", "2027E", "2029E"],
+        Inches(0.7), Inches(4.85), Inches(7.6), Inches(1.6),
+        ["2027E", "2029E"],
         [
-            ("Membership fees", (0, 55, 50)),
-            ("Consulting fees", (0, 30, 30)),
-            ("Education fees", (0, 15, 20)),
+            ("Membership fees", (55, 50)),
+            ("Consulting fees", (30, 30)),
+            ("Education fees", (15, 20)),
         ],
         legend=True,
     )
-    textbox(slide, Inches(9.1), Inches(5.1), Inches(3.4), Inches(1.3),
-            [{"text": "Path to revenue", "size": 12, "bold": True, "color": NAVY, "space_after": 6},
+    textbox(slide, Inches(8.6), Inches(5.05), Inches(3.9), Inches(1.3),
+            [{"text": "Path to revenue", "size": 13, "bold": True, "color": NAVY, "space_after": 8},
              {"text": "Platform revenue is US$0 today. Grow active users on free access, then introduce membership, consulting, and education fees.",
-              "size": 11, "color": BODY}])
+              "size": 12, "color": BODY}])
     footer(slide, 8)
 
 
@@ -639,51 +645,53 @@ def slide_traction(prs):
     ]
     x = 0.55
     for val, label in kpis:
-        round_rect(slide, Inches(x), Inches(1.3), Inches(2.95), Inches(1.25), fill=WHITE, line=LINE)
-        textbox(slide, Inches(x + 0.15), Inches(1.4), Inches(2.65), Inches(0.55),
+        round_rect(slide, Inches(x), Inches(1.28), Inches(2.95), Inches(1.15), fill=WHITE, line=LINE)
+        textbox(slide, Inches(x + 0.15), Inches(1.38), Inches(2.65), Inches(0.5),
                 [{"text": val, "size": 24, "bold": True, "color": NAVY, "font": FONT_DISPLAY}])
-        textbox(slide, Inches(x + 0.15), Inches(2.05), Inches(2.65), Inches(0.35),
+        textbox(slide, Inches(x + 0.15), Inches(1.95), Inches(2.65), Inches(0.35),
                 [{"text": label, "size": 9, "bold": True, "color": MUTED}])
         x += 3.15
 
-    round_rect(slide, Inches(0.55), Inches(2.75), Inches(7.5), Inches(3.55), fill=WHITE, line=LINE)
-    textbox(slide, Inches(0.75), Inches(2.9), Inches(7), Inches(0.3),
+    # Equal-height panels
+    panel_top, panel_h = 2.6, 3.55
+    round_rect(slide, Inches(0.55), Inches(panel_top), Inches(7.5), Inches(panel_h), fill=WHITE, line=LINE)
+    textbox(slide, Inches(0.75), Inches(panel_top + 0.12), Inches(7), Inches(0.28),
             [{"text": "Selected milestones", "size": 13, "bold": True, "color": NAVY}])
-    rect(slide, Inches(1.15), Inches(3.45), Inches(0.04), Inches(2.55), fill=TEAL)
+    rect(slide, Inches(1.15), Inches(panel_top + 0.6), Inches(0.04), Inches(2.7), fill=TEAL)
     milestones = [
-        ("2016", "51 Careers founded — premium career development for global professionals"),
-        ("2016–24", "Helped 10,000+ candidates; built deep interview & résumé expertise"),
-        ("2025", "Launched 51Careers.AI — free AI platform with mock interviews & 100K+ questions"),
+        ("2016", "51Careers founded — premium career development for global professionals"),
+        ("2016–24", "Helped 10,000+ candidates; built deep interview and résumé expertise"),
+        ("2025", "Launched 51Careers.AI — free AI platform with mock interviews and 100K+ questions"),
         ("2025–26", "Developing AI résumé builder; growing active users globally"),
         ("Next", "Introduce membership, consulting, and education fees as usage scales"),
     ]
-    y = 3.35
+    y = panel_top + 0.55
     for date, desc in milestones:
-        oval = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(1.05), Inches(y + 0.08), Inches(0.24), Inches(0.24))
+        oval = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(1.05), Inches(y + 0.06), Inches(0.24), Inches(0.24))
         fill_solid(oval, TEAL)
-        textbox(slide, Inches(1.5), Inches(y), Inches(1.2), Inches(0.3),
+        textbox(slide, Inches(1.5), Inches(y), Inches(1.15), Inches(0.28),
                 [{"text": date, "size": 11, "bold": True, "color": TEAL}])
-        textbox(slide, Inches(2.75), Inches(y), Inches(5.0), Inches(0.5),
+        textbox(slide, Inches(2.7), Inches(y), Inches(5.1), Inches(0.5),
                 [{"text": desc, "size": 11, "color": BODY}])
         y += 0.55
 
-    round_rect(slide, Inches(8.25), Inches(2.75), Inches(4.55), Inches(3.55), fill=WHITE, line=LINE)
-    textbox(slide, Inches(8.45), Inches(2.9), Inches(4.2), Inches(0.3),
+    round_rect(slide, Inches(8.25), Inches(panel_top), Inches(4.55), Inches(panel_h), fill=WHITE, line=LINE)
+    textbox(slide, Inches(8.45), Inches(panel_top + 0.12), Inches(4.2), Inches(0.28),
             [{"text": "Why it matters", "size": 13, "bold": True, "color": NAVY}])
     reasons = [
         "Eight years of real candidate-prep insight behind the AI product",
-        "100K+ proprietary questions create a durable data advantage vs. generic LLMs",
+        "100K+ proprietary questions create a durable advantage vs. generic LLMs",
         "Free launch maximizes global user acquisition before monetization",
         "Clear path: membership · consulting · education fees",
     ]
-    y = 3.35
+    y = panel_top + 0.55
     for r in reasons:
-        textbox(slide, Inches(8.45), Inches(y), Inches(4.15), Inches(0.6),
-                [{"text": "▸  " + r, "size": 11, "color": BODY}])
-        y += 0.65
+        textbox(slide, Inches(8.45), Inches(y), Inches(4.15), Inches(0.65),
+                [{"text": "▸  " + r, "size": 12, "color": BODY}])
+        y += 0.7
 
-    textbox(slide, Inches(0.55), Inches(6.4), Inches(12), Inches(0.3),
-            [{"text": "Platform revenue is currently US$0 by design (free access). Candidate totals reflect 51 Careers operating history since 2016.",
+    textbox(slide, Inches(0.55), Inches(6.3), Inches(12), Inches(0.28),
+            [{"text": "Platform revenue is currently US$0 by design (free access). Candidate totals reflect 51Careers operating history since 2016.",
               "size": 8, "color": MUTED}])
     footer(slide, 9)
 
@@ -701,11 +709,12 @@ def slide_competition(prs):
         XL_CHART_TYPE.BAR_CLUSTERED,
         Inches(0.65), Inches(1.75), Inches(5.45), Inches(2.9),
         ["51Careers.AI", "ChatGPT / OpenAI", "Google Gemini", "Claude", "Generic prep apps"],
-        [("Career AI depth", (6, 2, 2, 2, 3))],
+        [("Score", (6, 2, 2, 2, 3))],
         legend=False,
+        value_max=6,
     )
 
-    headers = ["Capability", "51Careers", "ChatGPT", "Gemini", "Claude"]
+    headers = ["Capability", "51Careers.AI", "ChatGPT", "Gemini", "Claude"]
     rows = [
         ["Career-specific mock interviews", "●", "○", "○", "○"],
         ["100K+ proprietary question bank", "●", "—", "—", "—"],
@@ -790,14 +799,14 @@ def slide_growth(prs):
         x += 4.15
 
     round_rect(slide, Inches(0.55), Inches(5.2), Inches(12.25), Inches(1.2), fill=WHITE, line=LINE)
-    textbox(slide, Inches(0.75), Inches(5.3), Inches(4.5), Inches(0.28),
+    textbox(slide, Inches(0.75), Inches(5.28), Inches(11.8), Inches(0.25),
             [{"text": "Illustrative active-user growth (index)", "size": 11, "bold": True, "color": NAVY}])
     add_chart(
         slide,
         XL_CHART_TYPE.LINE_MARKERS,
-        Inches(5.0), Inches(5.15), Inches(7.6), Inches(1.25),
+        Inches(0.7), Inches(5.4), Inches(11.9), Inches(0.95),
         ["2025", "2026", "2027", "2028", "2029"],
-        [("Active users (index)", (10, 35, 80, 140, 220))],
+        [("Index", (10, 35, 80, 140, 220))],
         legend=False,
     )
     textbox(slide, Inches(0.55), Inches(6.45), Inches(12), Inches(0.25),
@@ -818,7 +827,7 @@ def slide_financials(prs):
         XL_CHART_TYPE.COLUMN_CLUSTERED,
         Inches(0.65), Inches(1.65), Inches(7.65), Inches(2.65),
         ["2025A", "2026E", "2027E", "2028E", "2029E"],
-        [("Platform revenue", (0, 0.8, 3.5, 9.0, 18.0))],
+        [("Revenue", (0, 0.8, 3.5, 9.0, 18.0))],
         legend=False,
     )
 
@@ -830,7 +839,7 @@ def slide_financials(prs):
         XL_CHART_TYPE.LINE_MARKERS,
         Inches(0.65), Inches(4.85), Inches(7.65), Inches(1.4),
         ["2025A", "2026E", "2027E", "2028E", "2029E"],
-        [("Paid conversion", (0, 2, 5, 8, 12))],
+        [("Conversion", (0, 2, 5, 8, 12))],
         legend=False,
     )
 
@@ -902,7 +911,7 @@ def slide_offering(prs):
             "Brand & growth marketing (10%)",
             "Working capital (5%)",
         ],
-        [("Use of Proceeds", (35, 30, 20, 10, 5))],
+        [("Allocation", (35, 30, 20, 10, 5))],
         legend=True,
         point_colors=CHART_COLORS,
     )
@@ -924,24 +933,24 @@ def slide_leadership(prs):
             "Rocky Chen",
             "FOUNDER & CEO",
             [
-                "Founder of 51 Careers and 51Careers.AI; investor & Managing Director at publicly listed Helio",
-                "Decade of international business, capital markets, and global resource integration across AI, education, and related industries",
+                "Founder of 51Careers and 51Careers.AI; investor & Managing Director at publicly listed Helio",
+                "Decade of international business, capital markets, and global resource integration",
             ],
         ),
         (
             "Stephanie Li",
             "CO-FOUNDER & CFO",
             [
-                "Co-Founder since 2016; U.S. CPA — M.S. Accounting (Pace); B.A. Accounting (Dongbei University of Finance and Economics)",
-                "Oversees financial strategy, corporate governance, and sustainable growth; prior senior finance leadership in U.S. industry",
+                "Co-Founder since 2016; U.S. CPA — M.S. Accounting (Pace University)",
+                "Oversees financial strategy, corporate governance, and sustainable growth",
             ],
         ),
         (
             "Gavin Ding",
             "CO-FOUNDER, CTO & COO",
             [
-                "Serial entrepreneur (10+ yrs) across SaaS, AI, and digital business; B.S. Computer Science, ECUST",
-                "Prior CTO roles (Youpindao, Roubeibei) and multiple co-founded ventures; leads technology, operations, and AI strategy",
+                "Serial entrepreneur (10+ yrs) across SaaS, AI, and digital business; B.S. CS, ECUST",
+                "Prior CTO roles and multiple co-founded ventures; leads technology, operations, and AI",
             ],
         ),
         (
@@ -949,23 +958,23 @@ def slide_leadership(prs):
             "HEAD OF PRODUCT",
             [
                 "Leads product strategy, architecture, and development of the AI-powered platform",
-                "Former CTO & Director of Product, Ci Finance; senior product/tech roles at CPIC, Allinpay, Noah Holdings, and Tianrang Intelligence",
+                "Former CTO & Director of Product, Ci Finance; senior roles at CPIC, Allinpay, Noah",
             ],
         ),
         (
             "Chris Lin",
             "NORTH AMERICAN PARTNER",
             [
-                "Full-stack engineer; previously at Amazon Web Services (AWS) on mission-critical systems",
-                "B.S. Mechanical Engineering (Northwestern), M.S. Robotics; extensive hiring-panel experience and career mentorship",
+                "Full-stack engineer; previously at Amazon Web Services (AWS)",
+                "B.S. Northwestern, M.S. Robotics; extensive hiring-panel experience and mentorship",
             ],
         ),
         (
             "Jon Serbin",
             "SENIOR ADVISOR",
             [
-                "Harvard & MIT; former senior executive at Morgan Stanley; founder of Cedar (Wall Street investment banking)",
-                "40+ years advising tech M&A, capital raising, and listings; advises 51Careers.AI on growth, capital markets, and expansion",
+                "Harvard & MIT; former senior executive at Morgan Stanley; founder of Cedar",
+                "40+ years in tech M&A and capital raising; advises on growth and expansion",
             ],
         ),
     ]
