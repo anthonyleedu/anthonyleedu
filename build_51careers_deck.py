@@ -978,52 +978,113 @@ def slide_offering(prs):
 
 
 def slide_leadership(prs):
+    """Executive leadership — six condensed investor-ready profiles on one slide."""
     slide = blank_slide(prs)
-    section_header(slide, "Leadership", "Founder-Led, Globally Distributed")
+    section_header(slide, "Leadership", "Executive Leadership Team")
 
-    round_rect(slide, Inches(0.55), Inches(1.3), Inches(7.5), Inches(3.5), fill=WHITE, line=LINE)
-    accent_bar(slide, Inches(0.55), Inches(1.3), w=Inches(0.1), h=Inches(3.5))
-    textbox(slide, Inches(0.9), Inches(1.5), Inches(6.9), Inches(0.45),
-            [{"text": "Rocky Chen", "size": 26, "bold": True, "color": NAVY, "font": FONT_DISPLAY}])
-    textbox(slide, Inches(0.9), Inches(2.05), Inches(6.9), Inches(0.3),
-            [{"text": "FOUNDER & CHIEF EXECUTIVE OFFICER", "size": 11, "bold": True, "color": TEAL}])
-    textbox(slide, Inches(0.9), Inches(2.5), Inches(6.9), Inches(1.5),
-            [{"text": "Founded 51 Careers in New York in 2016 and built it from a boutique consultancy into a multi-market career-services and technology business. Architect of the Company’s AI-first strategy, including the 2025 strategic partnership with Alibaba Cloud AI, and of its expansion across North America, Europe, and Asia.",
-              "size": 12, "color": BODY}])
-    textbox(slide, Inches(0.9), Inches(4.1), Inches(6.9), Inches(0.5),
-            [{"text": "Supporting bench — Senior partners across business development, coaching operations, and engineering, supported by a mentor network of practitioners at leading global employers.",
-              "size": 11, "color": MUTED}])
+    leaders = [
+        (
+            "Rocky Chen",
+            "FOUNDER & CEO",
+            [
+                "Founder of 51 Careers and 51Careers.AI; investor & Managing Director at publicly listed Helio",
+                "Decade of international business, capital markets, and global resource integration across AI, education, and related industries",
+            ],
+        ),
+        (
+            "Stephanie Li",
+            "CO-FOUNDER & CFO",
+            [
+                "Co-Founder since 2016; U.S. CPA — M.S. Accounting (Pace); B.A. Accounting (Dongbei University of Finance and Economics)",
+                "Oversees financial strategy, corporate governance, and sustainable growth; prior senior finance leadership in U.S. industry",
+            ],
+        ),
+        (
+            "Gavin Ding",
+            "CO-FOUNDER, CTO & COO",
+            [
+                "Serial entrepreneur (10+ yrs) across SaaS, AI, and digital business; B.S. Computer Science, ECUST",
+                "Prior CTO roles (Youpindao, Roubeibei) and multiple co-founded ventures; leads technology, operations, and AI strategy",
+            ],
+        ),
+        (
+            "Robin Zhu",
+            "HEAD OF PRODUCT",
+            [
+                "Leads product strategy, architecture, and development of the AI-powered platform",
+                "Former CTO & Director of Product, Ci Finance; senior product/tech roles at CPIC, Allinpay, Noah Holdings, and Tianrang Intelligence",
+            ],
+        ),
+        (
+            "Chris Lin",
+            "NORTH AMERICAN PARTNER",
+            [
+                "Full-stack engineer; previously at Amazon Web Services (AWS) on mission-critical systems",
+                "B.S. Mechanical Engineering (Northwestern), M.S. Robotics; extensive hiring-panel experience and career mentorship",
+            ],
+        ),
+        (
+            "Jon Serbin",
+            "SENIOR ADVISOR",
+            [
+                "Harvard & MIT; former senior executive at Morgan Stanley; founder of Cedar (Wall Street investment banking)",
+                "40+ years advising tech M&A, capital raising, and listings; advises 51Careers.AI on growth, capital markets, and expansion",
+            ],
+        ),
+    ]
 
-    round_rect(slide, Inches(8.3), Inches(1.3), Inches(4.5), Inches(3.5), fill=NAVY)
-    textbox(slide, Inches(8.55), Inches(1.5), Inches(4.0), Inches(0.3),
-            [{"text": "GLOBAL ORGANIZATION", "size": 11, "bold": True, "color": TEAL}])
-    textbox(slide, Inches(8.55), Inches(1.95), Inches(4.0), Inches(0.45),
-            [{"text": "≈50 professionals", "size": 20, "bold": True, "color": WHITE, "font": FONT_DISPLAY}])
-    textbox(slide, Inches(8.55), Inches(2.45), Inches(4.0), Inches(0.3),
-            [{"text": "Distributed across four continents†", "size": 11, "color": RGBColor(0xC5, 0xD5, 0xE0)}])
-    textbox(slide, Inches(8.55), Inches(3.0), Inches(4.0), Inches(0.3),
-            [{"text": "Hubs", "size": 12, "bold": True, "color": TEAL}])
-    textbox(slide, Inches(8.55), Inches(3.3), Inches(4.0), Inches(0.55),
-            [{"text": "New York & Shanghai; presence in London, Singapore, Seoul, Toronto, and Delhi", "size": 11, "color": WHITE}])
-    textbox(slide, Inches(8.55), Inches(4.0), Inches(4.0), Inches(0.3),
-            [{"text": "Functions", "size": 12, "bold": True, "color": TEAL}])
-    textbox(slide, Inches(8.55), Inches(4.3), Inches(4.0), Inches(0.4),
-            [{"text": "AI & engineering · coaching & mentor network · placement · employer partnerships", "size": 11, "color": WHITE}])
+    # 2 × 3 grid
+    card_w, card_h = Inches(4.0), Inches(2.35)
+    gap_x, gap_y = Inches(0.2), Inches(0.18)
+    origin_x, origin_y = Inches(0.55), Inches(1.28)
+    accents = [TEAL, BLUE, BRONZE, TEAL, BLUE, BRONZE]
 
-    # Hub distribution chart
-    round_rect(slide, Inches(0.55), Inches(5.0), Inches(12.25), Inches(1.35), fill=WHITE, line=LINE)
-    textbox(slide, Inches(0.75), Inches(5.1), Inches(4), Inches(0.28),
-            [{"text": "Illustrative hub presence", "size": 11, "bold": True, "color": NAVY}])
-    add_chart(
+    for i, (name, title, bullets) in enumerate(leaders):
+        col, row = i % 3, i // 3
+        x = origin_x + col * (card_w + gap_x)
+        y = origin_y + row * (card_h + gap_y)
+        round_rect(slide, x, y, card_w, card_h, fill=WHITE, line=LINE)
+        accent_bar(slide, x, y, w=Inches(0.08), h=card_h, color=accents[i])
+        textbox(
+            slide,
+            x + Inches(0.22),
+            y + Inches(0.14),
+            card_w - Inches(0.35),
+            Inches(0.35),
+            [{"text": name, "size": 15, "bold": True, "color": NAVY, "font": FONT_DISPLAY}],
+        )
+        textbox(
+            slide,
+            x + Inches(0.22),
+            y + Inches(0.48),
+            card_w - Inches(0.35),
+            Inches(0.28),
+            [{"text": title, "size": 10, "bold": True, "color": TEAL}],
+        )
+        by = y + Inches(0.85)
+        for bullet in bullets:
+            textbox(
+                slide,
+                x + Inches(0.22),
+                by,
+                card_w - Inches(0.38),
+                Inches(0.65),
+                [{"text": "▸  " + bullet, "size": 10, "color": BODY}],
+            )
+            by += Inches(0.68)
+
+    textbox(
         slide,
-        XL_CHART_TYPE.BAR_CLUSTERED,
-        Inches(4.5), Inches(5.0), Inches(8.1), Inches(1.3),
-        ["New York", "Shanghai", "London", "Singapore", "Seoul", "Toronto", "Delhi"],
-        [("Relative presence", (100, 95, 55, 50, 45, 40, 40))],
-        legend=False,
+        Inches(0.55),
+        Inches(6.3),
+        Inches(12.2),
+        Inches(0.3),
+        [{
+            "text": "Supported by ≈50 professionals across New York, Shanghai, London, Singapore, Seoul, Toronto, and Delhi. Full biographies available in the data room.",
+            "size": 9,
+            "color": MUTED,
+        }],
     )
-    textbox(slide, Inches(0.55), Inches(6.4), Inches(12), Inches(0.25),
-            [{"text": "† Headcount per third-party estimates (2025); to be confirmed in due diligence.", "size": 8, "color": MUTED}])
     footer(slide, 14)
 
 
