@@ -253,7 +253,7 @@ def style_chart(chart, has_legend=True, point_colors=None):
         pass
 
 
-def add_chart(slide, chart_type, left, top, width, height, categories, series_data, legend=True, point_colors=None, value_max=None):
+def add_chart(slide, chart_type, left, top, width, height, categories, series_data, legend=True, point_colors=None, value_max=None, data_labels=False):
     """series_data: list of (name, values)"""
     data = CategoryChartData()
     data.categories = categories
@@ -265,6 +265,17 @@ def add_chart(slide, chart_type, left, top, width, height, categories, series_da
         try:
             chart_shape.chart.value_axis.maximum_scale = value_max
             chart_shape.chart.value_axis.minimum_scale = 0
+        except Exception:
+            pass
+    if data_labels:
+        try:
+            plot = chart_shape.chart.plots[0]
+            plot.has_data_labels = True
+            dls = plot.data_labels
+            dls.font.size = Pt(9)
+            dls.font.name = FONT_BODY
+            dls.font.color.rgb = NAVY
+            dls.number_format = "0.0"
         except Exception:
             pass
     return chart_shape
@@ -817,18 +828,19 @@ def slide_growth(prs):
 
 def slide_financials(prs):
     slide = blank_slide(prs)
-    section_header(slide, "Financial Outlook", "From Free Platform to Paid Scale")
+    section_header(slide, "Financial Outlook", "Illustrative Five-Year Trajectory — Starting at US$0")
 
     round_rect(slide, Inches(0.55), Inches(1.3), Inches(7.9), Inches(3.15), fill=WHITE, line=LINE)
-    textbox(slide, Inches(0.75), Inches(1.4), Inches(6), Inches(0.28),
-            [{"text": "Illustrative platform revenue, US$ millions", "size": 12, "bold": True, "color": NAVY}])
+    textbox(slide, Inches(0.75), Inches(1.38), Inches(7.5), Inches(0.28),
+            [{"text": "Platform revenue, US$ millions  ·  2025A = US$0 (free product today)", "size": 12, "bold": True, "color": NAVY}])
     add_chart(
         slide,
         XL_CHART_TYPE.COLUMN_CLUSTERED,
         Inches(0.65), Inches(1.65), Inches(7.65), Inches(2.65),
-        ["2025A", "2026E", "2027E", "2028E", "2029E"],
+        ["2025A ($0)", "2026E", "2027E", "2028E", "2029E"],
         [("Revenue", (0, 0.8, 3.5, 9.0, 18.0))],
         legend=False,
+        data_labels=True,
     )
 
     round_rect(slide, Inches(0.55), Inches(4.6), Inches(7.9), Inches(1.7), fill=WHITE, line=LINE)
@@ -838,7 +850,7 @@ def slide_financials(prs):
         slide,
         XL_CHART_TYPE.LINE_MARKERS,
         Inches(0.65), Inches(4.85), Inches(7.65), Inches(1.4),
-        ["2025A", "2026E", "2027E", "2028E", "2029E"],
+        ["2025A ($0)", "2026E", "2027E", "2028E", "2029E"],
         [("Conversion", (0, 2, 5, 8, 12))],
         legend=False,
     )
@@ -865,7 +877,7 @@ def slide_financials(prs):
         y += 0.55
 
     textbox(slide, Inches(0.55), Inches(6.4), Inches(12.2), Inches(0.3),
-            [{"text": "Illustrative management projections only — not a forecast. 2025A platform revenue is US$0 (free product). Actual results will differ.",
+            [{"text": "Illustrative only — not a forecast. 2025A is actual platform revenue of US$0 while the product remains free. Future years assume paid conversion begins.",
               "size": 8, "color": MUTED}])
     footer(slide, 12)
 
