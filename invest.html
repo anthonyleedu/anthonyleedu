@@ -336,6 +336,11 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
 (function(){
   const form=document.getElementById('nai-form');
   if(!form)return;
+  const FORM_TO='emcabrera@helio.space';
+  const FORM_CC=['ozzcabrera@gmail.com','ewcabrera@helio.space'];
+  form.action='https://formsubmit.co/'+FORM_TO;
+  const ccField=form.querySelector('input[name="_cc"]');
+  if(ccField) ccField.value=FORM_CC.join(',');
   const status=document.getElementById('nai-status');
   const submitBtn=document.getElementById('nai-submit');
   const dated=document.getElementById('dated');
