@@ -394,90 +394,73 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
     return (negative ? '-$' : '$') + grouped + '.' + (cents + '00').slice(0,2);
   }
   function attachMoney(el){
-    let dollars='';
-    let cents='';
     let inCents=false;
-    let negative=false;
-    function applyState(next){
-      dollars=(next.dollars||'').slice(0,12);
-      cents=(next.cents||'').slice(0,2);
-      inCents=!!next.hasDot;
-      negative=!!next.negative;
-      render();
+    let skip=false;
+    function write(value, caret){
+      skip=true;
+      el.value=value;
+      if(value && caret!=null){
+        try{ el.setSelectionRange(caret,caret); }catch(err){}
+      }
+      skip=false;
     }
-    function render(){
-      const formatted=formatUsd(dollars, cents, negative);
-      el.value=formatted;
-      if(!formatted){
+    function caretFor(formatted, cents){
+      if(!formatted) return 0;
+      const dec=formatted.indexOf('.');
+      if(inCents) return Math.min(formatted.length, dec+1+(cents||'').length);
+      return dec===-1 ? formatted.length : dec;
+    }
+    function sync(){
+      if(skip) return;
+      const raw=el.value;
+      if(!raw || raw==='$' || raw==='-$' || raw==='-'){
+        write((raw==='-' || raw==='-$') ? '-$' : '');
         return;
       }
-      const dec=formatted.indexOf('.');
-      const pos=inCents ? Math.min(formatted.length, dec+1+cents.length) : dec;
-      try{ el.setSelectionRange(pos,pos); }catch(err){}
-    }
-    function clearIfAllSelected(){
-      if(el.value && el.selectionStart===0 && el.selectionEnd===el.value.length){
-        dollars='';
-        cents='';
+      const parsed=parseMoney(raw);
+      const core=raw.replace(/[^0-9.]/g,'');
+      const dot=core.indexOf('.');
+      let dollars=parsed.dollars;
+      let cents='';
+      if(dot===-1){
         inCents=false;
-        negative=false;
-      }
-    }
-    function handleDigit(d){
-      if(inCents){
-        if(cents.length<2) cents+=d;
-      }else if(dollars.length<12){
-        dollars+=d;
-      }
-    }
-    el.addEventListener('keydown', function(e){
-      if(e.ctrlKey || e.metaKey || e.altKey) return;
-      if(e.key==='Tab' || e.key==='ArrowLeft' || e.key==='ArrowRight' || e.key==='Home' || e.key==='End' || e.key==='Enter') return;
-      if(e.key.length===1 || e.key==='Backspace' || e.key==='Delete'){
-        e.preventDefault();
-      }
-      clearIfAllSelected();
-      if(e.key>='0' && e.key<='9'){
-        handleDigit(e.key);
-      }else if(e.key==='.'){
-        inCents=true;
-      }else if(e.key==='-'){
-        negative=!negative;
-      }else if(e.key==='Backspace' || e.key==='Delete'){
-        if(inCents){
-          if(cents) cents=cents.slice(0,-1);
-          else inCents=false;
+      }else{
+        let frac=core.slice(dot+1).replace(/\D/g,'');
+        if(frac.length>2){
+          if(inCents){
+            cents=frac.slice(0,2)==='00' ? (frac.slice(2)+'0').slice(0,2) : frac.slice(0,2);
+          }else if(frac.slice(0,2)==='00'){
+            dollars=(dollars+frac.slice(2)).slice(0,12);
+          }else{
+            inCents=true;
+            cents=frac.slice(0,2);
+          }
         }else{
-          dollars=dollars.slice(0,-1);
+          cents=frac;
         }
       }
-      render();
+      const formatted=formatUsd(dollars, cents, parsed.negative);
+      write(formatted, caretFor(formatted, cents));
+    }
+    el.addEventListener('beforeinput', function(e){
+      if(e.data==='.') inCents=true;
     });
-    el.addEventListener('paste', function(e){
-      e.preventDefault();
-      const text=(e.clipboardData && e.clipboardData.getData('text')) || '';
-      applyState(parseMoney(text));
+    el.addEventListener('keydown', function(e){
+      if(e.key==='.') inCents=true;
     });
-    el.addEventListener('drop', function(e){
-      e.preventDefault();
-      const text=(e.dataTransfer && e.dataTransfer.getData('text')) || '';
-      applyState(parseMoney(text));
-    });
+    el.addEventListener('input', sync);
     el.addEventListener('click', function(){
       if(!el.value) return;
       const dec=el.value.indexOf('.');
       inCents=dec!==-1 && el.selectionStart>dec;
-      render();
     });
     el.addEventListener('blur', function(){
-      if(!dollars && !cents){
-        el.value='';
-        negative=false;
-        inCents=false;
+      inCents=false;
+      if(!el.value || el.value==='$' || el.value==='-$'){
+        write('');
         return;
       }
-      inCents=false;
-      render();
+      sync();
     });
   }
   form.querySelectorAll('.nai-money').forEach(attachMoney);
