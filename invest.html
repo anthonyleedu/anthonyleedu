@@ -385,70 +385,177 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
     dollars=dollars.replace(/\D/g,'').slice(0,12);
     return {negative:negative, dollars:dollars, cents:cents, hasDot:hasDot};
   }
-  function formatUsd(dollars, cents, negative){
-    if(!dollars && !cents){
+  function formatUsd(dollars, cents, negative, inCents){
+    if(!dollars && !cents && !inCents){
       return negative ? '-$' : '';
     }
     const digits=dollars.replace(/^0+(?=\d)/,'') || '0';
     const grouped=digits.replace(/\B(?=(\d{3})+(?!\d))/g,',');
-    return (negative ? '-$' : '$') + grouped + '.' + (cents + '00').slice(0,2);
+    const prefix=(negative ? '-$' : '$') + grouped + '.';
+    if(inCents) return prefix + cents.slice(0,2);
+    return prefix + (cents + '00').slice(0,2);
   }
   function attachMoney(el){
+    let dollars='';
+    let cents='';
     let inCents=false;
+    let negative=false;
     let skip=false;
-    function write(value, caret){
+    let fromKey=false;
+    function write(value, start, end){
       skip=true;
       el.value=value;
-      if(value && caret!=null){
-        try{ el.setSelectionRange(caret,caret); }catch(err){}
+      if(value && start!=null){
+        try{ el.setSelectionRange(start, end==null?start:end); }catch(err){}
       }
       skip=false;
     }
-    function caretFor(formatted, cents){
-      if(!formatted) return 0;
+    function render(){
+      const formatted=formatUsd(dollars, cents, negative, inCents);
+      if(!formatted){
+        write('');
+        return;
+      }
       const dec=formatted.indexOf('.');
-      if(inCents) return Math.min(formatted.length, dec+1+(cents||'').length);
-      return dec===-1 ? formatted.length : dec;
+      if(inCents){
+        write(formatted, dec+1+cents.length);
+      }else{
+        write(formatted, dec);
+      }
     }
-    function sync(){
+    function enterCents(){
+      if(!dollars && !cents) dollars='0';
+      inCents=true;
+      cents='';
+      const formatted=formatUsd(dollars, cents, negative, true);
+      const dec=formatted.indexOf('.');
+      write(formatted, dec+1, formatted.length);
+    }
+    function takeDigit(ch){
+      if(inCents){
+        if(cents.length>=2){
+          const dec=el.value.indexOf('.');
+          const replacing=dec!==-1 && el.selectionStart>dec && el.selectionEnd>el.selectionStart;
+          if(replacing) cents=ch;
+        }else{
+          cents=(cents+ch).slice(0,2);
+        }
+      }else{
+        dollars=(dollars+ch).slice(0,12);
+      }
+      render();
+    }
+    function backspace(){
+      if(inCents){
+        if(cents) cents=cents.slice(0,-1);
+        else inCents=false;
+      }else{
+        dollars=dollars.slice(0,-1);
+      }
+      if(!dollars && !cents && !inCents){
+        negative=false;
+        write('');
+        return;
+      }
+      render();
+    }
+    el.addEventListener('keydown', function(e){
+      if(e.ctrlKey || e.metaKey || e.altKey) return;
+      if(e.key==='Tab' || e.key==='ArrowLeft' || e.key==='ArrowRight' || e.key==='Home' || e.key==='End' || e.key==='Enter') return;
+      if(e.key==='.'){
+        e.preventDefault();
+        fromKey=true;
+        enterCents();
+        return;
+      }
+      if(e.key>='0' && e.key<='9'){
+        e.preventDefault();
+        fromKey=true;
+        if(el.value && el.selectionStart===0 && el.selectionEnd===el.value.length){
+          dollars='';
+          cents='';
+          inCents=false;
+          negative=false;
+        }
+        takeDigit(e.key);
+        return;
+      }
+      if(e.key==='-'){
+        e.preventDefault();
+        fromKey=true;
+        negative=!negative;
+        render();
+        return;
+      }
+      if(e.key==='Backspace' || e.key==='Delete'){
+        e.preventDefault();
+        fromKey=true;
+        backspace();
+      }
+    });
+    el.addEventListener('keyup', function(){
+      fromKey=false;
+    });
+    el.addEventListener('beforeinput', function(e){
+      if(fromKey){
+        e.preventDefault();
+        fromKey=false;
+        return;
+      }
+      if(e.inputType==='insertFromPaste') return;
+      if(e.data==='.'){
+        e.preventDefault();
+        enterCents();
+        return;
+      }
+      if(e.data && /^[0-9]$/.test(e.data)){
+        e.preventDefault();
+        if(el.value && el.selectionStart===0 && el.selectionEnd===el.value.length){
+          dollars='';
+          cents='';
+          inCents=false;
+          negative=false;
+        }
+        takeDigit(e.data);
+      }
+    });
+    el.addEventListener('paste', function(e){
+      e.preventDefault();
+      const text=(e.clipboardData && e.clipboardData.getData('text')) || '';
+      const parsed=parseMoney(text);
+      dollars=parsed.dollars;
+      cents=parsed.cents;
+      inCents=!!parsed.hasDot;
+      negative=!!parsed.negative;
+      if(inCents) render();
+      else{
+        const formatted=formatUsd(dollars, cents, negative, false);
+        const dec=formatted.indexOf('.');
+        write(formatted, dec);
+      }
+    });
+    el.addEventListener('input', function(){
       if(skip) return;
       const raw=el.value;
       if(!raw || raw==='$' || raw==='-$' || raw==='-'){
-        write((raw==='-' || raw==='-$') ? '-$' : '');
+        dollars='';
+        cents='';
+        inCents=false;
+        negative=raw==='-' || raw==='-$';
+        write(negative?'-$':'');
         return;
       }
-      const parsed=parseMoney(raw);
-      const core=raw.replace(/[^0-9.]/g,'');
-      const dot=core.indexOf('.');
-      let dollars=parsed.dollars;
-      let cents='';
-      if(dot===-1){
-        inCents=false;
-      }else{
-        let frac=core.slice(dot+1).replace(/\D/g,'');
-        if(frac.length>2){
-          if(inCents){
-            cents=frac.slice(0,2)==='00' ? (frac.slice(2)+'0').slice(0,2) : frac.slice(0,2);
-          }else if(frac.slice(0,2)==='00'){
-            dollars=(dollars+frac.slice(2)).slice(0,12);
-          }else{
-            inCents=true;
-            cents=frac.slice(0,2);
-          }
-        }else{
-          cents=frac;
-        }
+      const dots=(raw.match(/\./g)||[]).length;
+      if(dots>1 || /[.]$/.test(raw.replace(/,/g,'').replace(/\.00$/,''))){
+        inCents=true;
       }
-      const formatted=formatUsd(dollars, cents, parsed.negative);
-      write(formatted, caretFor(formatted, cents));
-    }
-    el.addEventListener('beforeinput', function(e){
-      if(e.data==='.') inCents=true;
+      const parsed=parseMoney(raw);
+      dollars=parsed.dollars;
+      cents=parsed.hasDot ? parsed.cents : '';
+      if(parsed.hasDot && !/\$[\d,]+\.00$/.test(raw)) inCents=true;
+      negative=!!parsed.negative;
+      render();
     });
-    el.addEventListener('keydown', function(e){
-      if(e.key==='.') inCents=true;
-    });
-    el.addEventListener('input', sync);
     el.addEventListener('click', function(){
       if(!el.value) return;
       const dec=el.value.indexOf('.');
@@ -456,11 +563,14 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
     });
     el.addEventListener('blur', function(){
       inCents=false;
-      if(!el.value || el.value==='$' || el.value==='-$'){
+      if(!dollars && !cents){
+        negative=false;
         write('');
         return;
       }
-      sync();
+      const formatted=formatUsd(dollars, cents, negative, false);
+      const dec=formatted.indexOf('.');
+      write(formatted, dec);
     });
   }
   form.querySelectorAll('.nai-money').forEach(attachMoney);
