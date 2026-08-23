@@ -151,10 +151,11 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
   </div>
 </nav>
 <section id="subscribe"><div class="subscribe-inner"><div class="subscribe-hd fi in"><a class="back-link" href="index.html">← Back to overview</a><div class="eyebrow">Non-Accredited Investors</div><h2 class="sec-title">Investor Acknowledgement</h2><p class="sec-sub">Complete the questionnaire below. We’ll review your information and provide the appropriate next steps and investment materials. Under Regulation D, no more than 35 non-accredited investors may participate in a private placement.</p></div><div class="subscribe-notice fi d1 in"><span class="wedge-tag">Definition</span><div><p>A non-accredited investor is an investor with a net worth of less than $1 million who has had an annual income of less than $200,000 ($300,000 with a spouse) in each of the past two years.</p><p>The offer and sale of membership, stock and share interests (the “Interests”) are not being registered under the Securities Act of 1933, as amended (the “Act”), or qualified under state securities laws, in reliance upon exemptions from such registration and qualification requirements for transactions not involving any public offering. Information supplied through this questionnaire will be used to ensure compliance with the requirements of such exemptions.</p></div></div>
-<form class="nai-form fi d1 in" id="nai-form" action="https://formsubmit.co/anthony_le@brown.edu" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+<form class="nai-form fi d1 in" id="nai-form" action="https://formsubmit.co/emcabrera@helio.space" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
 <input type="hidden" name="_subject" value="SLAM Non-Accredited Investor Acknowledgement">
 <input type="hidden" name="_template" value="table">
 <input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_cc" value="ozzcabrera@gmail.com,ewcabrera@helio.space">
 <input type="hidden" name="_next" id="nai-next" value="https://formsubmit.co/thanks">
 <input type="hidden" name="Date of Birth" id="dob-combined" value="">
 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
@@ -299,7 +300,7 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 </div>
 </div>
 
-<div class="nai-foot"><button type="submit" class="btn-primary" id="nai-submit">Submit Acknowledgement</button><p class="nai-legal">By submitting, you confirm the statements above and that this electronic signature has the same effect as a handwritten signature. This form is routed to anthony_le@brown.edu.</p></div>
+<div class="nai-foot"><button type="submit" class="btn-primary" id="nai-submit">Submit Acknowledgement</button><p class="nai-legal">By submitting, you confirm the statements above and that this electronic signature has the same effect as a handwritten signature.</p></div>
 <div class="nai-status" id="nai-status" role="status" aria-live="polite"></div>
 </div>
 </form>
@@ -394,7 +395,7 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
   function showThanks(){
     if(!status)return;
     status.className='nai-status ok';
-    status.textContent='Thank you. Your acknowledgement has been sent to anthony_le@brown.edu.';
+    status.textContent='Thank you. Your acknowledgement has been sent.';
     status.scrollIntoView({behavior:'smooth',block:'center'});
   }
   if(location.hash==='#subscribe-sent'){
