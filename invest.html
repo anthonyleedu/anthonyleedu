@@ -98,6 +98,7 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 .nai-sig-block[hidden],.nai-edu-block[hidden]{display:none !important}
 .nai-choice.nai-stack{flex-direction:column;align-items:flex-start;gap:10px;min-height:0}
 .nai-year{max-width:108px;letter-spacing:0.08em;font-variant-numeric:tabular-nums}
+.nai-money{font-variant-numeric:tabular-nums;letter-spacing:0.02em}
 .nai-field textarea{min-height:92px;resize:vertical}
 .nai-field input:focus,
 .nai-field textarea:focus,
@@ -277,19 +278,19 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <div class="nai-part-hd"><span class="nai-part-num">06</span><h3>Income</h3></div>
 <p class="nai-part-note">My income from all sources was, now is, or is expected to be:</p>
 <div class="nai-grid">
-<div class="nai-field"><label for="income_two_years_ago">Two years ago — gross income (actual)</label><input id="income_two_years_ago" name="Gross Income (Two Years Ago, Actual)" type="text" placeholder="$"></div>
-<div class="nai-field"><label for="income_one_year_ago">One year ago — gross income (actual)</label><input id="income_one_year_ago" name="Gross Income (One Year Ago, Actual)" type="text" placeholder="$"></div>
-<div class="nai-field"><label for="income_this_year">This year — gross income (estimated)</label><input id="income_this_year" name="Gross Income (This Year, Estimated)" type="text" placeholder="$"></div>
+<div class="nai-field"><label for="income_two_years_ago">Two years ago — gross income (actual)</label><input class="nai-money" id="income_two_years_ago" name="Gross Income (Two Years Ago, Actual)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="income_one_year_ago">One year ago — gross income (actual)</label><input class="nai-money" id="income_one_year_ago" name="Gross Income (One Year Ago, Actual)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="income_this_year">This year — gross income (estimated)</label><input class="nai-money" id="income_this_year" name="Gross Income (This Year, Estimated)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
 </div>
 </div>
 
 <div class="nai-part">
 <div class="nai-part-hd"><span class="nai-part-num">07</span><h3>Net Worth</h3></div>
 <div class="nai-grid">
-<div class="nai-field full"><label for="net_worth_incl">Personal net worth (including the net worth of my spouse, if any)</label><input id="net_worth_incl" name="Personal Net Worth (Including Spouse)" type="text" placeholder="$"></div>
-<div class="nai-field full"><label for="net_worth_excl">Personal net worth (exclusive of homes, home furnishings and automobiles)</label><input id="net_worth_excl" name="Personal Net Worth (Exclusive of Homes, Furnishings, Automobiles)" type="text" placeholder="$"></div>
-<div class="nai-field"><label for="liquid_assets">Estimated liquid assets</label><input id="liquid_assets" name="Estimated Liquid Assets" type="text" placeholder="$"></div>
-<div class="nai-field"><label for="non_liquid_assets">Estimated non-liquid assets</label><input id="non_liquid_assets" name="Estimated Non-Liquid Assets" type="text" placeholder="$"></div>
+<div class="nai-field full"><label for="net_worth_incl">Personal net worth (including the net worth of my spouse, if any)</label><input class="nai-money" id="net_worth_incl" name="Personal Net Worth (Including Spouse)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field full"><label for="net_worth_excl">Personal net worth (exclusive of homes, home furnishings and automobiles)</label><input class="nai-money" id="net_worth_excl" name="Personal Net Worth (Exclusive of Homes, Furnishings, Automobiles)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="liquid_assets">Estimated liquid assets</label><input class="nai-money" id="liquid_assets" name="Estimated Liquid Assets" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="non_liquid_assets">Estimated non-liquid assets</label><input class="nai-money" id="non_liquid_assets" name="Estimated Non-Liquid Assets" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
 </div>
 </div>
 
@@ -366,6 +367,120 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
     });
   }
   form.querySelectorAll('.nai-year').forEach(clampYear);
+  function parseMoney(value){
+    const text=String(value||'');
+    const negative=/^\s*-/.test(text.replace('$','')) || /^\s*-\$/.test(text);
+    const core=text.replace(/[^0-9.]/g,'');
+    const dot=core.indexOf('.');
+    let dollars='';
+    let cents='';
+    let hasDot=false;
+    if(dot===-1){
+      dollars=core;
+    }else{
+      hasDot=true;
+      dollars=core.slice(0,dot);
+      cents=core.slice(dot+1).replace(/\D/g,'').slice(0,2);
+    }
+    dollars=dollars.replace(/\D/g,'').slice(0,12);
+    return {negative:negative, dollars:dollars, cents:cents, hasDot:hasDot};
+  }
+  function formatUsd(dollars, cents, negative){
+    if(!dollars && !cents){
+      return negative ? '-$' : '';
+    }
+    const digits=dollars.replace(/^0+(?=\d)/,'') || '0';
+    const grouped=digits.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    return (negative ? '-$' : '$') + grouped + '.' + (cents + '00').slice(0,2);
+  }
+  function attachMoney(el){
+    let dollars='';
+    let cents='';
+    let inCents=false;
+    let negative=false;
+    function applyState(next){
+      dollars=(next.dollars||'').slice(0,12);
+      cents=(next.cents||'').slice(0,2);
+      inCents=!!next.hasDot;
+      negative=!!next.negative;
+      render();
+    }
+    function render(){
+      const formatted=formatUsd(dollars, cents, negative);
+      el.value=formatted;
+      if(!formatted){
+        return;
+      }
+      const dec=formatted.indexOf('.');
+      const pos=inCents ? Math.min(formatted.length, dec+1+cents.length) : dec;
+      try{ el.setSelectionRange(pos,pos); }catch(err){}
+    }
+    function clearIfAllSelected(){
+      if(el.value && el.selectionStart===0 && el.selectionEnd===el.value.length){
+        dollars='';
+        cents='';
+        inCents=false;
+        negative=false;
+      }
+    }
+    function handleDigit(d){
+      if(inCents){
+        if(cents.length<2) cents+=d;
+      }else if(dollars.length<12){
+        dollars+=d;
+      }
+    }
+    el.addEventListener('keydown', function(e){
+      if(e.ctrlKey || e.metaKey || e.altKey) return;
+      if(e.key==='Tab' || e.key==='ArrowLeft' || e.key==='ArrowRight' || e.key==='Home' || e.key==='End' || e.key==='Enter') return;
+      if(e.key.length===1 || e.key==='Backspace' || e.key==='Delete'){
+        e.preventDefault();
+      }
+      clearIfAllSelected();
+      if(e.key>='0' && e.key<='9'){
+        handleDigit(e.key);
+      }else if(e.key==='.'){
+        inCents=true;
+      }else if(e.key==='-'){
+        negative=!negative;
+      }else if(e.key==='Backspace' || e.key==='Delete'){
+        if(inCents){
+          if(cents) cents=cents.slice(0,-1);
+          else inCents=false;
+        }else{
+          dollars=dollars.slice(0,-1);
+        }
+      }
+      render();
+    });
+    el.addEventListener('paste', function(e){
+      e.preventDefault();
+      const text=(e.clipboardData && e.clipboardData.getData('text')) || '';
+      applyState(parseMoney(text));
+    });
+    el.addEventListener('drop', function(e){
+      e.preventDefault();
+      const text=(e.dataTransfer && e.dataTransfer.getData('text')) || '';
+      applyState(parseMoney(text));
+    });
+    el.addEventListener('click', function(){
+      if(!el.value) return;
+      const dec=el.value.indexOf('.');
+      inCents=dec!==-1 && el.selectionStart>dec;
+      render();
+    });
+    el.addEventListener('blur', function(){
+      if(!dollars && !cents){
+        el.value='';
+        negative=false;
+        inCents=false;
+        return;
+      }
+      inCents=false;
+      render();
+    });
+  }
+  form.querySelectorAll('.nai-money').forEach(attachMoney);
   if(dated){
     dated.addEventListener('input', function(){
       const year=(this.value||'').split('-')[0]||'';
