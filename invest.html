@@ -150,14 +150,14 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
     </div>
   </div>
 </nav>
-<section id="subscribe"><div class="subscribe-inner"><div class="subscribe-hd fi"><a class="back-link" href="index (6).html">← Back to overview</a><div class="eyebrow">Non-Accredited Investors</div><h2 class="sec-title">Investor Acknowledgement</h2><p class="sec-sub">Complete the questionnaire below. We’ll review your information and provide the appropriate next steps and investment materials. Under Regulation D, no more than 35 non-accredited investors may participate in a private placement.</p></div><div class="subscribe-notice fi d1"><span class="wedge-tag">Definition</span><div><p>A non-accredited investor is an investor with a net worth of less than $1 million who has had an annual income of less than $200,000 ($300,000 with a spouse) in each of the past two years.</p><p>The offer and sale of membership, stock and share interests (the “Interests”) are not being registered under the Securities Act of 1933, as amended (the “Act”), or qualified under state securities laws, in reliance upon exemptions from such registration and qualification requirements for transactions not involving any public offering. Information supplied through this questionnaire will be used to ensure compliance with the requirements of such exemptions.</p></div></div>
-<form class="nai-form fi d1" id="nai-form" action="https://formsubmit.co/anthony_le@brown.edu" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+<section id="subscribe"><div class="subscribe-inner"><div class="subscribe-hd fi in"><a class="back-link" href="index (6).html">← Back to overview</a><div class="eyebrow">Non-Accredited Investors</div><h2 class="sec-title">Investor Acknowledgement</h2><p class="sec-sub">Complete the questionnaire below. We’ll review your information and provide the appropriate next steps and investment materials. Under Regulation D, no more than 35 non-accredited investors may participate in a private placement.</p></div><div class="subscribe-notice fi d1 in"><span class="wedge-tag">Definition</span><div><p>A non-accredited investor is an investor with a net worth of less than $1 million who has had an annual income of less than $200,000 ($300,000 with a spouse) in each of the past two years.</p><p>The offer and sale of membership, stock and share interests (the “Interests”) are not being registered under the Securities Act of 1933, as amended (the “Act”), or qualified under state securities laws, in reliance upon exemptions from such registration and qualification requirements for transactions not involving any public offering. Information supplied through this questionnaire will be used to ensure compliance with the requirements of such exemptions.</p></div></div>
+<form class="nai-form fi d1 in" id="nai-form" action="https://formsubmit.co/anthony_le@brown.edu" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
 <input type="hidden" name="_subject" value="SLAM Non-Accredited Investor Acknowledgement">
 <input type="hidden" name="_template" value="table">
 <input type="hidden" name="_captcha" value="false">
-<input type="hidden" name="_next" id="nai-next" value="">
+<input type="hidden" name="_next" id="nai-next" value="https://formsubmit.co/thanks">
 <input type="hidden" name="Date of Birth" id="dob-combined" value="">
-<input type="text" name="_honey" class="nai-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+<input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 <div class="nai-shell">
 
 <div class="nai-part">
@@ -176,7 +176,7 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <div class="nai-part-hd"><span class="nai-part-num">02</span><h3>Person Making the Investment Decision</h3></div>
 <div class="nai-grid">
 <div class="nai-field full"><label for="decision_maker">Name of Person Making Investment Decision</label><input id="decision_maker" name="Name of Person Making Investment Decision" type="text" required></div>
-<div class="nai-field"><label>Date of Birth</label><div class="nai-dob"><select id="dob-month" required aria-label="Birth month"><option value="">Month</option><option value="01">January</option>
+<div class="nai-field"><label>Date of Birth</label><div class="nai-dob"><select id="dob-month" name="Birth Month" required aria-label="Birth month"><option value="">Month</option><option value="01">January</option>
 <option value="02">February</option>
 <option value="03">March</option>
 <option value="04">April</option>
@@ -187,7 +187,7 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <option value="09">September</option>
 <option value="10">October</option>
 <option value="11">November</option>
-<option value="12">December</option></select><select id="dob-day" required aria-label="Birth day"><option value="">Day</option><option value="01">1</option>
+<option value="12">December</option></select><select id="dob-day" name="Birth Day" required aria-label="Birth day"><option value="">Day</option><option value="01">1</option>
 <option value="02">2</option>
 <option value="03">3</option>
 <option value="04">4</option>
@@ -217,7 +217,7 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <option value="28">28</option>
 <option value="29">29</option>
 <option value="30">30</option>
-<option value="31">31</option></select><input class="nai-year" id="dob-year" type="text" inputmode="numeric" maxlength="4" minlength="4" pattern="[0-9]{4}" placeholder="YYYY" required autocomplete="bday-year" aria-label="Birth year"></div></div>
+<option value="31">31</option></select><input class="nai-year" id="dob-year" name="Birth Year" type="text" inputmode="numeric" maxlength="4" minlength="4" pattern="[0-9]{4}" placeholder="YYYY" required autocomplete="bday-year" aria-label="Birth year"></div></div>
 <div class="nai-field"><label>U.S. Citizen</label><div class="nai-choice"><label><input type="radio" name="U.S. Citizen" value="Yes" required> Yes</label><label><input type="radio" name="U.S. Citizen" value="No"> No</label></div></div>
 <div class="nai-subhead">Education</div>
 </div>
@@ -414,7 +414,6 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
       }
     }
     if(submitBtn){
-      submitBtn.disabled=true;
       submitBtn.textContent='Sending…';
     }
   });
