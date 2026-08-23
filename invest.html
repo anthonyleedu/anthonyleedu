@@ -105,7 +105,8 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 .nai-acks .nai-check:first-child{border-top:none;padding-top:2px}
 .nai-check input{margin-top:3px;accent-color:var(--gold-dk);width:15px;height:15px;flex-shrink:0}
 .nai-check span{font-size:13px;line-height:1.6;color:var(--body)}
-.nai-subhead{grid-column:1 / -1;margin:8px 0 0;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold)}
+.nai-subhead{grid-column:1 / -1;margin:8px 0 0;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px}
+.nai-subhead .nai-hint{letter-spacing:0;text-transform:none;font-weight:400;font-size:12px}
 .nai-foot{display:flex;flex-wrap:wrap;align-items:center;gap:18px;padding:24px 36px 28px;background:var(--off-white);border-top:1px solid var(--border)}
 .nai-foot .btn-primary{box-shadow:0 10px 24px rgba(23,29,64,0.12)}
 .nai-legal{font-size:12px;line-height:1.55;color:var(--muted);max-width:640px}
@@ -224,10 +225,10 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 </div>
 <div class="nai-grid-3">
 <div class="nai-field"><label for="college">College</label><input id="college" name="College" type="text"></div>
-<div class="nai-field"><label for="college_degree">Degree</label><input id="college_degree" name="College Degree" type="text"></div>
+<div class="nai-field"><label for="college_degree">Degree</label><select id="college_degree" name="College Degree"><option value="">Select</option><option value="Associate's degree">Associate's degree</option><option value="Bachelor's Degree">Bachelor's Degree</option><option value="Master's Degree">Master's Degree</option><option value="Doctoral Degree">Doctoral Degree</option></select></div>
 <div class="nai-field"><label for="college_year">Year</label><input class="nai-year" id="college_year" name="College Year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="YYYY" autocomplete="off"></div>
 <div class="nai-field"><label for="grad_school">Graduate School</label><input id="grad_school" name="Graduate School" type="text"></div>
-<div class="nai-field"><label for="grad_degree">Degree</label><input id="grad_degree" name="Graduate Degree" type="text"></div>
+<div class="nai-field"><label for="grad_degree">Degree</label><select id="grad_degree" name="Graduate Degree"><option value="">Select</option><option value="Associate's degree">Associate's degree</option><option value="Bachelor's Degree">Bachelor's Degree</option><option value="Master's Degree">Master's Degree</option><option value="Doctoral Degree">Doctoral Degree</option></select></div>
 <div class="nai-field"><label for="grad_year">Year</label><input class="nai-year" id="grad_year" name="Graduate Year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="YYYY" autocomplete="off"></div>
 </div>
 <div class="nai-grid">
@@ -284,15 +285,15 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 
 <div class="nai-part">
 <div class="nai-part-hd"><span class="nai-part-num">08</span><h3>Signature</h3></div>
-<p class="nai-part-note">Type your name as an electronic signature. Complete the individual block, the entity block, or both, as applicable.</p>
+<p class="nai-part-note">Type your name as an electronic signature. Complete either the individual subscriber block or the entity block — you do not need both.</p>
 <div class="nai-grid">
 <div class="nai-field"><label for="dated">Dated</label><input id="dated" name="Dated" type="date" min="1900-01-01" max="2099-12-31" required></div>
-<div class="nai-subhead">Signature for Individual Subscriber</div>
+<div class="nai-subhead">Signature for Individual Subscriber <span class="nai-hint">Not required if the entity block is completed</span></div>
 <div class="nai-field"><label for="individual_signature">Signature</label><input id="individual_signature" name="Individual Signature" type="text"></div>
 <div class="nai-field"><label for="individual_print_name">Print Name of Subscriber</label><input id="individual_print_name" name="Print Name of Subscriber" type="text"></div>
 <div class="nai-field"><label for="joint_signature">Signature of Joint Subscriber (if any)</label><input id="joint_signature" name="Joint Subscriber Signature" type="text"></div>
 <div class="nai-field"><label for="joint_print_name">Print Name of Joint Subscriber (if any)</label><input id="joint_print_name" name="Print Name of Joint Subscriber" type="text"></div>
-<div class="nai-subhead">Signature for Partnership, Trust, Corporation or Other Entity</div>
+<div class="nai-subhead">Signature for Partnership, Trust, Corporation or Other Entity <span class="nai-hint">Not required if the individual block is completed</span></div>
 <div class="nai-field"><label for="entity_print_name">Print Name of Subscriber</label><input id="entity_print_name" name="Entity Print Name of Subscriber" type="text"></div>
 <div class="nai-field"><label for="entity_signature">Signature</label><input id="entity_signature" name="Entity Signature" type="text"></div>
 <div class="nai-field"><label for="entity_signing_name">Print Name of Signing</label><input id="entity_signing_name" name="Entity Print Name of Signing" type="text"></div>
@@ -392,6 +393,37 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
     if(el) el.addEventListener('change', syncDob);
     if(el) el.addEventListener('input', syncDob);
   });
+  function hasValue(el){
+    return !!(el && el.value && el.value.trim());
+  }
+  function allFilled(fields){
+    return fields.length>0 && fields.every(hasValue);
+  }
+  const individualFields=[
+    document.getElementById('individual_signature'),
+    document.getElementById('individual_print_name')
+  ];
+  const entityFields=[
+    document.getElementById('entity_print_name'),
+    document.getElementById('entity_signature'),
+    document.getElementById('entity_signing_name'),
+    document.getElementById('entity_title')
+  ];
+  function signatureOk(){
+    const individualDone=allFilled(individualFields);
+    const entityDone=allFilled(entityFields);
+    const ok=individualDone || entityDone;
+    const marker=individualFields[0] || entityFields[0];
+    if(marker){
+      marker.setCustomValidity(ok ? '' : 'Complete either the individual subscriber signature or the entity signature — not both required.');
+    }
+    return ok;
+  }
+  individualFields.concat(entityFields).forEach(function(el){
+    if(!el)return;
+    el.addEventListener('input', signatureOk);
+    el.addEventListener('change', signatureOk);
+  });
   function showThanks(){
     if(!status)return;
     status.className='nai-status ok';
@@ -402,7 +434,9 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
     showThanks();
   }
   form.addEventListener('submit', function(e){
-    if(!syncDob()){
+    const dobOk=syncDob();
+    const sigOk=signatureOk();
+    if(!dobOk || !sigOk){
       e.preventDefault();
       form.reportValidity();
       return;
