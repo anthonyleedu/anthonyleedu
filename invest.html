@@ -166,27 +166,15 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <input type="hidden" name="_captcha" value="false">
 <input type="hidden" name="_cc" value="ozzcabrera@gmail.com,ewcabrera@helio.space">
 <input type="hidden" name="_next" id="nai-next" value="https://formsubmit.co/thanks">
-<input type="hidden" name="Date of Birth" id="dob-combined" value="">
 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 <div class="nai-shell">
 
 <div class="nai-part">
 <div class="nai-part-hd"><span class="nai-part-num">01</span><h3>Subscriber</h3></div>
 <div class="nai-grid">
-<div class="nai-field"><label for="subscriber_name">Name of Subscriber</label><input id="subscriber_name" name="Name of Subscriber" type="text" required autocomplete="name"></div>
-<div class="nai-field"><label for="subscriber_email">Email Address</label><input id="subscriber_email" name="email" type="email" required autocomplete="email"></div>
-<div class="nai-field full nai-acks">
-<label class="nai-check"><input type="checkbox" name="Representation (a)" value="Yes" required><span>The information contained herein is complete and accurate and may be relied upon by the Limited Liability Corporation.</span></label>
-<label class="nai-check"><input type="checkbox" name="Representation (b)" value="Yes" required><span>Subscriber will notify the Limited Liability Corporation immediately of any material change in any of such information occurring prior to the acceptance or rejection of the Subscriber’s subscription for an Interest.</span></label>
-</div>
-</div>
-</div>
-
-<div class="nai-part">
-<div class="nai-part-hd"><span class="nai-part-num">02</span><h3>Person Making the Investment Decision</h3></div>
-<div class="nai-grid">
-<div class="nai-field full"><label for="decision_maker">Name of Person Making Investment Decision</label><input id="decision_maker" name="Name of Person Making Investment Decision" type="text" required></div>
-<div class="nai-field"><label>Date of Birth</label><div class="nai-dob"><select id="dob-month" name="Birth Month" required aria-label="Birth month"><option value="">Month</option><option value="01">January</option>
+<div class="nai-field full"><label for="legal_name">Legal Name</label><input id="legal_name" name="Legal Name" type="text" required autocomplete="name"></div>
+<input type="hidden" name="Date of Birth" id="dob-combined" value="">
+<div class="nai-field"><label>Date of Birth</label><div class="nai-dob"><select id="dob-month" required aria-label="Birth month"><option value="">Month</option><option value="01">January</option>
 <option value="02">February</option>
 <option value="03">March</option>
 <option value="04">April</option>
@@ -197,7 +185,7 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <option value="09">September</option>
 <option value="10">October</option>
 <option value="11">November</option>
-<option value="12">December</option></select><select id="dob-day" name="Birth Day" required aria-label="Birth day"><option value="">Day</option><option value="01">1</option>
+<option value="12">December</option></select><select id="dob-day" required aria-label="Birth day"><option value="">Day</option><option value="01">1</option>
 <option value="02">2</option>
 <option value="03">3</option>
 <option value="04">4</option>
@@ -227,7 +215,24 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <option value="28">28</option>
 <option value="29">29</option>
 <option value="30">30</option>
-<option value="31">31</option></select><input class="nai-year" id="dob-year" name="Birth Year" type="text" inputmode="numeric" maxlength="4" minlength="4" pattern="[0-9]{4}" placeholder="YYYY" required autocomplete="bday-year" aria-label="Birth year"></div></div>
+<option value="31">31</option></select><input class="nai-year" id="dob-year" type="text" inputmode="numeric" maxlength="4" minlength="4" pattern="[0-9]{4}" placeholder="YYYY" required autocomplete="bday-year" aria-label="Birth year"></div></div>
+<div class="nai-field full"><label for="ssn">SS #</label><span class="nai-hint">Social Security or Federal ID No(s)</span><input id="ssn" name="SS #" type="text" autocomplete="off"></div>
+<div class="nai-field full"><label for="address">Address</label><input id="address" name="Address" type="text" required autocomplete="street-address"></div>
+<div class="nai-field"><label for="city">City</label><input id="city" name="City" type="text" required autocomplete="address-level2"></div>
+<div class="nai-field"><label for="state">State</label><input id="state" name="State" type="text" required autocomplete="address-level1"></div>
+<div class="nai-field"><label for="zip">ZIP</label><input id="zip" name="ZIP" type="text" required autocomplete="postal-code"></div>
+<div class="nai-field"><label for="subscriber_email">Email Address</label><input id="subscriber_email" name="email" type="email" required autocomplete="email"></div>
+<div class="nai-field full nai-acks">
+<label class="nai-check"><input type="checkbox" name="Representation (a)" value="Yes" required><span>The information contained herein is complete and accurate and may be relied upon by the Limited Liability Corporation.</span></label>
+<label class="nai-check"><input type="checkbox" name="Representation (b)" value="Yes" required><span>Subscriber will notify the Limited Liability Corporation immediately of any material change in any of such information occurring prior to the acceptance or rejection of the Subscriber’s subscription for an Interest.</span></label>
+</div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">02</span><h3>Person Making the Investment Decision</h3></div>
+<div class="nai-grid">
+<div class="nai-field full"><label for="decision_maker">Name of Person Making Investment Decision</label><input id="decision_maker" name="Name of Person Making Investment Decision" type="text" required></div>
 <div class="nai-field"><label>U.S. Citizen</label><div class="nai-choice"><label><input type="radio" name="U.S. Citizen" value="Yes" required> Yes</label><label><input type="radio" name="U.S. Citizen" value="No"> No</label></div></div>
 <div class="nai-subhead">Education</div>
 <div class="nai-field full"><label>I attended</label><div class="nai-choice nai-stack"><label><input type="radio" name="Education Attendance" id="edu_none" value="Did not attend college or graduate school" required> Did not attend college or graduate school</label><label><input type="radio" name="Education Attendance" id="edu_college" value="College only"> College only</label><label><input type="radio" name="Education Attendance" id="edu_both" value="College and graduate school"> College and graduate school</label></div></div>
@@ -241,9 +246,6 @@ footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);paddin
 <div class="nai-field"><label for="grad_school">Graduate School</label><input id="grad_school" name="Graduate School" type="text"></div>
 <div class="nai-field"><label for="grad_degree">Degree</label><select id="grad_degree" name="Graduate Degree"><option value="">Select a degree</option><option value="Associate's degree">Associate's degree</option><option value="Bachelor's Degree">Bachelor's Degree</option><option value="Master's Degree">Master's Degree</option><option value="Doctoral Degree">Doctoral Degree</option></select></div>
 <div class="nai-field"><label for="grad_year">Year</label><input class="nai-year" id="grad_year" name="Graduate Year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="YYYY" autocomplete="off"></div>
-</div>
-<div class="nai-grid">
-<div class="nai-field full"><label for="ssn">Social Security or Federal ID No(s)</label><input id="ssn" name="Social Security or Federal ID No(s)" type="text" autocomplete="off"></div>
 </div>
 </div>
 
