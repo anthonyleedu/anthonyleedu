@@ -616,7 +616,7 @@ document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('
     }
     dobDay.setCustomValidity('');
     dobYear.setCustomValidity('');
-    dobCombined.value=y+'-'+m+'-'+d;
+    dobCombined.value=m+'-'+d+'-'+y;
     return true;
   }
   [dobMonth,dobDay,dobYear].forEach(function(el){
