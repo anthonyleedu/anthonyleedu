@@ -1,0 +1,16 @@
+{
+  "name": "SLAM Investor Site",
+  "terminals": [
+    {
+      "name": "web",
+      "command": "python3 -m http.server 8000",
+      "description": "Static web server for the SLAM investor site and document assets. Open http://localhost:8000/ for the directory listing, or http://localhost:8000/index%20(6).html for the presentation."
+    }
+  ],
+  "ports": [
+    {
+      "name": "web server",
+      "port": 8000
+    }
+  ]
+}
