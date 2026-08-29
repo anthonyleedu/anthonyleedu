@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Express Investment Interest | SLAM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{--white:#ffffff;--off-white:#D3F8FF;--light-gray:#E4DBFF;--border:#D3D3EE;--muted:#697296;--body:#3A415F;--dark:#1E2548;--navy:#171D40;--purple:#E4DBFF;--turquoise:#D3F8FF;--gold:#7EBEFF;--gold-lt:#DEEDFC;--gold-dk:#278CF1;--fw-display:'Cormorant Garamond',Georgia,serif;--fw-body:'Inter',-apple-system,sans-serif;--mw:1160px;--pad:0 40px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--fw-body);color:var(--body);background:var(--off-white);-webkit-font-smoothing:antialiased;line-height:1.65;text-rendering:optimizeLegibility;padding-top:62px}
+a{text-decoration:none;color:inherit}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(23,29,64,0.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(126,190,255,0.18);height:62px}
+.nav-inner{max-width:var(--mw);margin:0 auto;padding:0 40px;height:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:9px;margin-left:-36px;color:inherit}
+.nav-brand-name{font-family:var(--fw-display);font-size:22px;font-weight:600;letter-spacing:0.14em;line-height:1;text-transform:uppercase;color:var(--white);transform:translateY(1px)}
+.nav-brand-sub{font-family:var(--fw-display);font-size:15px;letter-spacing:0.04em;line-height:1;text-transform:none;color:rgba(255,255,255,0.9);font-weight:500}
+.nav-links{display:grid;grid-template-columns:repeat(6,86px) max-content;column-gap:18px;align-items:center;margin-right:-36px}
+.nav-links a{font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.65);transition:color 0.18s}
+.nav-links .lnk{display:inline-flex;justify-content:center;text-align:center}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{margin-left:0;background:var(--gold) !important;color:var(--navy) !important;padding:9px 20px;border-radius:3px;font-weight:600 !important;transition:opacity 0.18s !important;box-shadow:0 10px 24px rgba(23,29,64,0.12)}
+.nav-cta:hover{opacity:0.88 !important}
+.btn-primary{display:inline-block;background:var(--gold);color:var(--navy);font-family:var(--fw-body);font-size:12px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:15px 32px;border-radius:3px;border:none;cursor:pointer;transition:opacity 0.18s;box-shadow:0 10px 24px rgba(23,29,64,0.12)}
+.btn-primary:hover{opacity:0.88;box-shadow:0 12px 28px rgba(23,29,64,0.16)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:0.13em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--gold);flex-shrink:0}
+.sec-title{font-family:var(--fw-display);font-size:36px;font-weight:400;line-height:1.1;color:var(--navy);letter-spacing:-0.01em;margin-bottom:10px;text-wrap:balance}
+.sec-sub{font-size:14px;line-height:1.75;color:var(--muted);max-width:580px}
+.fi{opacity:0;transform:translateY(18px);transition:opacity 0.55s ease,transform 0.55s ease}
+.fi.in{opacity:1;transform:translateY(0)}
+.fi.d1{transition-delay:0.1s}
+.back-link{display:inline-flex;align-items:center;gap:8px;margin-bottom:22px;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--gold)}
+.back-link:hover{opacity:0.85}
+footer{background:var(--navy);border-top:1px solid rgba(126,190,255,0.12);padding:28px 0;margin-top:8px}
+.footer-inner{max-width:var(--mw);margin:0 auto;padding:0 40px;display:flex;justify-content:space-between;align-items:center;gap:32px}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.35);white-space:nowrap}
+.footer-disc{font-size:11px;color:rgba(255,255,255,0.25);line-height:1.5;max-width:520px;text-align:right}
+
+/* ===== NON-ACCREDITED INVESTOR FORM ===== */
+#subscribe{padding:56px 0 72px;background:transparent;scroll-margin-top:62px}
+.subscribe-inner{max-width:var(--mw);margin:0 auto;padding:0 40px}
+.subscribe-hd{margin-bottom:32px}
+.subscribe-hd .sec-sub{max-width:720px}
+.subscribe-notice{background:var(--navy);border-radius:6px;padding:26px 32px;display:flex;gap:26px;align-items:flex-start;margin-bottom:28px}
+.wedge-tag{flex-shrink:0;width:168px;padding-top:2px;font-size:11px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:var(--gold)}
+.subscribe-notice .wedge-tag{flex-shrink:0;width:168px}
+.subscribe-notice p{font-size:14px;line-height:1.7;color:rgba(255,255,255,0.78)}
+.subscribe-notice p+p{margin-top:10px}
+.nai-form{margin:0}
+.nai-shell{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:6px;box-shadow:0 14px 36px rgba(23,29,64,0.06);overflow:hidden}
+.nai-part{padding:32px 36px 30px;border-top:1px solid var(--border)}
+.nai-part:first-child{border-top:none}
+.nai-part-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.nai-part-num{font-family:var(--fw-display);font-size:20px;font-weight:500;color:var(--gold);letter-spacing:0.06em;min-width:2.1em}
+.nai-part-hd h3{font-family:var(--fw-display);font-size:24px;font-weight:500;color:var(--navy);line-height:1.15}
+.nai-part-note{margin:0 0 18px;font-size:13px;line-height:1.6;color:var(--muted);max-width:720px}.nai-grid+.nai-grid-3,.nai-grid-3+.nai-grid{margin-top:16px}
+.nai-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.nai-grid-3{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) 108px;gap:16px 14px}
+.nai-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.nai-field.full{grid-column:1 / -1}
+.nai-field label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy)}
+.nai-field label.nai-q{text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--body);line-height:1.55}
+.nai-hint{font-size:12px;color:var(--muted);line-height:1.5;font-weight:400;letter-spacing:0;text-transform:none}
+.nai-field input[type="text"],
+.nai-field input[type="email"],
+.nai-field input[type="date"],
+.nai-field textarea,
+.nai-field select{
+  width:100%;
+  border:1px solid var(--border);
+  background:var(--white);
+  color:var(--body);
+  font-family:var(--fw-body);
+  font-size:14px;
+  line-height:1.45;
+  padding:12px 14px;
+  border-radius:3px;
+  outline:none;
+  transition:border-color 0.18s,box-shadow 0.18s
+}
+.nai-field input[type="text"],
+.nai-field input[type="email"],
+.nai-field input[type="date"],
+.nai-field textarea{
+  appearance:none;
+  -webkit-appearance:none
+}
+.nai-field select{
+  cursor:pointer;
+  appearance:auto;
+  -webkit-appearance:menulist
+}
+.nai-sig-block,.nai-edu-block{margin-top:16px}
+.nai-sig-block[hidden],.nai-edu-block[hidden]{display:none !important}
+.nai-choice.nai-stack{flex-direction:column;align-items:flex-start;gap:10px;min-height:0}
+.nai-year{max-width:108px;letter-spacing:0.08em;font-variant-numeric:tabular-nums}
+.nai-money{font-variant-numeric:tabular-nums;letter-spacing:0.02em}
+.nai-field textarea{min-height:92px;resize:vertical}
+.nai-field input:focus,
+.nai-field textarea:focus,
+.nai-field select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(126,190,255,0.28)}
+.nai-dob{display:grid;grid-template-columns:minmax(0,1.4fr) 92px 108px;gap:10px;width:100%}
+.nai-dob .nai-year{max-width:none}
+.nai-choice{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;min-height:44px}
+.nai-choice label{display:inline-flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--body);cursor:pointer}
+.nai-choice input{accent-color:var(--gold-dk);width:15px;height:15px}
+.nai-field label.nai-check{text-transform:none;letter-spacing:0;font-weight:400;color:var(--body)}
+.nai-check{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--border)}
+.nai-acks .nai-check:first-child{border-top:none;padding-top:2px}
+.nai-check input{margin-top:3px;accent-color:var(--gold-dk);width:15px;height:15px;flex-shrink:0}
+.nai-check span{font-size:13px;line-height:1.6;color:var(--body)}
+.nai-subhead{grid-column:1 / -1;margin:8px 0 0;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px}
+.nai-subhead .nai-hint{letter-spacing:0;text-transform:none;font-weight:400;font-size:12px}
+.nai-foot{display:flex;flex-wrap:wrap;align-items:center;gap:18px;padding:24px 36px 28px;background:var(--off-white);border-top:1px solid var(--border)}
+.nai-foot .btn-primary{box-shadow:0 10px 24px rgba(23,29,64,0.12)}
+.nai-legal{font-size:12px;line-height:1.55;color:var(--muted);max-width:640px}
+.nai-status{display:none;margin:18px 36px 0;border-radius:6px;padding:16px 18px;font-size:14px;line-height:1.6}
+.nai-status.ok{display:block;background:var(--gold-lt);border:1px solid var(--gold);color:var(--navy)}
+.nai-status.err{display:block;background:#f7ecec;border:1px solid #d9b3b3;color:#6b2b2b}
+.nai-honey{position:absolute;left:-9999px;opacity:0;height:0;width:0;overflow:hidden}
+@media (max-width:960px){
+  .subscribe-inner{padding:0 20px}
+  .subscribe-notice{flex-direction:column;gap:10px;padding:20px 22px}
+  .subscribe-notice .wedge-tag{width:auto}
+  .nai-part,.nai-foot{padding:22px 20px}
+  .nai-grid,.nai-grid-3,.nai-dob{grid-template-columns:1fr}
+  .nai-year{max-width:none}
+  .nai-part-hd{flex-wrap:wrap}
+}
+@media (max-width:960px){
+  .nav-links .lnk{display:none}
+  .nav-inner{padding:0 20px}
+  .nav-brand-sub{display:none}
+  .footer-inner{flex-direction:column;align-items:flex-start}
+  .footer-disc{text-align:left}
+}
+
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html">
+      <span class="nav-brand-name">SLAM</span>
+      <span class="nav-brand-sub">Sofia Lunar &amp; Asteroid Mining Corporation Division</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#why-now" class="lnk">Why Now</a>
+      <a href="index.html#solution" class="lnk">Solution</a>
+      <a href="index.html#tech" class="lnk">Technology</a>
+      <a href="index.html#roadmap" class="lnk">Roadmap</a>
+      <a href="index.html#strategic" class="lnk">Strategic</a>
+      <a href="index.html#team" class="lnk">Team</a>
+      <a href="invest.html" class="nav-cta">Seed Investor Inquiries</a>
+    </div>
+  </div>
+</nav>
+<section id="subscribe"><div class="subscribe-inner"><div class="subscribe-hd fi in"><a class="back-link" href="index.html">← Back to overview</a><div class="eyebrow">Non-Accredited Investors</div><h2 class="sec-title">Investor Acknowledgement</h2><p class="sec-sub">Complete the questionnaire below. We’ll review your information and provide the appropriate next steps and investment materials. Under Regulation D, no more than 35 non-accredited investors may participate in a private placement.</p></div><div class="subscribe-notice fi d1 in"><span class="wedge-tag">Definition</span><div><p>A non-accredited investor is an investor with a net worth of less than $1 million who has had an annual income of less than $200,000 ($300,000 with a spouse) in each of the past two years.</p><p>The offer and sale of membership, stock and share interests (the “Interests”) are not being registered under the Securities Act of 1933, as amended (the “Act”), or qualified under state securities laws, in reliance upon exemptions from such registration and qualification requirements for transactions not involving any public offering. Information supplied through this questionnaire will be used to ensure compliance with the requirements of such exemptions.</p></div></div>
+<form class="nai-form fi d1 in" id="nai-form" action="https://formsubmit.co/emcabrera@helio.space" method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+<input type="hidden" name="_subject" value="SLAM Non-Accredited Investor Acknowledgement">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_cc" value="ozzcabrera@gmail.com,ewcabrera@helio.space">
+<input type="hidden" name="_next" id="nai-next" value="https://formsubmit.co/thanks">
+<input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+<div class="nai-shell">
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">01</span><h3>Subscriber</h3></div>
+<div class="nai-grid">
+<div class="nai-field full"><label for="legal_name">Legal Name</label><input id="legal_name" name="Legal Name" type="text" required autocomplete="name"></div>
+<input type="hidden" name="Date of Birth" id="dob-combined" value="">
+<div class="nai-field"><label>Date of Birth</label><div class="nai-dob"><select id="dob-month" required aria-label="Birth month"><option value="">Month</option><option value="01">January</option>
+<option value="02">February</option>
+<option value="03">March</option>
+<option value="04">April</option>
+<option value="05">May</option>
+<option value="06">June</option>
+<option value="07">July</option>
+<option value="08">August</option>
+<option value="09">September</option>
+<option value="10">October</option>
+<option value="11">November</option>
+<option value="12">December</option></select><select id="dob-day" required aria-label="Birth day"><option value="">Day</option><option value="01">1</option>
+<option value="02">2</option>
+<option value="03">3</option>
+<option value="04">4</option>
+<option value="05">5</option>
+<option value="06">6</option>
+<option value="07">7</option>
+<option value="08">8</option>
+<option value="09">9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="17">17</option>
+<option value="18">18</option>
+<option value="19">19</option>
+<option value="20">20</option>
+<option value="21">21</option>
+<option value="22">22</option>
+<option value="23">23</option>
+<option value="24">24</option>
+<option value="25">25</option>
+<option value="26">26</option>
+<option value="27">27</option>
+<option value="28">28</option>
+<option value="29">29</option>
+<option value="30">30</option>
+<option value="31">31</option></select><input class="nai-year" id="dob-year" type="text" inputmode="numeric" maxlength="4" minlength="4" pattern="[0-9]{4}" placeholder="YYYY" required autocomplete="bday-year" aria-label="Birth year"></div></div>
+<div class="nai-field full"><label for="ssn">SS #</label><span class="nai-hint">Social Security or Federal ID No(s)</span><input id="ssn" name="SS #" type="text" autocomplete="off"></div>
+<div class="nai-field full"><label for="address">Address</label><input id="address" name="Address" type="text" required autocomplete="street-address"></div>
+<div class="nai-field"><label for="city">City</label><input id="city" name="City" type="text" required autocomplete="address-level2"></div>
+<div class="nai-field"><label for="state">State</label><input id="state" name="State" type="text" required autocomplete="address-level1"></div>
+<div class="nai-field"><label for="zip">ZIP</label><input id="zip" name="ZIP" type="text" required autocomplete="postal-code"></div>
+<div class="nai-field"><label for="subscriber_email">Email Address</label><input id="subscriber_email" name="email" type="email" required autocomplete="email"></div>
+<div class="nai-field full nai-acks">
+<label class="nai-check"><input type="checkbox" name="Representation (a)" value="Yes" required><span>The information contained herein is complete and accurate and may be relied upon by the Limited Liability Corporation.</span></label>
+<label class="nai-check"><input type="checkbox" name="Representation (b)" value="Yes" required><span>Subscriber will notify the Limited Liability Corporation immediately of any material change in any of such information occurring prior to the acceptance or rejection of the Subscriber’s subscription for an Interest.</span></label>
+</div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">02</span><h3>Person Making the Investment Decision</h3></div>
+<div class="nai-grid">
+<div class="nai-field full"><label for="decision_maker">Name of Person Making Investment Decision</label><input id="decision_maker" name="Name of Person Making Investment Decision" type="text" required></div>
+<div class="nai-field"><label>U.S. Citizen</label><div class="nai-choice"><label><input type="radio" name="U.S. Citizen" value="Yes" required> Yes</label><label><input type="radio" name="U.S. Citizen" value="No"> No</label></div></div>
+<div class="nai-subhead">Education</div>
+<div class="nai-field full"><label>I attended</label><div class="nai-choice nai-stack"><label><input type="radio" name="Education Attendance" id="edu_none" value="Did not attend college or graduate school" required> Did not attend college or graduate school</label><label><input type="radio" name="Education Attendance" id="edu_college" value="College only"> College only</label><label><input type="radio" name="Education Attendance" id="edu_both" value="College and graduate school"> College and graduate school</label></div></div>
+</div>
+<div class="nai-grid-3 nai-edu-block" id="college-edu-block" hidden>
+<div class="nai-field"><label for="college">College</label><input id="college" name="College" type="text"></div>
+<div class="nai-field"><label for="college_degree">Degree</label><select id="college_degree" name="College Degree"><option value="">Select a degree</option><option value="Associate's degree">Associate's degree</option><option value="Bachelor's Degree">Bachelor's Degree</option><option value="Master's Degree">Master's Degree</option><option value="Doctoral Degree">Doctoral Degree</option></select></div>
+<div class="nai-field"><label for="college_year">Year</label><input class="nai-year" id="college_year" name="College Year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="YYYY" autocomplete="off"></div>
+</div>
+<div class="nai-grid-3 nai-edu-block" id="grad-edu-block" hidden>
+<div class="nai-field"><label for="grad_school">Graduate School</label><input id="grad_school" name="Graduate School" type="text"></div>
+<div class="nai-field"><label for="grad_degree">Degree</label><select id="grad_degree" name="Graduate Degree"><option value="">Select a degree</option><option value="Associate's degree">Associate's degree</option><option value="Bachelor's Degree">Bachelor's Degree</option><option value="Master's Degree">Master's Degree</option><option value="Doctoral Degree">Doctoral Degree</option></select></div>
+<div class="nai-field"><label for="grad_year">Year</label><input class="nai-year" id="grad_year" name="Graduate Year" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="YYYY" autocomplete="off"></div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">03</span><h3>Business &amp; Occupation</h3></div>
+<div class="nai-grid">
+<div class="nai-field full"><label for="nature_of_business">Nature of Business</label><input id="nature_of_business" name="Nature of Business" type="text"></div>
+<div class="nai-field full"><label for="position_duties">Position and Duties</label><textarea id="position_duties" name="Position and Duties"></textarea></div>
+<div class="nai-field full"><label for="prior_occupations">Other prior occupations or duties during the past five years</label><textarea id="prior_occupations" name="Prior Occupations (Past 5 Years)"></textarea></div>
+<div class="nai-field"><label for="retirement_year">Year of Anticipated Retirement</label><input class="nai-year" id="retirement_year" name="Year of Anticipated Retirement" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="YYYY" autocomplete="off"></div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">04</span><h3>Prior Investments</h3></div>
+<p class="nai-part-note">Please list investments made during the past five years, including year, nature of investment, and amount ($).</p>
+<div class="nai-grid">
+<div class="nai-field full"><label for="prior_investments">Investments made during the past five years</label><textarea id="prior_investments" name="Investments (Past 5 Years)" placeholder="Year, nature of investment, amount ($)"></textarea></div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">05</span><h3>Knowledge &amp; Experience</h3></div>
+<div class="nai-grid">
+<div class="nai-field full"><label class="nai-q">I consider myself to have such knowledge and experience in financial and business matters to enable me to evaluate the merits and risks of an investment in the Company.</label><div class="nai-choice"><label><input type="radio" name="Has Knowledge and Experience" value="Yes" required> Yes</label><label><input type="radio" name="Has Knowledge and Experience" value="No"> No</label></div></div>
+<div class="nai-field full" id="knowledge-basis-field"><label for="knowledge_basis">If yes, the basis for your answer</label><span class="nai-hint">For example: investment or business experience, profession, past review of other investment offerings, etc.</span><textarea id="knowledge_basis" name="Basis for Knowledge and Experience"></textarea></div>
+<div class="nai-field full" id="purchaser-rep-field"><label for="purchaser_rep">If no, purchaser representative</label><span class="nai-hint">Name, business address, and telephone number of the person who is your purchaser representative.</span><textarea id="purchaser_rep" name="Purchaser Representative"></textarea></div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">06</span><h3>Income</h3></div>
+<p class="nai-part-note">My income from all sources was, now is, or is expected to be:</p>
+<div class="nai-grid">
+<div class="nai-field"><label for="income_two_years_ago">Two years ago — gross income (actual)</label><input class="nai-money" id="income_two_years_ago" name="Gross Income (Two Years Ago, Actual)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="income_one_year_ago">One year ago — gross income (actual)</label><input class="nai-money" id="income_one_year_ago" name="Gross Income (One Year Ago, Actual)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="income_this_year">This year — gross income (estimated)</label><input class="nai-money" id="income_this_year" name="Gross Income (This Year, Estimated)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">07</span><h3>Net Worth</h3></div>
+<div class="nai-grid">
+<div class="nai-field full"><label for="net_worth_incl">Personal net worth (including the net worth of my spouse, if any)</label><input class="nai-money" id="net_worth_incl" name="Personal Net Worth (Including Spouse)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field full"><label for="net_worth_excl">Personal net worth (exclusive of homes, home furnishings and automobiles)</label><input class="nai-money" id="net_worth_excl" name="Personal Net Worth (Exclusive of Homes, Furnishings, Automobiles)" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="liquid_assets">Estimated liquid assets</label><input class="nai-money" id="liquid_assets" name="Estimated Liquid Assets" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+<div class="nai-field"><label for="non_liquid_assets">Estimated non-liquid assets</label><input class="nai-money" id="non_liquid_assets" name="Estimated Non-Liquid Assets" type="text" inputmode="decimal" autocomplete="off" placeholder="$0.00"></div>
+</div>
+</div>
+
+<div class="nai-part">
+<div class="nai-part-hd"><span class="nai-part-num">08</span><h3>Signature</h3></div>
+<p class="nai-part-note">Type your name as an electronic signature. Choose one signature type — you do not need to complete both.</p>
+<div class="nai-grid">
+<div class="nai-field"><label for="dated">Dated</label><input id="dated" name="Dated" type="date" min="1900-01-01" max="2099-12-31" required></div>
+<div class="nai-field full"><label>I am signing as</label><div class="nai-choice"><label><input type="radio" name="Signing As" id="sign_as_individual" value="Individual Subscriber" required> Individual subscriber</label><label><input type="radio" name="Signing As" id="sign_as_entity" value="Partnership, Trust, Corporation or Other Entity"> Partnership, trust, corporation, or other entity</label></div></div>
+</div>
+<div class="nai-grid nai-sig-block" id="individual-sig-block" hidden>
+<div class="nai-subhead">Signature for Individual Subscriber</div>
+<div class="nai-field"><label for="individual_signature">Signature</label><input id="individual_signature" name="Individual Signature" type="text"></div>
+<div class="nai-field"><label for="individual_print_name">Print Name of Subscriber</label><input id="individual_print_name" name="Print Name of Subscriber" type="text"></div>
+<div class="nai-field"><label for="joint_signature">Signature of Joint Subscriber (if any)</label><input id="joint_signature" name="Joint Subscriber Signature" type="text"></div>
+<div class="nai-field"><label for="joint_print_name">Print Name of Joint Subscriber (if any)</label><input id="joint_print_name" name="Print Name of Joint Subscriber" type="text"></div>
+</div>
+<div class="nai-grid nai-sig-block" id="entity-sig-block" hidden>
+<div class="nai-subhead">Signature for Partnership, Trust, Corporation or Other Entity</div>
+<div class="nai-field"><label for="entity_print_name">Print Name of Subscriber</label><input id="entity_print_name" name="Entity Print Name of Subscriber" type="text"></div>
+<div class="nai-field"><label for="entity_signature">Signature</label><input id="entity_signature" name="Entity Signature" type="text"></div>
+<div class="nai-field"><label for="entity_signing_name">Print Name of Signing</label><input id="entity_signing_name" name="Entity Print Name of Signing" type="text"></div>
+<div class="nai-field"><label for="entity_title">Title</label><input id="entity_title" name="Entity Title" type="text"></div>
+</div>
+</div>
+
+<div class="nai-foot"><button type="submit" class="btn-primary" id="nai-submit">Submit Acknowledgement</button><p class="nai-legal">By submitting, you confirm the statements above and that this electronic signature has the same effect as a handwritten signature.</p></div>
+<div class="nai-status" id="nai-status" role="status" aria-live="polite"></div>
+</div>
+</form>
+</div></section>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-copy">© 2026 Sofia Lunar &amp; Asteroid Mining Corporation Division (“SLAM”). All rights reserved.</div>
+    <div class="footer-disc">This material is for informational purposes only and does not constitute an offer or solicitation to purchase securities. Forward-looking statements involve risk and uncertainty. Qualified investors only.</div>
+  </div>
+</footer>
+<script>
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold: 0.07});
+document.querySelectorAll('.fi').forEach(el=> obs.observe(el));
+document.querySelectorAll('.fi').forEach(el=>{setTimeout(()=> el.classList.add('in'),80);});
+</script>
+<script>
+(function(){
+  const form=document.getElementById('nai-form');
+  if(!form)return;
+  const FORM_TO='emcabrera@helio.space';
+  const FORM_CC=['ozzcabrera@gmail.com','ewcabrera@helio.space'];
+  form.action='https://formsubmit.co/'+FORM_TO;
+  const ccField=form.querySelector('input[name="_cc"]');
+  if(ccField) ccField.value=FORM_CC.join(',');
+  const status=document.getElementById('nai-status');
+  const submitBtn=document.getElementById('nai-submit');
+  const dated=document.getElementById('dated');
+  const next=document.getElementById('nai-next');
+  const dobMonth=document.getElementById('dob-month');
+  const dobDay=document.getElementById('dob-day');
+  const dobYear=document.getElementById('dob-year');
+  const dobCombined=document.getElementById('dob-combined');
+  if(dated && !dated.value){
+    dated.value=new Date().toISOString().slice(0,10);
+  }
+  function clampYear(el){
+    el.addEventListener('input', function(){
+      this.value=this.value.replace(/\D/g,'').slice(0,4);
+      this.setCustomValidity('');
+    });
+    el.addEventListener('blur', function(){
+      if(this.value && this.value.length!==4){
+        this.setCustomValidity('Enter a 4-digit year');
+      }else{
+        this.setCustomValidity('');
+      }
+    });
+  }
+  form.querySelectorAll('.nai-year').forEach(clampYear);
+  function parseMoney(value){
+    const text=String(value||'');
+    const negative=/^\s*-/.test(text.replace('$','')) || /^\s*-\$/.test(text);
+    const core=text.replace(/[^0-9.]/g,'');
+    const dot=core.indexOf('.');
+    let dollars='';
+    let cents='';
+    let hasDot=false;
+    if(dot===-1){
+      dollars=core;
+    }else{
+      hasDot=true;
+      dollars=core.slice(0,dot);
+      cents=core.slice(dot+1).replace(/\D/g,'').slice(0,2);
+    }
+    dollars=dollars.replace(/\D/g,'').slice(0,12);
+    return {negative:negative, dollars:dollars, cents:cents, hasDot:hasDot};
+  }
+  function formatUsd(dollars, cents, negative, inCents){
+    if(!dollars && !cents && !inCents){
+      return negative ? '-$' : '';
+    }
+    const digits=dollars.replace(/^0+(?=\d)/,'') || '0';
+    const grouped=digits.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    const prefix=(negative ? '-$' : '$') + grouped + '.';
+    if(inCents) return prefix + cents.slice(0,2);
+    return prefix + (cents + '00').slice(0,2);
+  }
+  function attachMoney(el){
+    let dollars='';
+    let cents='';
+    let inCents=false;
+    let negative=false;
+    let skip=false;
+    let fromKey=false;
+    function write(value, start, end){
+      skip=true;
+      el.value=value;
+      if(value && start!=null){
+        try{ el.setSelectionRange(start, end==null?start:end); }catch(err){}
+      }
+      skip=false;
+    }
+    function render(){
+      const formatted=formatUsd(dollars, cents, negative, inCents);
+      if(!formatted){
+        write('');
+        return;
+      }
+      const dec=formatted.indexOf('.');
+      if(inCents){
+        write(formatted, dec+1+cents.length);
+      }else{
+        write(formatted, dec);
+      }
+    }
+    function enterCents(){
+      if(!dollars && !cents) dollars='0';
+      inCents=true;
+      cents='';
+      const formatted=formatUsd(dollars, cents, negative, true);
+      const dec=formatted.indexOf('.');
+      write(formatted, dec+1, formatted.length);
+    }
+    function takeDigit(ch){
+      if(inCents){
+        if(cents.length>=2){
+          const dec=el.value.indexOf('.');
+          const replacing=dec!==-1 && el.selectionStart>dec && el.selectionEnd>el.selectionStart;
+          if(replacing) cents=ch;
+        }else{
+          cents=(cents+ch).slice(0,2);
+        }
+      }else{
+        dollars=(dollars+ch).slice(0,12);
+      }
+      render();
+    }
+    function backspace(){
+      if(inCents){
+        if(cents) cents=cents.slice(0,-1);
+        else inCents=false;
+      }else{
+        dollars=dollars.slice(0,-1);
+      }
+      if(!dollars && !cents && !inCents){
+        negative=false;
+        write('');
+        return;
+      }
+      render();
+    }
+    el.addEventListener('keydown', function(e){
+      if(e.ctrlKey || e.metaKey || e.altKey) return;
+      if(e.key==='Tab' || e.key==='ArrowLeft' || e.key==='ArrowRight' || e.key==='Home' || e.key==='End' || e.key==='Enter') return;
+      if(e.key==='.'){
+        e.preventDefault();
+        fromKey=true;
+        enterCents();
+        return;
+      }
+      if(e.key>='0' && e.key<='9'){
+        e.preventDefault();
+        fromKey=true;
+        if(el.value && el.selectionStart===0 && el.selectionEnd===el.value.length){
+          dollars='';
+          cents='';
+          inCents=false;
+          negative=false;
+        }
+        takeDigit(e.key);
+        return;
+      }
+      if(e.key==='-'){
+        e.preventDefault();
+        fromKey=true;
+        negative=!negative;
+        render();
+        return;
+      }
+      if(e.key==='Backspace' || e.key==='Delete'){
+        e.preventDefault();
+        fromKey=true;
+        backspace();
+      }
+    });
+    el.addEventListener('keyup', function(){
+      fromKey=false;
+    });
+    el.addEventListener('beforeinput', function(e){
+      if(fromKey){
+        e.preventDefault();
+        fromKey=false;
+        return;
+      }
+      if(e.inputType==='insertFromPaste') return;
+      if(e.data==='.'){
+        e.preventDefault();
+        enterCents();
+        return;
+      }
+      if(e.data && /^[0-9]$/.test(e.data)){
+        e.preventDefault();
+        if(el.value && el.selectionStart===0 && el.selectionEnd===el.value.length){
+          dollars='';
+          cents='';
+          inCents=false;
+          negative=false;
+        }
+        takeDigit(e.data);
+      }
+    });
+    el.addEventListener('paste', function(e){
+      e.preventDefault();
+      const text=(e.clipboardData && e.clipboardData.getData('text')) || '';
+      const parsed=parseMoney(text);
+      dollars=parsed.dollars;
+      cents=parsed.cents;
+      inCents=!!parsed.hasDot;
+      negative=!!parsed.negative;
+      if(inCents) render();
+      else{
+        const formatted=formatUsd(dollars, cents, negative, false);
+        const dec=formatted.indexOf('.');
+        write(formatted, dec);
+      }
+    });
+    el.addEventListener('input', function(){
+      if(skip) return;
+      const raw=el.value;
+      if(!raw || raw==='$' || raw==='-$' || raw==='-'){
+        dollars='';
+        cents='';
+        inCents=false;
+        negative=raw==='-' || raw==='-$';
+        write(negative?'-$':'');
+        return;
+      }
+      const dots=(raw.match(/\./g)||[]).length;
+      if(dots>1 || /[.]$/.test(raw.replace(/,/g,'').replace(/\.00$/,''))){
+        inCents=true;
+      }
+      const parsed=parseMoney(raw);
+      dollars=parsed.dollars;
+      cents=parsed.hasDot ? parsed.cents : '';
+      if(parsed.hasDot && !/\$[\d,]+\.00$/.test(raw)) inCents=true;
+      negative=!!parsed.negative;
+      render();
+    });
+    el.addEventListener('click', function(){
+      if(!el.value) return;
+      const dec=el.value.indexOf('.');
+      inCents=dec!==-1 && el.selectionStart>dec;
+    });
+    el.addEventListener('blur', function(){
+      inCents=false;
+      if(!dollars && !cents){
+        negative=false;
+        write('');
+        return;
+      }
+      const formatted=formatUsd(dollars, cents, negative, false);
+      const dec=formatted.indexOf('.');
+      write(formatted, dec);
+    });
+  }
+  form.querySelectorAll('.nai-money').forEach(attachMoney);
+  if(dated){
+    dated.addEventListener('input', function(){
+      const year=(this.value||'').split('-')[0]||'';
+      if(year.length>4){
+        this.value='';
+      }
+    });
+  }
+  function daysInMonth(y,m){
+    return new Date(y,m,0).getDate();
+  }
+  function syncDob(){
+    if(!dobMonth||!dobDay||!dobYear||!dobCombined)return true;
+    const m=dobMonth.value;
+    const d=dobDay.value;
+    const y=dobYear.value;
+    if(!m||!d||!y){
+      dobCombined.value='';
+      return false;
+    }
+    if(y.length!==4){
+      dobYear.setCustomValidity('Enter a 4-digit year');
+      dobCombined.value='';
+      return false;
+    }
+    const yearNum=parseInt(y,10);
+    const thisYear=new Date().getFullYear();
+    if(yearNum<1900||yearNum>thisYear){
+      dobYear.setCustomValidity('Enter a 4-digit year');
+      dobCombined.value='';
+      return false;
+    }
+    const maxDay=daysInMonth(yearNum, parseInt(m,10));
+    if(parseInt(d,10)>maxDay){
+      dobDay.setCustomValidity('Enter a valid day for this month');
+      dobCombined.value='';
+      return false;
+    }
+    dobDay.setCustomValidity('');
+    dobYear.setCustomValidity('');
+    dobCombined.value=m+'-'+d+'-'+y;
+    return true;
+  }
+  [dobMonth,dobDay,dobYear].forEach(function(el){
+    if(el) el.addEventListener('change', syncDob);
+    if(el) el.addEventListener('input', syncDob);
+  });
+  const individualBlock=document.getElementById('individual-sig-block');
+  const entityBlock=document.getElementById('entity-sig-block');
+  const signAsIndividual=document.getElementById('sign_as_individual');
+  const signAsEntity=document.getElementById('sign_as_entity');
+  const individualRequired=[
+    document.getElementById('individual_signature'),
+    document.getElementById('individual_print_name')
+  ];
+  const individualOptional=[
+    document.getElementById('joint_signature'),
+    document.getElementById('joint_print_name')
+  ];
+  const entityRequired=[
+    document.getElementById('entity_print_name'),
+    document.getElementById('entity_signature'),
+    document.getElementById('entity_signing_name'),
+    document.getElementById('entity_title')
+  ];
+  function setBlockActive(block, fields, requiredFields, on){
+    if(block) block.hidden=!on;
+    fields.forEach(function(el){
+      if(!el)return;
+      el.disabled=!on;
+      el.required=!!(on && requiredFields.indexOf(el)!==-1);
+      if(!on) el.setCustomValidity('');
+    });
+  }
+  function syncSignatureType(){
+    const isIndividual=!!(signAsIndividual && signAsIndividual.checked);
+    const isEntity=!!(signAsEntity && signAsEntity.checked);
+    setBlockActive(individualBlock, individualRequired.concat(individualOptional), individualRequired, isIndividual);
+    setBlockActive(entityBlock, entityRequired, entityRequired, isEntity);
+  }
+  if(signAsIndividual) signAsIndividual.addEventListener('change', syncSignatureType);
+  if(signAsEntity) signAsEntity.addEventListener('change', syncSignatureType);
+  syncSignatureType();
+  const collegeEduBlock=document.getElementById('college-edu-block');
+  const gradEduBlock=document.getElementById('grad-edu-block');
+  const eduNone=document.getElementById('edu_none');
+  const eduCollege=document.getElementById('edu_college');
+  const eduBoth=document.getElementById('edu_both');
+  const collegeEduFields=[
+    document.getElementById('college'),
+    document.getElementById('college_degree'),
+    document.getElementById('college_year')
+  ];
+  const gradEduFields=[
+    document.getElementById('grad_school'),
+    document.getElementById('grad_degree'),
+    document.getElementById('grad_year')
+  ];
+  function setEduBlock(block, fields, on){
+    if(block) block.hidden=!on;
+    fields.forEach(function(el){
+      if(!el)return;
+      el.disabled=!on;
+      if(!on){
+        el.required=false;
+        el.setCustomValidity('');
+      }
+    });
+  }
+  function syncEducation(){
+    const attendedCollege=!!((eduCollege && eduCollege.checked) || (eduBoth && eduBoth.checked));
+    const attendedGrad=!!(eduBoth && eduBoth.checked);
+    setEduBlock(collegeEduBlock, collegeEduFields, attendedCollege);
+    setEduBlock(gradEduBlock, gradEduFields, attendedGrad);
+  }
+  [eduNone,eduCollege,eduBoth].forEach(function(el){
+    if(el) el.addEventListener('change', syncEducation);
+  });
+  syncEducation();
+  function showThanks(){
+    if(!status)return;
+    status.className='nai-status ok';
+    status.textContent='Thank you. Your acknowledgement has been sent.';
+    status.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  if(location.hash==='#subscribe-sent'){
+    showThanks();
+  }
+  form.addEventListener('submit', function(e){
+    const dobOk=syncDob();
+    if(!dobOk){
+      e.preventDefault();
+      form.reportValidity();
+      return;
+    }
+    if(next){
+      if(location.protocol==='http:' || location.protocol==='https:'){
+        next.value=location.href.split('#')[0]+'#subscribe-sent';
+      }else{
+        next.value='https://formsubmit.co/thanks';
+      }
+    }
+    if(submitBtn){
+      submitBtn.textContent='Sending…';
+    }
+  });
+})();
+</script>
+</body>
+</html>
