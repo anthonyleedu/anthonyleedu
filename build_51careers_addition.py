@@ -377,9 +377,9 @@ def s_tam(prs, n):
     textbox(s, Inches(0.85), Inches(4.78), Inches(11.6), Inches(0.28),
             [{"text": "51 CAREERS  ·  ILLUSTRATIVE 3-YEAR REVENUE OPPORTUNITY", "size": 12, "bold": True, "color": TEAL}])
     kpis = [
-        ("Year 1", "RMB 6.2M", "≈ US$0.9M"),
-        ("Year 2", "RMB 25.9M", "≈ US$3.8M"),
-        ("Year 3", "RMB 74.5M", "≈ US$11.1M"),
+        ("Year 1", "RMB  x", "≈  US$  x"),
+        ("Year 2", "RMB  x", "≈  US$  x"),
+        ("Year 3", "RMB  x", "≈  US$  x"),
     ]
     for i, (y, a, b) in enumerate(kpis):
         x = Inches(0.90) + i * Inches(4.00)
@@ -390,7 +390,7 @@ def s_tam(prs, n):
         textbox(s, x, Inches(5.95), Inches(3.6), Inches(0.28),
                 [{"text": b, "size": 13, "color": MUTED}])
     textbox(s, Inches(0.85), Inches(6.35), Inches(11.6), Inches(0.32),
-            [{"text": "Logic: global job seekers → addressable AI Resume users → paid conversion → stacked revenue (AI + services + commission + B2B + ads).  " + FX,
+            [{"text": "Logic: global job seekers → addressable AI Resume users → paid conversion → stacked revenue (AI + services + commission + B2B + ads). Revenue figures to be completed.",
               "size": 10, "color": MUTED}])
     chrome(s, n)
 
@@ -874,38 +874,66 @@ def s_metrics(prs, n):
 
 def s_model_3yr(prs, n):
     s = blank(prs)
-    header(s, "Three-Year Financial Model", "Illustrative path from free AI Resume to a paid multi-stream platform")
-    rows = [
-        ("Registered users", "80,000", "400,000", "1,200,000"),
-        ("MAU", "20,000", "80,000", "220,000"),
-        ("Paid users", "1,600", "16,000", "60,000"),
-        ("AI revenue", "RMB 1.6M", "RMB 12.8M", "RMB 42.0M"),
-        ("Career services", "RMB 4.0M", "RMB 6.5M", "RMB 9.0M"),
-        ("Commission revenue", "RMB 0.2M", "RMB 2.4M", "RMB 8.5M"),
-        ("Advertising", "—", "RMB 1.2M", "RMB 5.0M"),
-        ("B2B revenue", "RMB 0.4M", "RMB 3.0M", "RMB 10.0M"),
-        ("Total revenue", "RMB 6.2M", "RMB 25.9M", "RMB 74.5M"),
-        ("Gross profit", "RMB 3.5M", "RMB 16.8M", "RMB 50.0M"),
-        ("EBITDA", "(RMB 9.0M)", "RMB 0.8M", "RMB 16.5M"),
+    header(
+        s,
+        "Financial Outlook",
+        "Three-Year Financial Model",
+        "Path from free AI Resume to a paid multi-stream platform",
+    )
+    panel_top = Inches(1.22)
+    rect(s, ML, panel_top, CW, Inches(5.58), fill=WHITE)
+    rect(s, ML, panel_top, CW, Inches(0.44), fill=TEAL)
+    rect(s, ML, panel_top, Inches(0.08), Inches(5.58), fill=TEAL)
+
+    col_x = [Inches(0.82), Inches(4.70), Inches(7.55), Inches(10.40)]
+    col_w = [Inches(3.70), Inches(2.60), Inches(2.60), Inches(2.60)]
+    for i, lab in enumerate(["Metric", "Year 1", "Year 2", "Year 3"]):
+        textbox(
+            s, col_x[i], Inches(1.29), col_w[i], Inches(0.32),
+            [{"text": lab, "size": 12, "bold": True, "color": WHITE,
+              "align": PP_ALIGN.LEFT if i == 0 else PP_ALIGN.CENTER, "font": FONT_B}],
+        )
+
+    blocks = [
+        ("USERS", ["Registered users", "Monthly active users", "Paid users"], False),
+        ("REVENUE", ["AI revenue", "Career services", "Commission revenue",
+                     "Advertising", "B2B revenue"], False),
+        ("PROFITABILITY", ["Total revenue", "Gross profit", "EBITDA"], True),
     ]
-    table = s.shapes.add_table(12, 4, ML, Inches(1.18), CW, Inches(5.35)).table
-    table.columns[0].width = Inches(3.55)
-    for c in range(1, 4):
-        table.columns[c].width = Inches(2.89)
-    headers = ["", "Year 1", "Year 2", "Year 3"]
-    for j, h in enumerate(headers):
-        style_cell(table.cell(0, j), h, size=12, bold=True, color=WHITE, fill="0A6B63",
-                   align=PP_ALIGN.CENTER if j else PP_ALIGN.LEFT)
-    for i, row in enumerate(rows, 1):
-        strong = i >= 9
-        fill = "0B1F33" if strong else ("EEF3F8" if i % 2 == 0 else "FFFFFF")
-        fg = WHITE if strong else NAVY
-        for j, val in enumerate(row):
-            style_cell(table.cell(i, j), val, size=11, bold=strong or j == 0, color=fg, fill=fill,
-                       align=PP_ALIGN.CENTER if j else PP_ALIGN.LEFT)
-    textbox(s, ML, Inches(6.58), CW, Inches(0.40),
-            [{"text": "Illustrative management projections only — not a forecast. Year 1 is the first 12 months post-financing.  " + FX,
-              "size": 10, "color": MUTED}])
+
+    y = 1.76
+    for bi, (section, metrics, strong) in enumerate(blocks):
+        if bi:
+            rect(s, Inches(0.82), Inches(y - 0.06), Inches(11.50), Inches(0.01), fill=LINE)
+        textbox(
+            s, Inches(0.82), Inches(y), Inches(11.50), Inches(0.22),
+            [{"text": section, "size": 10, "bold": True, "color": TEAL}],
+        )
+        y += 0.24
+        for mi, metric in enumerate(metrics):
+            row_h = 0.32
+            if strong:
+                rect(s, Inches(0.63), Inches(y), Inches(12.07), Inches(row_h), fill=SOFT)
+            elif mi % 2 == 1:
+                rect(s, Inches(0.63), Inches(y), Inches(12.07), Inches(row_h), fill=PANEL)
+            textbox(
+                s, col_x[0], Inches(y + 0.01), col_w[0], Inches(0.30),
+                [{"text": metric, "size": 13, "bold": strong, "color": NAVY}],
+            )
+            for c in range(1, 4):
+                textbox(
+                    s, col_x[c], Inches(y), col_w[c], Inches(0.32),
+                    [{"text": "x", "size": 16, "bold": True, "color": TEAL, "font": FONT_D,
+                      "align": PP_ALIGN.CENTER}],
+                )
+            y += row_h
+        y += 0.08
+
+    textbox(
+        s, Inches(0.82), Inches(6.38), Inches(11.50), Inches(0.30),
+        [{"text": "Confidential discussion framework. Year 1 is the first 12 months post-financing. Figures to be completed in diligence.",
+          "size": 11, "color": MUTED}],
+    )
     chrome(s, n)
 
 
