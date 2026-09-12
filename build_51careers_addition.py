@@ -363,48 +363,48 @@ def s_why_now(prs, n):
 
 def s_tam(prs, n):
     s = blank(prs)
-    header(s, "Market Size", "TAM  →  SAM  →  SOM  →  Three-Year Revenue Opportunity",
+    header(s, "Market Size", "TAM  →  SAM  →  SOM  →  Three-Year Revenue",
            "From global job seekers to paid AI career users. Illustrative, for discussion.")
     cards = [
-        ("TAM", "US$200B+", "RMB 1.35 trillion+",
+        ("01", "TAM", "US$ 200B+", "RMB 1.35T+",
          "Global recruitment, talent-acquisition, and career-development spend."),
-        ("SAM", "US$30B+", "RMB 200 billion+",
+        ("02", "SAM", "US$ 30B+", "RMB 200B+",
          "Digital / AI-enabled hiring tools, resume products, and online career preparation."),
-        ("SOM", "US$1.5B+", "RMB 10 billion+",
-         "AI resume & career-assistant demand in initial markets: China, U.S., and English-speaking Asia."),
+        ("03", "SOM", "US$ 1.5B+", "RMB 10B+",
+         "AI resume and career-assistant demand in initial markets: China, the U.S., and English-speaking Asia."),
     ]
-    for i, (lab, usd, rmb, desc) in enumerate(cards):
+    for i, (num, lab, usd, rmb, desc) in enumerate(cards):
         x = ML + i * Inches(4.08)
         round_rect(s, x, Inches(1.22), Inches(3.92), Inches(3.28), fill=WHITE)
         rect(s, x, Inches(1.22), Inches(3.92), Inches(0.10), fill=TEAL)
-        textbox(s, x + Inches(0.22), Inches(1.44), Inches(3.48), Inches(0.26),
-                [{"text": lab, "size": 13, "bold": True, "color": TEAL}])
-        textbox(s, x + Inches(0.22), Inches(1.76), Inches(3.48), Inches(0.58),
-                [{"text": usd, "size": 30, "bold": True, "color": NAVY, "font": FONT_D}])
-        textbox(s, x + Inches(0.22), Inches(2.38), Inches(3.48), Inches(0.30),
-                [{"text": rmb, "size": 15, "bold": True, "color": INK}])
-        textbox(s, x + Inches(0.22), Inches(2.76), Inches(3.48), Inches(1.50),
+        textbox(s, x + Inches(0.22), Inches(1.40), Inches(3.48), Inches(0.28),
+                [{"text": f"{num}   ·   {lab}", "size": 13, "bold": True, "color": TEAL, "font": FONT_D}])
+        textbox(s, x + Inches(0.22), Inches(1.74), Inches(3.48), Inches(0.58),
+                [{"text": usd, "size": 28, "bold": True, "color": NAVY, "font": FONT_D}])
+        textbox(s, x + Inches(0.22), Inches(2.36), Inches(3.48), Inches(0.30),
+                [{"text": rmb, "size": 15, "bold": True, "color": INK, "font": FONT_D}])
+        textbox(s, x + Inches(0.22), Inches(2.74), Inches(3.48), Inches(1.50),
                 [{"text": desc, "size": 14, "color": BODY}])
     round_rect(s, ML, Inches(4.62), CW, Inches(2.26), fill=WHITE)
     rect(s, ML, Inches(4.62), Inches(0.08), Inches(2.26), fill=TEAL)
-    textbox(s, Inches(0.85), Inches(4.78), Inches(11.6), Inches(0.28),
-            [{"text": "51 CAREERS  ·  ILLUSTRATIVE 3-YEAR REVENUE OPPORTUNITY", "size": 12, "bold": True, "color": TEAL}])
+    textbox(s, Inches(0.85), Inches(4.74), Inches(11.6), Inches(0.26),
+            [{"text": "51 CAREERS  ·  2027E–2029E REVENUE", "size": 12, "bold": True, "color": TEAL}])
     kpis = [
         ("2027E", "US$ 2.0M", "≈ RMB 13.5M"),
         ("2028E", "US$ 8.0M", "≈ RMB 53.8M"),
         ("2029E", "US$ 28.0M", "≈ RMB 188.4M"),
     ]
     for i, (y, a, b) in enumerate(kpis):
-        x = Inches(0.90) + i * Inches(4.00)
-        textbox(s, x, Inches(5.18), Inches(3.6), Inches(0.24),
-                [{"text": y, "size": 12, "bold": True, "color": MUTED}])
-        textbox(s, x, Inches(5.42), Inches(3.6), Inches(0.50),
-                [{"text": a, "size": 24, "bold": True, "color": NAVY, "font": FONT_D}])
-        textbox(s, x, Inches(5.95), Inches(3.6), Inches(0.28),
-                [{"text": b, "size": 13, "color": MUTED}])
-    textbox(s, Inches(0.85), Inches(6.35), Inches(11.6), Inches(0.32),
-            [{"text": "Logic: global job seekers → addressable AI Resume users → paid conversion → stacked revenue (AI + services + commission + B2B + ads).",
-              "size": 10, "color": MUTED}])
+        x = Inches(0.78) + i * Inches(4.08)
+        textbox(s, x, Inches(5.10), Inches(3.70), Inches(0.24),
+                [{"text": y, "size": 13, "bold": True, "color": TEAL, "font": FONT_D}])
+        textbox(s, x, Inches(5.36), Inches(3.70), Inches(0.50),
+                [{"text": a, "size": 26, "bold": True, "color": NAVY, "font": FONT_D}])
+        textbox(s, x, Inches(5.90), Inches(3.70), Inches(0.28),
+                [{"text": b, "size": 14, "color": MUTED, "font": FONT_D}])
+    textbox(s, Inches(0.78), Inches(6.32), Inches(11.7), Inches(0.36),
+            [{"text": "Logic: global job seekers  →  addressable AI Resume users  →  paid conversion  →  stacked revenue (AI + services + commission + B2B + ads).",
+              "size": 12, "color": MUTED}])
     chrome(s, n)
 
 
