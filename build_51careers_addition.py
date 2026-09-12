@@ -377,9 +377,9 @@ def s_tam(prs, n):
     textbox(s, Inches(0.85), Inches(4.78), Inches(11.6), Inches(0.28),
             [{"text": "51 CAREERS  ·  ILLUSTRATIVE 3-YEAR REVENUE OPPORTUNITY", "size": 12, "bold": True, "color": TEAL}])
     kpis = [
-        ("Year 1", "RMB  x", "≈  US$  x"),
-        ("Year 2", "RMB  x", "≈  US$  x"),
-        ("Year 3", "RMB  x", "≈  US$  x"),
+        ("2027E", "US$  2.0M", "≈  RMB  13.5M"),
+        ("2028E", "US$  8.0M", "≈  RMB  53.8M"),
+        ("2029E", "US$  28.0M", "≈  RMB  188M"),
     ]
     for i, (y, a, b) in enumerate(kpis):
         x = Inches(0.90) + i * Inches(4.00)
@@ -390,7 +390,7 @@ def s_tam(prs, n):
         textbox(s, x, Inches(5.95), Inches(3.6), Inches(0.28),
                 [{"text": b, "size": 13, "color": MUTED}])
     textbox(s, Inches(0.85), Inches(6.35), Inches(11.6), Inches(0.32),
-            [{"text": "Logic: global job seekers → addressable AI Resume users → paid conversion → stacked revenue (AI + services + commission + B2B + ads). Revenue figures to be completed.",
+            [{"text": "Logic: global job seekers → addressable AI Resume users → paid conversion → stacked revenue (AI + services + commission + B2B + ads).",
               "size": 10, "color": MUTED}])
     chrome(s, n)
 
@@ -533,8 +533,8 @@ def s_global_market(prs, n):
     s = blank(prs)
     header(s, "09  ·  Global Market Opportunity", "AI Resume Is a Naturally Global Product",
            "A resume is a universal component of the global employment market.")
-    markets = ["United States", "Canada", "United Kingdom", "Australia", "Singapore",
-               "Hong Kong", "China", "Europe", "Middle East", "Other markets"]
+    markets = ["United States", "Canada", "Central America", "United Kingdom", "Australia",
+               "Singapore", "Hong Kong", "China", "Europe", "Middle East"]
     for i, m in enumerate(markets):
         col, row = i % 5, i // 5
         x = ML + col * Inches(2.46)
@@ -558,8 +558,10 @@ def s_strategy(prs, n):
     s = blank(prs)
     header(s, "10  ·  Global Product Strategy", "One Platform. Multiple Labor Markets.")
     dims = [
-        ("Geography", "US / Canada / UK / Australia / Europe / Asia / Middle East"),
-        ("Industry", "Technology / Finance / Consulting / Healthcare / Marketing / Education"),
+        ("Geography",
+         "U.S.  ·  Canada  ·  Central America  ·  U.K.  ·  Australia  ·  Europe  ·  Asia  ·  Middle East"),
+        ("Industry",
+         "Applicable across industries — including Technology, Fintech, Financial Services, Advanced Manufacturing, Consulting, Healthcare, Marketing, Education, and more."),
         ("Career level", "Student / Graduate / Professional / Manager / Executive"),
         ("Target role", "Software Engineer / PM / Data Scientist / Marketing / Finance / more"),
         ("Target employer", "Startup / SME / Enterprise / Multinational"),
@@ -571,7 +573,7 @@ def s_strategy(prs, n):
         textbox(s, Inches(0.90), y + Inches(0.14), Inches(3.20), Inches(0.70),
                 [{"text": t, "size": 18, "bold": True, "color": NAVY, "font": FONT_D}], valign=MSO_ANCHOR.MIDDLE)
         textbox(s, Inches(4.30), y + Inches(0.14), Inches(8.20), Inches(0.70),
-                [{"text": b, "size": 15, "color": BODY}], valign=MSO_ANCHOR.MIDDLE)
+                [{"text": b, "size": 14, "color": BODY}], valign=MSO_ANCHOR.MIDDLE)
     chrome(s, n)
 
 
@@ -750,8 +752,26 @@ def s_advantages(prs, n):
 
 def s_team(prs, n):
     s = blank(prs)
-    header(s, "18  ·  Team & Operating Structure", "Global Business  +  China Technology")
-    groups = [
+    header(s, "18  ·  Team & Operating Structure", "Core founding team in place  ·  Planned hiring funded by this round")
+    round_rect(s, ML, Inches(1.20), Inches(3.92), Inches(5.00), fill=WHITE)
+    rect(s, ML, Inches(1.20), Inches(3.92), Inches(0.10), fill=TEAL)
+    textbox(s, Inches(0.80), Inches(1.42), Inches(3.50), Inches(0.26),
+            [{"text": "EXISTING", "size": 11, "bold": True, "color": TEAL}])
+    textbox(s, Inches(0.80), Inches(1.72), Inches(3.50), Inches(0.40),
+            [{"text": "FOUNDING TEAM", "size": 16, "bold": True, "color": NAVY, "font": FONT_D}])
+    textbox(s, Inches(0.80), Inches(2.18), Inches(3.50), Inches(0.70),
+            [{"text": "4", "size": 44, "bold": True, "color": NAVY, "font": FONT_D}])
+    textbox(s, Inches(0.80), Inches(2.95), Inches(3.50), Inches(0.36),
+            [{"text": "Core founding team members", "size": 14, "bold": True, "color": BODY}])
+    for i, line in enumerate([
+        "In place today",
+        "Product, capital, and go-to-market leadership",
+        "Additional roles are not yet hired",
+    ]):
+        textbox(s, Inches(0.80), Inches(3.50) + i * Inches(0.48), Inches(3.50), Inches(0.42),
+                [{"text": f"▸  {line}", "size": 13, "color": BODY}])
+
+    planned = [
         ("CHINA TECHNOLOGY", "7",
          [("Product Manager", "1"), ("Designer", "1"), ("QA / Testing", "1"),
           ("Front-End Engineer", "1"), ("Back-End Engineers", "2"), ("AI Engineer", "1")]),
@@ -759,33 +779,33 @@ def s_team(prs, n):
          [("Marketing / Performance", "1"), ("B2B Business Development", "1+")]),
         ("U.S. GROWTH", "3",
          [("Performance Marketing", "1"), ("Local / Field Marketing", "2")]),
-        ("FOUNDING TEAM", "4",
-         [("Founders / core management", "4")]),
     ]
-    for i, (title, count, roles) in enumerate(groups):
-        x = ML + i * Inches(3.08)
-        round_rect(s, x, Inches(1.20), Inches(2.95), Inches(4.55), fill=WHITE)
-        rect(s, x, Inches(1.20), Inches(2.95), Inches(0.10), fill=TEAL)
-        textbox(s, x + Inches(0.16), Inches(1.42), Inches(2.63), Inches(0.55),
-                [{"text": title, "size": 13, "bold": True, "color": TEAL}])
-        textbox(s, x + Inches(0.16), Inches(1.95), Inches(2.63), Inches(0.45),
+    for i, (title, count, roles) in enumerate(planned):
+        x = Inches(4.70) + i * Inches(2.82)
+        round_rect(s, x, Inches(1.20), Inches(2.70), Inches(5.00), fill=WHITE)
+        rect(s, x, Inches(1.20), Inches(2.70), Inches(0.10), fill=LINE)
+        textbox(s, x + Inches(0.14), Inches(1.42), Inches(2.42), Inches(0.24),
+                [{"text": "PLANNED", "size": 11, "bold": True, "color": MUTED}])
+        textbox(s, x + Inches(0.14), Inches(1.68), Inches(2.42), Inches(0.55),
+                [{"text": title, "size": 13, "bold": True, "color": NAVY}])
+        textbox(s, x + Inches(0.14), Inches(2.22), Inches(2.42), Inches(0.45),
                 [{"text": count, "size": 26, "bold": True, "color": NAVY, "font": FONT_D}])
         for j, (role, nhead) in enumerate(roles):
-            textbox(s, x + Inches(0.16), Inches(2.50) + j * Inches(0.48), Inches(2.10), Inches(0.44),
-                    [{"text": role, "size": 12, "color": BODY}])
-            textbox(s, x + Inches(2.20), Inches(2.50) + j * Inches(0.48), Inches(0.55), Inches(0.44),
-                    [{"text": nhead, "size": 12, "bold": True, "color": TEAL, "align": PP_ALIGN.RIGHT}])
-    round_rect(s, ML, Inches(5.90), CW, Inches(0.92), fill=SOFT)
-    textbox(s, Inches(0.80), Inches(6.10), Inches(11.7), Inches(0.55),
-            [{"text": "Existing annual core personnel cost  ≈  RMB 5.1 million (≈ US$758K). Additional hires as needed.",
-              "size": 14, "color": BODY}])
+            textbox(s, x + Inches(0.14), Inches(2.80) + j * Inches(0.46), Inches(1.85), Inches(0.42),
+                    [{"text": role, "size": 11, "color": BODY}])
+            textbox(s, x + Inches(1.95), Inches(2.80) + j * Inches(0.46), Inches(0.58), Inches(0.42),
+                    [{"text": nhead, "size": 11, "bold": True, "color": TEAL, "align": PP_ALIGN.RIGHT}])
+    round_rect(s, ML, Inches(6.32), CW, Inches(0.58), fill=SOFT)
+    textbox(s, Inches(0.80), Inches(6.40), Inches(11.7), Inches(0.42),
+            [{"text": "Only the core founding team is in place today. China technology, China growth, and U.S. growth roles are planned hires — not current headcount.",
+              "size": 13, "color": BODY}])
     chrome(s, n)
 
 
 def s_funds(prs, n):
     s = blank(prs)
     header(s, "19  ·  Use of Funds", "RMB 20 Million Growth Financing",
-           "After RMB 13.1M personnel + advertising, remaining capital funds infrastructure, AI, operations, events, expansion and working capital.")
+           "RMB 13.1M is a planned personnel + advertising budget. Remaining capital funds infrastructure, AI, operations, events, expansion and working capital.")
     alloc = [
         ("Marketing & user acquisition", "40%", "RMB 8.0M"),
         ("Product & AI development", "22.5%", "RMB 4.5M"),
@@ -809,10 +829,10 @@ def s_funds(prs, n):
         textbox(s, Inches(10.30), y, Inches(2.45), Inches(0.48),
                 [{"text": f"{pct}   ·   {amt}", "size": 13, "bold": True, "color": NAVY, "align": PP_ALIGN.RIGHT}])
     kpis = [
-        ("PERSONNEL", "RMB 5.1M", "Existing annual core team"),
+        ("PERSONNEL", "RMB 5.1M", "Planned hiring budget — not current payroll"),
         ("CHINA ADS", "RMB 1.0M", "Planned annual spend"),
         ("U.S. ADS", "RMB 7.0M", "Planned annual spend"),
-        ("P+A BUDGET", "RMB 13.1M", "Personnel + advertising"),
+        ("P+A BUDGET", "RMB 13.1M", "Planned personnel + advertising"),
     ]
     for i, (lab, big, sub) in enumerate(kpis):
         x = ML + i * Inches(3.08)
@@ -851,87 +871,85 @@ def s_roadmap(prs, n):
     chrome(s, n)
 
 
-def s_metrics(prs, n):
-    s = blank(prs)
-    header(s, "21  ·  Key Metrics We Will Optimize", "Growth, monetization, unit economics, and platform health")
-    groups = [
-        ("GROWTH", ["Registered users", "MAU", "AI Resume generations", "User retention", "Organic traffic"]),
-        ("MONETIZATION", ["Conversion rate", "Paid users", "ARPU", "Revenue", "Gross margin"]),
-        ("UNIT ECONOMICS", ["CAC", "LTV", "LTV / CAC", "Payback period"]),
-        ("PLATFORM", ["Employer partners", "Career-service partners", "Job listings", "Referral GMV", "Commission revenue"]),
-    ]
-    for i, (t, items) in enumerate(groups):
-        x = ML + i * Inches(3.08)
-        round_rect(s, x, Inches(1.22), Inches(2.95), Inches(5.55), fill=WHITE)
-        rect(s, x, Inches(1.22), Inches(2.95), Inches(0.10), fill=TEAL)
-        textbox(s, x + Inches(0.16), Inches(1.48), Inches(2.63), Inches(0.45),
-                [{"text": t, "size": 14, "bold": True, "color": TEAL}])
-        for j, it in enumerate(items):
-            textbox(s, x + Inches(0.16), Inches(2.10) + j * Inches(0.82), Inches(2.63), Inches(0.70),
-                    [{"text": it, "size": 15, "bold": True, "color": NAVY}])
-    chrome(s, n)
-
-
 def s_model_3yr(prs, n):
     s = blank(prs)
     header(
         s,
-        "Financial Outlook",
-        "Three-Year Financial Model",
-        "Path from free AI Resume to a paid multi-stream platform",
+        "21  ·  Three-Year Financial Model",
+        "Users, Revenue, and Profitability",
+        "Illustrative 2027E–2029E operating plan. Figures in US$.",
     )
-    panel_top = Inches(1.22)
-    rect(s, ML, panel_top, CW, Inches(5.58), fill=WHITE)
-    rect(s, ML, panel_top, CW, Inches(0.44), fill=TEAL)
-    rect(s, ML, panel_top, Inches(0.08), Inches(5.58), fill=TEAL)
 
-    col_x = [Inches(0.82), Inches(4.70), Inches(7.55), Inches(10.40)]
-    col_w = [Inches(3.70), Inches(2.60), Inches(2.60), Inches(2.60)]
-    for i, lab in enumerate(["Metric", "Year 1", "Year 2", "Year 3"]):
-        textbox(
-            s, col_x[i], Inches(1.29), col_w[i], Inches(0.32),
-            [{"text": lab, "size": 12, "bold": True, "color": WHITE,
-              "align": PP_ALIGN.LEFT if i == 0 else PP_ALIGN.CENTER, "font": FONT_B}],
-        )
-
-    blocks = [
-        ("USERS", ["Registered users", "Monthly active users", "Paid users"], False),
-        ("REVENUE", ["AI revenue", "Career services", "Commission revenue",
-                     "Advertising", "B2B revenue"], False),
-        ("PROFITABILITY", ["Total revenue", "Gross profit", "EBITDA"], True),
+    panels = [
+        (
+            "USERS",
+            [
+                ("Users", "1.0M", "3.0M", "7.0M"),
+                ("Registered users", "300K", "1.0M", "2.5M"),
+                ("Monthly active users", "150K", "500K", "1.25M"),
+                ("Paid users", "15K", "60K", "180K"),
+                ("Paid conversion", "5.0%", "6.0%", "7.2%"),
+                ("MAU / registered", "50%", "50%", "50%"),
+            ],
+        ),
+        (
+            "REVENUE",
+            [
+                ("AI revenue", "$0.70M", "$2.40M", "$8.40M"),
+                ("Career services", "$0.50M", "$1.60M", "$5.60M"),
+                ("Commission", "$0.30M", "$1.20M", "$4.20M"),
+                ("Advertising", "$0.20M", "$0.80M", "$2.80M"),
+                ("B2B revenue", "$0.30M", "$2.00M", "$7.00M"),
+                ("Total revenue", "$2.00M", "$8.00M", "$28.00M"),
+            ],
+        ),
+        (
+            "PROFITABILITY",
+            [
+                ("Gross margin", "65%", "70%", "75%"),
+                ("Gross profit", "$1.30M", "$5.60M", "$21.00M"),
+                ("EBITDA margin", "–50%", "–15%", "15%"),
+                ("EBITDA", "–$1.00M", "–$1.20M", "$4.20M"),
+                ("Profitability", "Loss", "Loss", "Profitable"),
+            ],
+        ),
     ]
 
-    y = 1.76
-    for bi, (section, metrics, strong) in enumerate(blocks):
-        if bi:
-            rect(s, Inches(0.82), Inches(y - 0.06), Inches(11.50), Inches(0.01), fill=LINE)
+    years = ["2027E", "2028E", "2029E"]
+    for i, (title, rows) in enumerate(panels):
+        x = ML + i * Inches(4.08)
+        round_rect(s, x, Inches(1.22), Inches(3.92), Inches(5.48), fill=WHITE)
+        rect(s, x, Inches(1.22), Inches(3.92), Inches(0.08), fill=TEAL)
         textbox(
-            s, Inches(0.82), Inches(y), Inches(11.50), Inches(0.22),
-            [{"text": section, "size": 10, "bold": True, "color": TEAL}],
+            s, x + Inches(0.16), Inches(1.38), Inches(3.60), Inches(0.30),
+            [{"text": title, "size": 13, "bold": True, "color": TEAL}],
         )
-        y += 0.24
-        for mi, metric in enumerate(metrics):
-            row_h = 0.32
-            if strong:
-                rect(s, Inches(0.63), Inches(y), Inches(12.07), Inches(row_h), fill=SOFT)
-            elif mi % 2 == 1:
-                rect(s, Inches(0.63), Inches(y), Inches(12.07), Inches(row_h), fill=PANEL)
+        col_w = Inches(1.16)
+        col0 = x + Inches(0.28)
+        for yi, yr in enumerate(years):
             textbox(
-                s, col_x[0], Inches(y + 0.01), col_w[0], Inches(0.30),
-                [{"text": metric, "size": 13, "bold": strong, "color": NAVY}],
+                s, col0 + yi * col_w, Inches(1.70), col_w, Inches(0.24),
+                [{"text": yr, "size": 11, "bold": True, "color": MUTED, "align": PP_ALIGN.CENTER}],
             )
-            for c in range(1, 4):
+        for ri, (metric, *vals) in enumerate(rows):
+            y = Inches(2.02) + ri * Inches(0.72)
+            strong = metric in {"Total revenue", "Profitability", "Users"}
+            if strong:
+                rect(s, x + Inches(0.10), y, Inches(3.72), Inches(0.68), fill=SOFT)
+            textbox(
+                s, x + Inches(0.16), y + Inches(0.02), Inches(3.60), Inches(0.24),
+                [{"text": metric, "size": 11, "bold": True, "color": MUTED}],
+            )
+            for vi, val in enumerate(vals):
+                accent = TEAL if (metric == "Profitability" and val == "Profitable") else NAVY
                 textbox(
-                    s, col_x[c], Inches(y), col_w[c], Inches(0.32),
-                    [{"text": "x", "size": 16, "bold": True, "color": TEAL, "font": FONT_D,
+                    s, col0 + vi * col_w, y + Inches(0.26), col_w, Inches(0.36),
+                    [{"text": val, "size": 14, "bold": True, "color": accent, "font": FONT_D,
                       "align": PP_ALIGN.CENTER}],
                 )
-            y += row_h
-        y += 0.08
-
     textbox(
-        s, Inches(0.82), Inches(6.38), Inches(11.50), Inches(0.30),
-        [{"text": "Confidential discussion framework. Year 1 is the first 12 months post-financing. Figures to be completed in diligence.",
+        s, ML, Inches(6.74), CW, Inches(0.28),
+        [{"text": "Management projections for discussion. Not a forecast. Paid conversion is paid users / registered users.",
           "size": 11, "color": MUTED}],
     )
     chrome(s, n)
@@ -1049,7 +1067,7 @@ def build():
         s_exec, s_problem, s_opportunity, s_why_now, s_tam, s_solution, s_product,
         s_validation, s_tech, s_global_market, s_strategy, s_phases, s_model,
         s_flywheel, s_acquisition, s_geo, s_compete, s_advantages, s_team,
-        s_funds, s_roadmap, s_metrics, s_model_3yr, s_investment, s_financing,
+        s_funds, s_roadmap, s_model_3yr, s_investment, s_financing,
         s_what_20m, s_vision,
     ]
     for i, fn in enumerate(builders, start=2):
