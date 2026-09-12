@@ -44,9 +44,20 @@ NS_A = "http://schemas.openxmlformats.org/drawingml/2006/main"
 FX = "USD at an illustrative RMB 6.73 / US$1. Figures labeled illustrative are management projections, not forecasts."
 
 
+def apply_typeface(run, name):
+    """Force Latin / EA / CS typeface so digits do not fall back to Calibri."""
+    run.font.name = name
+    rPr = run._r.get_or_add_rPr()
+    for tag in ("a:latin", "a:ea", "a:cs"):
+        el = rPr.find(qn(tag))
+        if el is None:
+            el = etree.SubElement(rPr, qn(tag))
+        el.set("typeface", name)
+
+
 def set_run(run, text, font=FONT_B, size=11, bold=False, color=BODY, italic=False):
     run.text = text
-    run.font.name = font
+    apply_typeface(run, font)
     run.font.size = Pt(size)
     run.font.bold = bold
     run.font.italic = italic
@@ -140,12 +151,13 @@ def chrome(slide, page: int):
 
 
 def header(slide, eyebrow: str, title: str, subtitle: str | None = None):
-    textbox(slide, ML, Inches(0.22), CW, Inches(0.24),
+    textbox(slide, ML, Inches(0.20), CW, Inches(0.22),
             [{"text": eyebrow.upper(), "size": 10, "bold": True, "color": TEAL}])
-    textbox(slide, ML, Inches(0.44), CW, Inches(0.48),
-            [{"text": title, "size": 24, "bold": True, "color": NAVY, "font": FONT_D}])
+    title_size = 20 if len(title) > 52 else 24
+    textbox(slide, ML, Inches(0.40), CW, Inches(0.50),
+            [{"text": title, "size": title_size, "bold": True, "color": NAVY, "font": FONT_D}])
     if subtitle:
-        textbox(slide, ML, Inches(0.92), CW, Inches(0.28),
+        textbox(slide, ML, Inches(0.90), CW, Inches(0.26),
                 [{"text": subtitle, "size": 13, "color": MUTED}])
 
 
@@ -321,24 +333,25 @@ def s_opportunity(prs, n):
 
 def s_why_now(prs, n):
     s = blank(prs)
-    header(s, "04  ·  Why Now", "Three Structural Trends Are Converging")
+    header(s, "04  ·  Why Now", "Three Structural Trends Are Converging",
+           "AI adoption, data-driven hiring, and fragmented career services are moving at the same time.")
     trends = [
-        ("1", "Generative AI has reached mass adoption",
+        ("01", "Generative AI has reached mass adoption",
          "Consumers are increasingly comfortable using AI for professional and personal tasks. That adoption is the distribution opening for an AI career product."),
-        ("2", "Recruiting is becoming more data-driven",
+        ("02", "Recruiting is becoming more data-driven",
          "Employers rely on structured information, keywords, measurable achievements, and automated screening. Candidates need a product that writes to that standard."),
-        ("3", "Career services remain fragmented",
+        ("03", "Career services remain fragmented",
          "The industry is still dependent on manual services and fragmented providers. That gap is the opening for a scalable AI + human platform."),
     ]
     for i, (num, title, body) in enumerate(trends):
         x = ML + i * Inches(4.08)
         round_rect(s, x, Inches(1.22), Inches(3.92), Inches(4.35), fill=WHITE)
         rect(s, x, Inches(1.22), Inches(3.92), Inches(0.10), fill=TEAL)
-        textbox(s, x + Inches(0.24), Inches(1.48), Inches(3.44), Inches(0.70),
-                [{"text": num, "size": 36, "bold": True, "color": TEAL, "font": FONT_D}])
-        textbox(s, x + Inches(0.24), Inches(2.22), Inches(3.44), Inches(1.15),
-                [{"text": title, "size": 18, "bold": True, "color": NAVY}])
-        textbox(s, x + Inches(0.24), Inches(3.45), Inches(3.44), Inches(1.85),
+        textbox(s, x + Inches(0.24), Inches(1.46), Inches(3.44), Inches(0.42),
+                [{"text": num, "size": 20, "bold": True, "color": TEAL, "font": FONT_D}])
+        textbox(s, x + Inches(0.24), Inches(1.92), Inches(3.44), Inches(1.10),
+                [{"text": title, "size": 18, "bold": True, "color": NAVY, "font": FONT_D}])
+        textbox(s, x + Inches(0.24), Inches(3.10), Inches(3.44), Inches(2.20),
                 [{"text": body, "size": 15, "color": BODY}])
     round_rect(s, ML, Inches(5.70), CW, Inches(1.18), fill=NAVY)
     textbox(s, Inches(0.80), Inches(5.84), Inches(11.7), Inches(0.26),
@@ -377,9 +390,9 @@ def s_tam(prs, n):
     textbox(s, Inches(0.85), Inches(4.78), Inches(11.6), Inches(0.28),
             [{"text": "51 CAREERS  ·  ILLUSTRATIVE 3-YEAR REVENUE OPPORTUNITY", "size": 12, "bold": True, "color": TEAL}])
     kpis = [
-        ("2027E", "US$  2.0M", "≈  RMB  13.5M"),
-        ("2028E", "US$  8.0M", "≈  RMB  53.8M"),
-        ("2029E", "US$  28.0M", "≈  RMB  188M"),
+        ("2027E", "US$ 2.0M", "≈ RMB 13.5M"),
+        ("2028E", "US$ 8.0M", "≈ RMB 53.8M"),
+        ("2029E", "US$ 28.0M", "≈ RMB 188.4M"),
     ]
     for i, (y, a, b) in enumerate(kpis):
         x = Inches(0.90) + i * Inches(4.00)
