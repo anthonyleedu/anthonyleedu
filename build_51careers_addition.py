@@ -409,14 +409,14 @@ def s_solution(prs, n):
         "Access professional services",
     ]
     for i, step in enumerate(steps):
-        y = Inches(1.22) + i * Inches(0.68)
-        round_rect(s, ML, y, Inches(7.60), Inches(0.60), fill=WHITE)
-        rect(s, ML, y, Inches(0.08), Inches(0.60), fill=TEAL)
-        textbox(s, Inches(0.85), y + Inches(0.12), Inches(0.50), Inches(0.36),
-                [{"text": f"{i+1:02d}", "size": 14, "bold": True, "color": TEAL, "font": FONT_D}])
-        textbox(s, Inches(1.45), y + Inches(0.12), Inches(6.40), Inches(0.36),
-                [{"text": step, "size": 16, "bold": True, "color": NAVY}])
-    round_rect(s, Inches(8.40), Inches(1.22), Inches(4.38), Inches(5.58), fill=NAVY)
+        y = Inches(1.22) + i * Inches(0.78)
+        round_rect(s, ML, y, Inches(7.60), Inches(0.72), fill=WHITE)
+        rect(s, ML, y, Inches(0.08), Inches(0.72), fill=TEAL)
+        textbox(s, Inches(0.85), y + Inches(0.16), Inches(0.50), Inches(0.42),
+                [{"text": f"{i+1:02d}", "size": 16, "bold": True, "color": TEAL, "font": FONT_D}])
+        textbox(s, Inches(1.45), y + Inches(0.16), Inches(6.40), Inches(0.42),
+                [{"text": step, "size": 17, "bold": True, "color": NAVY}])
+    round_rect(s, Inches(8.40), Inches(1.22), Inches(4.38), Inches(5.66), fill=NAVY)
     textbox(s, Inches(8.65), Inches(1.50), Inches(3.95), Inches(0.28),
             [{"text": "STARTING POINT", "size": 12, "bold": True, "color": TEAL}])
     textbox(s, Inches(8.65), Inches(1.90), Inches(3.95), Inches(0.90),
@@ -1063,9 +1063,13 @@ def s_vision(prs, n):
               "size": 32, "bold": True, "color": TEAL, "font": FONT_D}])
     textbox(s, Inches(0.90), Inches(4.75), Inches(11.5), Inches(0.50),
             [{"text": "AI   ×   Career   ×   Talent   ×   Opportunity", "size": 20, "color": TEAL_SOFT}])
-    textbox(s, Inches(0.90), Inches(5.50), Inches(11.5), Inches(0.50),
+    textbox(s, Inches(0.90), Inches(5.45), Inches(11.5), Inches(0.50),
             [{"text": "51 CAREERS", "size": 22, "bold": True, "color": WHITE, "font": FONT_D}])
-    textbox(s, Inches(0.90), Inches(6.70), Inches(11.5), Inches(0.32),
+    rect(s, Inches(0), Inches(6.35), SW, Inches(1.15), fill=COVER)
+    textbox(s, Inches(0.90), Inches(6.58), Inches(11.5), Inches(0.32),
+            [{"text": "CHINA R&D   ·   U.S. COMMERCIALIZATION   ·   GLOBAL DISTRIBUTION",
+              "size": 14, "bold": True, "color": TEAL_SOFT}])
+    textbox(s, Inches(0.90), Inches(6.95), Inches(11.5), Inches(0.32),
             [{"text": f"51 CAREERS   ·   CONFIDENTIAL   ·   {n}", "size": 10, "bold": True, "color": RGBColor(0x6B, 0x7C, 0x8F)}])
 
 
