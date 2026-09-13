@@ -421,15 +421,35 @@ def s_solution(prs, n):
         "Make better career decisions",
         "Access professional services",
     ]
+    top, block_h, row_gap = 1.22, 5.66, 0.08
+    row_h = (block_h - 6 * row_gap) / 7
     for i, step in enumerate(steps):
-        y = Inches(1.22) + i * Inches(0.78)
-        round_rect(s, ML, y, Inches(7.60), Inches(0.72), fill=WHITE)
-        rect(s, ML, y, Inches(0.08), Inches(0.72), fill=TEAL)
-        textbox(s, Inches(0.85), y + Inches(0.16), Inches(0.50), Inches(0.42),
-                [{"text": f"{i+1:02d}", "size": 16, "bold": True, "color": TEAL, "font": FONT_D}])
-        textbox(s, Inches(1.45), y + Inches(0.16), Inches(6.40), Inches(0.42),
-                [{"text": step, "size": 17, "bold": True, "color": NAVY}])
-    round_rect(s, Inches(8.40), Inches(1.22), Inches(4.38), Inches(5.66), fill=NAVY)
+        y = top + i * (row_h + row_gap)
+        round_rect(s, ML, Inches(y), Inches(7.55), Inches(row_h), fill=WHITE)
+        rect(s, ML, Inches(y), Inches(0.08), Inches(row_h), fill=TEAL)
+        badge_s = 0.40
+        badge_y = y + (row_h - badge_s) / 2
+        badge = s.shapes.add_shape(
+            MSO_SHAPE.ROUNDED_RECTANGLE,
+            Inches(0.78), Inches(badge_y), Inches(0.56), Inches(badge_s),
+        )
+        fill_solid(badge, TEAL)
+        try:
+            badge.adjustments[0] = 0.25
+        except Exception:
+            pass
+        add_text(
+            badge,
+            [{"text": f"{i+1:02d}", "size": 13, "bold": True, "color": WHITE,
+              "font": FONT_D, "align": PP_ALIGN.CENTER}],
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+        textbox(
+            s, Inches(1.50), Inches(y), Inches(6.40), Inches(row_h),
+            [{"text": step, "size": 16, "bold": True, "color": NAVY}],
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+    round_rect(s, Inches(8.40), Inches(top), Inches(4.38), Inches(block_h), fill=NAVY)
     textbox(s, Inches(8.65), Inches(1.50), Inches(3.95), Inches(0.28),
             [{"text": "STARTING POINT", "size": 12, "bold": True, "color": TEAL}])
     textbox(s, Inches(8.65), Inches(1.90), Inches(3.95), Inches(0.90),
