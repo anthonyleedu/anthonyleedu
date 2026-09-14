@@ -786,33 +786,55 @@ def s_advantages(prs, n):
 def s_leadership(prs, n):
     s = blank(prs)
     header(s, "18  ·  Leadership Team", "51 Careers.AI Executive Leadership",
-           "Founder-led. Globally distributed. Full biographies available in the data room.")
+           "Founder-led. Globally distributed.")
     leaders = [
         ("Rocky Chen", "FOUNDER & CEO",
-         "Founder of 51 Careers and 51 Careers.AI; investor and Managing Director at publicly listed Helio. Decade of international business, capital markets, and global resource integration."),
+         [
+             "Founded 51 Careers in New York in 2016 and built it from a boutique consultancy into a multi-market career-services and technology business.",
+             "Founder of 51 Careers.AI; investor and Managing Director at publicly listed Helio. Architect of the AI-first strategy, including the 2025 Alibaba Cloud AI partnership.",
+         ]),
         ("Stephanie Li", "CO-FOUNDER & CFO",
-         "Co-founder since 2016. U.S. CPA; M.S. Accounting, Pace University. Oversees financial strategy, corporate governance, and sustainable growth."),
+         [
+             "Co-founder since 2016. U.S. CPA; M.S. Accounting, Pace University.",
+             "Oversees financial strategy, corporate governance, and sustainable growth for 51 Careers and 51 Careers.AI.",
+         ]),
         ("Gavin Ding", "CO-FOUNDER, CTO & COO",
-         "Serial entrepreneur (10+ years) across SaaS, AI, and digital business; B.S. Computer Science, ECUST. Leads technology, operations, and AI."),
+         [
+             "Serial entrepreneur (10+ years) across SaaS, AI, and digital business; B.S. Computer Science, ECUST.",
+             "Prior CTO roles and multiple co-founded ventures. Leads technology, operations, and AI.",
+         ]),
         ("Robin Zhu", "HEAD OF PRODUCT",
-         "Leads product strategy, architecture, and development of the AI-powered platform. Former CTO & Director of Product, Ci Finance; senior roles at CPIC, Allinpay, and Noah."),
+         [
+             "Leads product strategy, architecture, and development of the AI-powered career platform.",
+             "Former CTO & Director of Product at Ci Finance; senior product roles at CPIC, Allinpay, and Noah.",
+         ]),
         ("Chris Lin", "NORTH AMERICAN PARTNER",
-         "Full-stack engineer; previously at Amazon Web Services (AWS). B.S. Northwestern; M.S. Robotics. Extensive hiring-panel experience and mentorship."),
+         [
+             "Full-stack engineer; previously at Amazon Web Services (AWS).",
+             "B.S. Northwestern; M.S. Robotics. Extensive hiring-panel experience and professional mentorship.",
+         ]),
         ("Jon Serbin", "SENIOR ADVISOR",
-         "Harvard and MIT; former senior executive at Morgan Stanley; founder of Cedar. 40+ years in tech M&A and capital raising; advises on growth and expansion."),
+         [
+             "Harvard and MIT; former senior executive at Morgan Stanley; founder of Cedar.",
+             "40+ years in technology M&A and capital raising. Advises 51 Careers on growth and expansion.",
+         ]),
     ]
-    for i, (name, title, bio) in enumerate(leaders):
+    for i, (name, title, bullets) in enumerate(leaders):
         col, row = i % 3, i // 3
         x = ML + col * Inches(4.08)
         y = Inches(1.22) + row * Inches(2.80)
         round_rect(s, x, y, Inches(3.92), Inches(2.68), fill=WHITE)
         rect(s, x, y, Inches(0.08), Inches(2.68), fill=TEAL)
-        textbox(s, x + Inches(0.22), y + Inches(0.18), Inches(3.50), Inches(0.40),
-                [{"text": name, "size": 18, "bold": True, "color": NAVY, "font": FONT_D}])
-        textbox(s, x + Inches(0.22), y + Inches(0.58), Inches(3.50), Inches(0.30),
-                [{"text": title, "size": 12, "bold": True, "color": TEAL}])
-        textbox(s, x + Inches(0.22), y + Inches(0.96), Inches(3.50), Inches(1.50),
-                [{"text": bio, "size": 13, "color": BODY}])
+        textbox(s, x + Inches(0.22), y + Inches(0.12), Inches(3.50), Inches(0.34),
+                [{"text": name, "size": 16, "bold": True, "color": NAVY, "font": FONT_D}])
+        textbox(s, x + Inches(0.22), y + Inches(0.46), Inches(3.50), Inches(0.26),
+                [{"text": title, "size": 11, "bold": True, "color": TEAL}])
+        for j, bullet in enumerate(bullets):
+            textbox(
+                s, x + Inches(0.22), y + Inches(0.78) + j * Inches(0.90),
+                Inches(3.50), Inches(0.88),
+                [{"text": f"▸  {bullet}", "size": 12, "color": BODY}],
+            )
     chrome(s, n)
 
 
