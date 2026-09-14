@@ -200,9 +200,18 @@ def badge(slide, l, t, n, size=0.38):
 def num_block(slide, x, y, n, title, body, tw=5.60, bh=0.70):
     badge(slide, x, y, n)
     textbox(slide, x + Inches(0.55), y - Inches(0.02), Inches(tw), Inches(0.30),
-            [{"text": title, "size": 14, "bold": True, "color": TITLE}])
+            [{"text": title, "size": 15, "bold": True, "color": TITLE}])
     textbox(slide, x + Inches(0.55), y + Inches(0.32), Inches(tw), Inches(bh),
-            [{"text": body, "size": 12.5, "color": BODY}])
+            [{"text": body, "size": 13.5, "color": BODY}])
+
+
+def conclusion(slide, kicker: str, line: str):
+    """Full-width closer so the canvas is used through the footer."""
+    round_rect(slide, ML, Inches(6.18), CW, Inches(0.76), fill=PALE)
+    textbox(slide, Inches(1.10), Inches(6.24), CW - Inches(0.40), Inches(0.22),
+            [{"text": kicker.upper(), "size": 11, "bold": True, "color": BLUE}])
+    textbox(slide, Inches(1.10), Inches(6.46), CW - Inches(0.40), Inches(0.40),
+            [{"text": line, "size": 14, "bold": True, "color": TITLE}])
 
 
 # ---------------------------------------------------------------------------
@@ -213,61 +222,80 @@ def s_cover(prs):
     s = prs.slides.add_slide(prs.slide_layouts[6])
     s.shapes.add_picture(COVER_BG, Inches(0), Inches(0), SW, SH)
     logo(s, light=True, cover=True)
-    textbox(s, ML, Inches(2.85), Inches(10.0), Inches(0.32),
+    textbox(s, ML, Inches(1.70), Inches(11.0), Inches(0.28),
             [{"text": "CONFIDENTIAL INVESTOR PRESENTATION", "size": 12, "bold": True, "color": BLUE_LT}])
-    textbox(s, ML, Inches(3.20), Inches(11.20), Inches(0.95),
-            [{"text": "51 Careers.AI", "size": 46, "bold": True, "color": WHITE}])
-    textbox(s, ML, Inches(4.25), Inches(8.90), Inches(0.85),
+    textbox(s, ML, Inches(2.00), Inches(11.20), Inches(0.78),
+            [{"text": "51 Careers.AI", "size": 42, "bold": True, "color": WHITE}])
+    textbox(s, ML, Inches(2.78), Inches(11.20), Inches(0.40),
             [{"text": "Building the global AI career platform — from resume to opportunity.",
-              "size": 17, "color": COVER_SUB}])
-    textbox(s, ML, Inches(5.30), Inches(10.5), Inches(0.30),
+              "size": 18, "color": COVER_SUB}])
+    textbox(s, ML, Inches(3.22), Inches(11.20), Inches(0.28),
             [{"text": "AI RESUME   ×   AI CAREER   ×   GLOBAL TALENT ECOSYSTEM",
-              "size": 11, "color": BLUE_SOFT}])
-    textbox(s, ML, Inches(6.75), Inches(11.0), Inches(0.30),
-            [{"text": "September 2026    |    New York  ·  Shanghai    |    Proprietary and Confidential",
-              "size": 10.5, "color": COVER_META}])
+              "size": 13, "color": BLUE_SOFT}])
+    cards = [
+        ("PRE-MONEY", "RMB 180M", "≈ US$26.7 million"),
+        ("RAISE  ·  10% EQUITY", "RMB 20M", "≈ US$2.97 million"),
+        ("POST-MONEY", "RMB 200M", "≈ US$29.7 million"),
+    ]
+    for i, (lab, big, usd) in enumerate(cards):
+        x = ML + i * Inches(3.91)
+        outlined_rect(s, x, Inches(3.70), Inches(3.71), Inches(1.95), COVER_CARD, COVER_LINE, 0.75)
+        textbox(s, x + Inches(0.22), Inches(3.88), Inches(3.27), Inches(0.28),
+                [{"text": lab, "size": 12, "bold": True, "color": BLUE_LT}])
+        textbox(s, x + Inches(0.22), Inches(4.20), Inches(3.27), Inches(0.70),
+                [{"text": big, "size": 28, "bold": True, "color": WHITE}])
+        textbox(s, x + Inches(0.22), Inches(4.92), Inches(3.27), Inches(0.42),
+                [{"text": usd, "size": 14, "color": COVER_SUB}])
+    textbox(s, ML, Inches(5.85), CW, Inches(0.70),
+            [{"text": "The resume is the entry point. The ambition is the global AI career platform — connecting job seekers, employers, career services, education, and the talent ecosystem.",
+              "size": 15, "color": COVER_SUB}])
+    textbox(s, ML, Inches(6.70), CW, Inches(0.28),
+            [{"text": "September 2026    |    New York  ·  Shanghai    |    China R&D  ·  U.S. commercialization  ·  Global distribution",
+              "size": 12, "color": COVER_META}])
 
 
 def s_exec(prs, n):
     s = blank(prs)
     header(s, "Company Overview", "51 Careers at a Glance",
            "Career services  →  AI Resume  →  AI Career Platform  →  Global Career Marketplace")
-    textbox(s, ML, Inches(1.90), Inches(6.20), Inches(1.55),
-            [{"text": "51 Careers is building a global AI Career Platform to help job seekers create better resumes, discover opportunities, improve job-search outcomes, and access professional career services.",
-              "size": 13.5, "color": BODY}])
-    textbox(s, ML, Inches(3.55), Inches(6.20), Inches(1.20),
-            [{"text": "The entry point is an AI-powered Resume Platform that turns unstructured career experience into professional, quantified, job-specific resumes. This round raises RMB 20 million (10% of RMB 200 million post-money) to accelerate product, acquisition, and global commercialization.",
-              "size": 13.5, "color": BODY}])
-    stats = [
-        ("2016", "founded in New York"),
-        ("RMB 20M", "growth capital this round"),
-        ("10%", "equity at RMB 200M post"),
-        ("RMB 180M", "pre-money valuation"),
-    ]
-    for i, (big, lab) in enumerate(stats):
-        col, row = i % 2, i // 2
-        x = ML + col * Inches(3.15)
-        y = Inches(4.90) + row * Inches(1.00)
-        textbox(s, x, y, Inches(2.95), Inches(0.46),
-                [{"text": big, "size": 26, "bold": True, "color": BLUE}])
-        textbox(s, x, y + Inches(0.44), Inches(2.95), Inches(0.48),
-                [{"text": lab, "size": 10.5, "color": MUTED}])
-    round_rect(s, Inches(7.40), Inches(1.90), Inches(5.03), Inches(4.85), fill=PALE)
-    items = [
+    round_rect(s, ML, Inches(1.88), Inches(6.20), Inches(4.10), fill=PALE)
+    textbox(s, Inches(1.12), Inches(2.04), Inches(5.76), Inches(3.78), [
+        {"text": "Who we are", "size": 14, "bold": True, "color": BLUE, "space_after": 6},
+        {"text": "51 Careers is building a global AI Career Platform to help job seekers create better resumes, discover opportunities, improve job-search outcomes, and access professional career services.", "size": 14, "color": BODY, "space_after": 12},
+        {"text": "Entry point", "size": 14, "bold": True, "color": BLUE, "space_after": 6},
+        {"text": "An AI-powered Resume Platform that turns unstructured career experience into professional, quantified, job-specific resumes.", "size": 14, "color": BODY, "space_after": 12},
+        {"text": "This round", "size": 14, "bold": True, "color": BLUE, "space_after": 6},
+        {"text": "RMB 20 million (10% of RMB 200 million post-money) to accelerate product development, user acquisition, and global commercialization. Pre-money RMB 180 million.", "size": 14, "color": BODY},
+    ])
+    highlights = [
         "AI Resume demo already developed",
         "Initial testing completed with promising results",
-        "Stronger professional positioning vs. general-purpose models in internal tests",
+        "Stronger professional positioning vs. general-purpose models",
         "Product can serve users globally from day one",
-        "Existing career-services business: domain expertise + monetization",
+        "Existing career-services business: expertise + monetization",
         "U.S. market as the first international growth beachhead",
         "Multiple revenue streams beyond AI Resume subscriptions",
-        "RMB 20M to fund product, acquisition, and global go-to-market",
+        "RMB 20M to fund product, acquisition, and global GTM",
     ]
-    textbox(s, Inches(7.60), Inches(2.08), Inches(4.65), Inches(0.32),
+    round_rect(s, Inches(7.30), Inches(1.88), Inches(5.13), Inches(4.10), fill=PALE)
+    textbox(s, Inches(7.50), Inches(2.04), Inches(4.75), Inches(0.32),
             [{"text": "Investment highlights", "size": 14, "bold": True, "color": TITLE}])
-    for i, t in enumerate(items):
-        textbox(s, Inches(7.60), Inches(2.48) + i * Inches(0.50), Inches(4.65), Inches(0.48),
-                [{"text": f"{i+1:02d}   {t}", "size": 12, "color": BODY}])
+    for i, t in enumerate(highlights):
+        textbox(s, Inches(7.50), Inches(2.42) + i * Inches(0.42), Inches(4.75), Inches(0.40),
+                [{"text": f"{i+1:02d}    {t}", "size": 13, "color": BODY}])
+    stats = [
+        ("2016", "Founded in New York"),
+        ("RMB 20M", "Growth capital this round"),
+        ("10%", "Equity at RMB 200M post"),
+        ("RMB 180M", "Pre-money valuation"),
+    ]
+    for i, (big, lab) in enumerate(stats):
+        x = ML + i * Inches(2.91)
+        round_rect(s, x, Inches(6.10), Inches(2.80), Inches(0.84), fill=PALE)
+        textbox(s, x + Inches(0.14), Inches(6.16), Inches(2.52), Inches(0.36),
+                [{"text": big, "size": 16, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.14), Inches(6.50), Inches(2.52), Inches(0.34),
+                [{"text": lab, "size": 12, "color": MUTED}])
     chrome(s, n)
 
 
@@ -283,7 +311,15 @@ def s_problem(prs, n):
         ("Career guidance", "Professional advice remains expensive and consultant-dependent."),
     ]
     for i, (t, b) in enumerate(items):
-        num_block(s, ML, Inches(1.92) + i * Inches(0.95), i + 1, t, b, tw=11.0, bh=0.52)
+        x = ML + i * Inches(2.33)
+        round_rect(s, x, Inches(1.90), Inches(2.21), Inches(4.10), fill=PALE)
+        badge(s, x + Inches(0.18), Inches(2.10), i + 1)
+        textbox(s, x + Inches(0.18), Inches(2.65), Inches(1.85), Inches(0.90),
+                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.18), Inches(3.60), Inches(1.85), Inches(2.15),
+                [{"text": b, "size": 13.5, "color": BODY}])
+    conclusion(s, "The result",
+               "Low-quality applications  →  Low interview rates  →  Long job searches  →  High frustration")
     chrome(s, n)
 
 
@@ -291,28 +327,31 @@ def s_opportunity(prs, n):
     s = blank(prs)
     header(s, "The Opportunity", "AI Is Reshaping Career Services",
            "Generative AI has changed how people create, communicate, and consume professional information.")
-    round_rect(s, ML, Inches(1.95), Inches(5.56), Inches(4.55), fill=PALE)
-    textbox(s, Inches(1.12), Inches(2.15), Inches(5.20), Inches(0.36),
-            [{"text": "Traditional model", "size": 16, "bold": True, "color": TITLE}])
-    textbox(s, Inches(1.12), Inches(2.55), Inches(5.20), Inches(0.28),
-            [{"text": "Human consultant", "size": 12, "bold": True, "color": BLUE}])
+    round_rect(s, ML, Inches(1.90), Inches(5.56), Inches(4.10), fill=PALE)
+    textbox(s, Inches(1.12), Inches(2.10), Inches(5.20), Inches(0.36),
+            [{"text": "Traditional model", "size": 18, "bold": True, "color": TITLE}])
+    textbox(s, Inches(1.12), Inches(2.50), Inches(5.20), Inches(0.28),
+            [{"text": "Human consultant", "size": 13, "bold": True, "color": BLUE}])
     for i, line in enumerate(["Manual analysis", "Manual resume writing", "Manual job search", "High cost", "Limited scalability"]):
-        textbox(s, Inches(1.12), Inches(3.05) + i * Inches(0.58), Inches(5.20), Inches(0.50),
-                [{"text": line, "size": 14, "color": BODY}])
-    round_rect(s, Inches(6.87), Inches(1.95), Inches(5.56), Inches(4.55), fill=PALE)
-    textbox(s, Inches(7.09), Inches(2.15), Inches(5.20), Inches(0.36),
-            [{"text": "AI-enabled model", "size": 16, "bold": True, "color": TITLE}])
-    textbox(s, Inches(7.09), Inches(2.55), Inches(5.20), Inches(0.28),
-            [{"text": "Career platform", "size": 12, "bold": True, "color": BLUE}])
+        textbox(s, Inches(1.12), Inches(3.00) + i * Inches(0.56), Inches(5.20), Inches(0.52),
+                [{"text": line, "size": 16, "color": BODY}])
+    round_rect(s, Inches(6.87), Inches(1.90), Inches(5.56), Inches(4.10), fill=PALE)
+    textbox(s, Inches(7.09), Inches(2.10), Inches(5.20), Inches(0.36),
+            [{"text": "AI-enabled model", "size": 18, "bold": True, "color": TITLE}])
+    textbox(s, Inches(7.09), Inches(2.50), Inches(5.20), Inches(0.28),
+            [{"text": "Career platform", "size": 13, "bold": True, "color": BLUE}])
     for i, line in enumerate(["Automated career analysis", "AI resume generation", "Job matching", "Continuous optimization", "Global scalability"]):
-        textbox(s, Inches(7.09), Inches(3.05) + i * Inches(0.58), Inches(5.20), Inches(0.50),
-                [{"text": line, "size": 14, "color": BODY}])
+        textbox(s, Inches(7.09), Inches(3.00) + i * Inches(0.56), Inches(5.20), Inches(0.52),
+                [{"text": line, "size": 16, "color": BODY}])
+    conclusion(s, "Our opportunity",
+               "Transform high-cost, labor-intensive career services into a scalable AI-powered platform.")
     chrome(s, n)
 
 
 def s_why_now(prs, n):
     s = blank(prs)
-    header(s, "Why Now", "Three Structural Trends Are Converging")
+    header(s, "Why Now", "Three Structural Trends Are Converging",
+           "AI adoption, data-driven hiring, and fragmented career services are moving at the same time.")
     trends = [
         ("Generative AI has reached mass adoption",
          "Consumers are increasingly comfortable using AI for professional and personal tasks. That adoption is the distribution opening for an AI career product."),
@@ -322,13 +361,14 @@ def s_why_now(prs, n):
          "The industry is still dependent on manual services and fragmented providers. That gap is the opening for a scalable AI + human platform."),
     ]
     for i, (t, b) in enumerate(trends):
-        x = ML + i * Inches(3.90)
-        round_rect(s, x, Inches(1.70), Inches(3.70), Inches(4.55), fill=PALE)
-        badge(s, x + Inches(0.22), Inches(1.92), i + 1)
-        textbox(s, x + Inches(0.22), Inches(2.50), Inches(3.26), Inches(1.20),
-                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.22), Inches(3.80), Inches(3.26), Inches(2.20),
-                [{"text": b, "size": 13, "color": BODY}])
+        x = ML + i * Inches(3.91)
+        round_rect(s, x, Inches(1.90), Inches(3.71), Inches(4.10), fill=PALE)
+        badge(s, x + Inches(0.22), Inches(2.10), i + 1)
+        textbox(s, x + Inches(0.22), Inches(2.68), Inches(3.27), Inches(1.15),
+                [{"text": t, "size": 18, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.22), Inches(3.95), Inches(3.27), Inches(1.80),
+                [{"text": b, "size": 14, "color": BODY}])
+    conclusion(s, "51 Careers sits at the intersection", "AI   ×   Employment   ×   Career Services")
     chrome(s, n)
 
 
@@ -345,32 +385,34 @@ def s_tam(prs, n):
          "AI resume and career-assistant demand in China, the U.S., and English-speaking Asia."),
     ]
     for i, (lab, usd, rmb, desc) in enumerate(cards):
-        x = ML + i * Inches(3.90)
-        round_rect(s, x, Inches(1.95), Inches(3.70), Inches(2.85), fill=PALE)
-        textbox(s, x + Inches(0.22), Inches(2.10), Inches(3.26), Inches(0.28),
-                [{"text": lab, "size": 12, "bold": True, "color": BLUE}])
-        textbox(s, x + Inches(0.22), Inches(2.42), Inches(3.26), Inches(0.50),
+        x = ML + i * Inches(3.91)
+        round_rect(s, x, Inches(1.90), Inches(3.71), Inches(2.55), fill=PALE)
+        textbox(s, x + Inches(0.22), Inches(2.04), Inches(3.27), Inches(0.26),
+                [{"text": lab, "size": 13, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.22), Inches(2.32), Inches(3.27), Inches(0.50),
                 [{"text": usd, "size": 26, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.22), Inches(2.94), Inches(3.26), Inches(0.28),
-                [{"text": rmb, "size": 14, "bold": True, "color": BODY}])
-        textbox(s, x + Inches(0.22), Inches(3.30), Inches(3.26), Inches(1.30),
-                [{"text": desc, "size": 13, "color": MUTED}])
+        textbox(s, x + Inches(0.22), Inches(2.84), Inches(3.27), Inches(0.26),
+                [{"text": rmb, "size": 15, "bold": True, "color": BODY}])
+        textbox(s, x + Inches(0.22), Inches(3.16), Inches(3.27), Inches(1.10),
+                [{"text": desc, "size": 13.5, "color": MUTED}])
+    round_rect(s, ML, Inches(4.58), CW, Inches(1.42), fill=PALE)
+    textbox(s, Inches(1.12), Inches(4.68), CW - Inches(0.44), Inches(0.24),
+            [{"text": "51 CAREERS  ·  2027E–2029E REVENUE", "size": 12, "bold": True, "color": BLUE}])
     kpis = [
         ("2027E", "US$ 2.0M", "≈ RMB 13.5M"),
         ("2028E", "US$ 8.0M", "≈ RMB 53.8M"),
         ("2029E", "US$ 28.0M", "≈ RMB 188.4M"),
     ]
     for i, (yr, a, b) in enumerate(kpis):
-        x = ML + i * Inches(3.90)
-        textbox(s, x, Inches(5.00), Inches(3.70), Inches(0.26),
-                [{"text": yr, "size": 12, "bold": True, "color": BLUE}])
-        textbox(s, x, Inches(5.28), Inches(3.70), Inches(0.46),
-                [{"text": a, "size": 24, "bold": True, "color": TITLE}])
-        textbox(s, x, Inches(5.76), Inches(3.70), Inches(0.28),
+        x = Inches(1.12) + i * Inches(3.80)
+        textbox(s, x, Inches(4.98), Inches(3.50), Inches(0.22),
+                [{"text": yr, "size": 13, "bold": True, "color": BLUE}])
+        textbox(s, x, Inches(5.20), Inches(3.50), Inches(0.42),
+                [{"text": a, "size": 22, "bold": True, "color": TITLE}])
+        textbox(s, x, Inches(5.62), Inches(3.50), Inches(0.26),
                 [{"text": b, "size": 13, "color": MUTED}])
-    textbox(s, ML, Inches(6.20), CW, Inches(0.70),
-            [{"text": "Logic: global job seekers  →  addressable AI Resume users  →  paid conversion  →  stacked revenue (AI + services + commission + B2B + ads).",
-              "size": 12.5, "color": MUTED}])
+    conclusion(s, "Logic",
+               "Global job seekers  →  addressable AI Resume users  →  paid conversion  →  stacked revenue (AI + services + commission + B2B + ads).")
     chrome(s, n)
 
 
@@ -387,51 +429,55 @@ def s_solution(prs, n):
         "Make better career decisions",
         "Access professional services",
     ]
+    top, block_h, row_gap = 1.90, 5.00, 0.08
+    row_h = (block_h - 6 * row_gap) / 7
     for i, step in enumerate(steps):
-        y = Inches(1.90) + i * Inches(0.70)
-        badge(s, ML, y + Inches(0.08), i + 1)
-        textbox(s, Inches(1.50), y, Inches(6.40), Inches(0.58),
+        y = top + i * (row_h + row_gap)
+        round_rect(s, ML, Inches(y), Inches(7.15), Inches(row_h), fill=PALE)
+        badge(s, Inches(1.08), Inches(y + (row_h - 0.38) / 2), i + 1)
+        textbox(s, Inches(1.62), Inches(y), Inches(6.20), Inches(row_h),
                 [{"text": step, "size": 16, "bold": True, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
-    round_rect(s, Inches(8.20), Inches(1.90), Inches(4.23), Inches(4.80), fill=PALE)
-    textbox(s, Inches(8.42), Inches(2.12), Inches(3.80), Inches(0.28),
-            [{"text": "Starting point", "size": 12, "bold": True, "color": BLUE}])
-    textbox(s, Inches(8.42), Inches(2.48), Inches(3.80), Inches(0.70),
+    round_rect(s, Inches(8.25), Inches(top), Inches(4.18), Inches(block_h), fill=PALE)
+    textbox(s, Inches(8.47), Inches(2.08), Inches(3.76), Inches(0.26),
+            [{"text": "Starting point", "size": 13, "bold": True, "color": BLUE}])
+    textbox(s, Inches(8.47), Inches(2.42), Inches(3.76), Inches(0.70),
             [{"text": "AI Resume", "size": 28, "bold": True, "color": TITLE}])
-    textbox(s, Inches(8.42), Inches(3.30), Inches(3.80), Inches(3.10),
+    textbox(s, Inches(8.47), Inches(3.25), Inches(3.76), Inches(3.40),
             [{"text": "The resume is the first touchpoint between the user and the 51 Careers ecosystem — the on-ramp to AI Career tools, services, matching, and the marketplace.\n\nOne product. One profile. Multiple monetization paths across the career journey.",
-              "size": 13.5, "color": BODY}])
+              "size": 15, "color": BODY}])
     chrome(s, n)
 
 
 def s_product(prs, n):
     s = blank(prs)
     header(s, "Product", "From Career Experience to Quantified Professional Value")
-    round_rect(s, ML, Inches(1.70), Inches(3.70), Inches(5.00), fill=PALE)
-    textbox(s, Inches(1.12), Inches(1.90), Inches(3.30), Inches(0.28),
-            [{"text": "Users provide", "size": 12, "bold": True, "color": BLUE}])
+    round_rect(s, ML, Inches(1.55), Inches(3.70), Inches(5.40), fill=PALE)
+    textbox(s, Inches(1.12), Inches(1.72), Inches(3.30), Inches(0.28),
+            [{"text": "Users provide", "size": 13, "bold": True, "color": BLUE}])
     for i, item in enumerate(["Education", "Work experience", "Projects", "Skills", "Achievements", "Career goals", "Target job descriptions"]):
-        textbox(s, Inches(1.12), Inches(2.30) + i * Inches(0.58), Inches(3.30), Inches(0.52),
-                [{"text": item, "size": 14, "color": BODY}])
-    round_rect(s, Inches(4.80), Inches(1.70), Inches(3.70), Inches(5.00), fill=PALE)
-    textbox(s, Inches(5.02), Inches(1.90), Inches(3.30), Inches(0.28),
-            [{"text": "Our AI generates", "size": 12, "bold": True, "color": BLUE}])
-    textbox(s, Inches(5.02), Inches(2.40), Inches(3.30), Inches(2.40), [
-        {"text": "Professional", "size": 22, "bold": True, "color": TITLE, "space_after": 8},
-        {"text": "+  Quantified", "size": 22, "bold": True, "color": TITLE, "space_after": 8},
-        {"text": "+  Job-specific", "size": 22, "bold": True, "color": TITLE, "space_after": 8},
-        {"text": "resume content", "size": 14, "color": MUTED},
+        textbox(s, Inches(1.12), Inches(2.12) + i * Inches(0.66), Inches(3.30), Inches(0.58),
+                [{"text": item, "size": 16, "color": TITLE}])
+    round_rect(s, Inches(4.80), Inches(1.55), Inches(3.70), Inches(5.40), fill=PALE)
+    textbox(s, Inches(5.02), Inches(1.72), Inches(3.30), Inches(0.28),
+            [{"text": "Our AI generates", "size": 13, "bold": True, "color": BLUE}])
+    textbox(s, Inches(5.02), Inches(2.20), Inches(3.30), Inches(2.60), [
+        {"text": "Professional", "size": 24, "bold": True, "color": TITLE, "space_after": 10},
+        {"text": "+  Quantified", "size": 24, "bold": True, "color": TITLE, "space_after": 10},
+        {"text": "+  Job-specific", "size": 24, "bold": True, "color": TITLE, "space_after": 10},
+        {"text": "resume content", "size": 16, "color": MUTED},
     ])
-    textbox(s, Inches(5.02), Inches(5.10), Inches(3.30), Inches(1.40),
+    textbox(s, Inches(5.02), Inches(5.20), Inches(3.30), Inches(1.50),
             [{"text": "Optimized for ATS, role, employer, and geography — so one career profile can serve many applications.",
-              "size": 13, "color": BODY}])
+              "size": 14, "color": BODY}])
     caps = [
         "AI Resume Generation", "Resume Optimization", "Job-Specific Customization", "Achievement Quantification",
         "ATS Optimization", "Multiple Resume Versions", "Cover Letter Generation", "Career Profile Creation",
     ]
     for i, cap in enumerate(caps):
-        y = Inches(1.70) + i * Inches(0.62)
-        textbox(s, Inches(8.70), y, Inches(3.70), Inches(0.58),
-                [{"text": cap, "size": 13.5, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
+        y = Inches(1.55) + i * Inches(0.675)
+        round_rect(s, Inches(8.70), y, Inches(3.73), Inches(0.62), fill=PALE)
+        textbox(s, Inches(8.88), y, Inches(3.40), Inches(0.62),
+                [{"text": cap, "size": 14, "bold": True, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
     chrome(s, n)
 
 
@@ -444,56 +490,56 @@ def s_validation(prs, n):
         ("Internal benchmark testing", "Compared against direct outputs from leading general-purpose AI models."),
     ]
     for i, (t, b) in enumerate(checks):
-        x = ML + i * Inches(3.90)
-        round_rect(s, x, Inches(1.70), Inches(3.70), Inches(1.85), fill=PALE)
-        textbox(s, x + Inches(0.22), Inches(1.88), Inches(3.26), Inches(0.40),
-                [{"text": t, "size": 15, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.22), Inches(2.32), Inches(3.26), Inches(1.05),
-                [{"text": b, "size": 13, "color": BODY}])
-    textbox(s, ML, Inches(3.75), CW, Inches(0.30),
-            [{"text": "Initial testing indicates stronger performance in", "size": 12, "bold": True, "color": BLUE}])
+        x = ML + i * Inches(3.91)
+        round_rect(s, x, Inches(1.55), Inches(3.71), Inches(1.95), fill=PALE)
+        textbox(s, x + Inches(0.22), Inches(1.70), Inches(3.27), Inches(0.40),
+                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.22), Inches(2.18), Inches(3.27), Inches(1.10),
+                [{"text": b, "size": 14, "color": BODY}])
+    textbox(s, ML, Inches(3.64), CW, Inches(0.28),
+            [{"text": "Initial testing indicates stronger performance in", "size": 13, "bold": True, "color": BLUE}])
     dims = ["Professional positioning", "Achievement quantification", "Job relevance",
             "Career-experience extraction", "Resume structure"]
     for i, d in enumerate(dims):
-        x = ML + i * Inches(2.32)
-        round_rect(s, x, Inches(4.15), Inches(2.20), Inches(1.20), fill=PALE)
-        textbox(s, x + Inches(0.12), Inches(4.40), Inches(1.96), Inches(0.80),
-                [{"text": d, "size": 13, "bold": True, "color": TITLE}])
-    textbox(s, ML, Inches(5.55), CW, Inches(1.30),
-            [{"text": "Current results are based on internal testing. The next stage is larger-scale, structured, blind A/B testing to establish statistically meaningful benchmarks versus general-purpose models.",
-              "size": 13.5, "color": MUTED}])
+        x = ML + i * Inches(2.33)
+        round_rect(s, x, Inches(4.00), Inches(2.21), Inches(1.95), fill=PALE)
+        textbox(s, x + Inches(0.14), Inches(4.45), Inches(1.93), Inches(1.15),
+                [{"text": d, "size": 15, "bold": True, "color": TITLE}])
+    conclusion(s, "Important note",
+               "Current results are internal. Next: larger-scale, structured, blind A/B tests versus general-purpose models.")
     chrome(s, n)
 
 
 def s_tech(prs, n):
     s = blank(prs)
     header(s, "Technology", "We Are Not Simply Building an LLM Wrapper")
-    textbox(s, ML, Inches(1.70), CW, Inches(0.40),
+    round_rect(s, ML, Inches(1.55), CW, Inches(0.78), fill=PALE)
+    textbox(s, Inches(1.12), Inches(1.70), CW - Inches(0.44), Inches(0.50),
             [{"text": "LLM  +  Career Knowledge  +  Resume Framework  +  Job Intelligence  +  User Data",
-              "size": 16, "bold": True, "color": BLUE}])
+              "size": 16, "bold": True, "color": TITLE}])
     chips = [
         "Career-experience extraction", "Achievement quantification", "Job-description analysis", "Resume optimization",
         "Industry terminology", "Role-specific requirements", "Geographic resume conventions", "ATS optimization",
     ]
     for i, c in enumerate(chips):
         col, row = i % 4, i // 4
-        x = ML + col * Inches(2.90)
-        y = Inches(2.30) + row * Inches(0.95)
-        round_rect(s, x, y, Inches(2.75), Inches(0.82), fill=PALE)
-        textbox(s, x + Inches(0.16), y + Inches(0.18), Inches(2.43), Inches(0.50),
-                [{"text": c, "size": 13, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
+        x = ML + col * Inches(2.91)
+        y = Inches(2.50) + row * Inches(1.05)
+        round_rect(s, x, y, Inches(2.80), Inches(0.92), fill=PALE)
+        textbox(s, x + Inches(0.16), y + Inches(0.20), Inches(2.48), Inches(0.54),
+                [{"text": c, "size": 14, "bold": True, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
     loop = ["User input", "AI analysis", "Resume gen.", "Application", "Feedback", "Model upgrade", "Better outcomes", "More users"]
-    textbox(s, ML, Inches(4.40), CW, Inches(0.28),
-            [{"text": "Data feedback loop", "size": 12, "bold": True, "color": BLUE}])
+    textbox(s, ML, Inches(4.70), CW, Inches(0.26),
+            [{"text": "Data feedback loop", "size": 13, "bold": True, "color": BLUE}])
     for i, step in enumerate(loop):
         x = ML + i * Inches(1.45)
-        textbox(s, x, Inches(4.78), Inches(1.38), Inches(0.28),
-                [{"text": f"{i+1:02d}", "size": 11, "bold": True, "color": BLUE}])
-        textbox(s, x, Inches(5.08), Inches(1.38), Inches(0.70),
+        round_rect(s, x, Inches(5.02), Inches(1.35), Inches(0.98), fill=PALE)
+        textbox(s, x + Inches(0.08), Inches(5.10), Inches(1.20), Inches(0.26),
+                [{"text": f"{i+1:02d}", "size": 12, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.08), Inches(5.38), Inches(1.20), Inches(0.52),
                 [{"text": step, "size": 12, "bold": True, "color": TITLE}])
-    textbox(s, ML, Inches(5.90), CW, Inches(0.90),
-            [{"text": "Each cycle compounds proprietary career intelligence that generic chat models do not accumulate.",
-              "size": 13.5, "color": MUTED}])
+    conclusion(s, "Compounding advantage",
+               "Each cycle builds proprietary career intelligence that generic chat models do not accumulate.")
     chrome(s, n)
 
 
@@ -505,16 +551,13 @@ def s_global_market(prs, n):
                "Singapore", "Hong Kong", "China", "Europe", "Middle East"]
     for i, m in enumerate(markets):
         col, row = i % 5, i // 5
-        x = ML + col * Inches(2.32)
-        y = Inches(1.95) + row * Inches(1.70)
-        round_rect(s, x, y, Inches(2.18), Inches(1.50), fill=PALE)
-        textbox(s, x + Inches(0.12), y + Inches(0.48), Inches(1.94), Inches(0.60),
-                [{"text": m, "size": 14, "bold": True, "color": TITLE}])
-    textbox(s, ML, Inches(5.50), CW, Inches(0.32),
-            [{"text": "The universal question", "size": 12, "bold": True, "color": BLUE}])
-    textbox(s, ML, Inches(5.85), CW, Inches(0.90),
-            [{"text": "“How do I present my professional value to employers?”  That shared problem gives AI Resume a fundamentally different scalability profile from traditional, local career-consulting businesses.",
-              "size": 14, "color": BODY}])
+        x = ML + col * Inches(2.33)
+        y = Inches(1.90) + row * Inches(2.00)
+        round_rect(s, x, y, Inches(2.21), Inches(1.85), fill=PALE)
+        textbox(s, x + Inches(0.12), y + Inches(0.60), Inches(1.97), Inches(0.70),
+                [{"text": m, "size": 16, "bold": True, "color": TITLE}])
+    conclusion(s, "The universal question",
+               "“How do I present my professional value to employers?” — a global problem with a scalable product.")
     chrome(s, n)
 
 
@@ -531,11 +574,12 @@ def s_strategy(prs, n):
         ("Target employer", "Startup / SME / Enterprise / Multinational"),
     ]
     for i, (t, b) in enumerate(dims):
-        y = Inches(1.65) + i * Inches(1.02)
-        textbox(s, ML, y, Inches(2.40), Inches(0.85),
-                [{"text": t, "size": 16, "bold": True, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
-        textbox(s, Inches(3.50), y, Inches(8.90), Inches(0.85),
-                [{"text": b, "size": 14, "color": BODY}], valign=MSO_ANCHOR.MIDDLE)
+        y = Inches(1.55) + i * Inches(1.06)
+        round_rect(s, ML, y, CW, Inches(0.96), fill=PALE)
+        textbox(s, Inches(1.12), y + Inches(0.12), Inches(2.70), Inches(0.72),
+                [{"text": t, "size": 18, "bold": True, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
+        textbox(s, Inches(4.00), y + Inches(0.12), Inches(8.10), Inches(0.72),
+                [{"text": b, "size": 15, "color": BODY}], valign=MSO_ANCHOR.MIDDLE)
     chrome(s, n)
 
 
@@ -549,21 +593,22 @@ def s_phases(prs, n):
         ("Phase 4", "Global Platform", "Job seekers × employers × services × education × talent ecosystem"),
     ]
     for i, (p, t, b) in enumerate(phases):
-        x = ML + i * Inches(2.90)
-        round_rect(s, x, Inches(1.70), Inches(2.75), Inches(3.20), fill=PALE)
-        badge(s, x + Inches(0.18), Inches(1.90), i + 1)
-        textbox(s, x + Inches(0.18), Inches(2.48), Inches(2.40), Inches(0.28),
-                [{"text": p, "size": 12, "bold": True, "color": BLUE}])
-        textbox(s, x + Inches(0.18), Inches(2.80), Inches(2.40), Inches(0.80),
-                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.18), Inches(3.65), Inches(2.40), Inches(1.05),
-                [{"text": b, "size": 13, "color": BODY}])
+        x = ML + i * Inches(2.91)
+        round_rect(s, x, Inches(1.55), Inches(2.80), Inches(3.40), fill=PALE)
+        badge(s, x + Inches(0.18), Inches(1.72), i + 1)
+        textbox(s, x + Inches(0.18), Inches(2.28), Inches(2.44), Inches(0.28),
+                [{"text": p, "size": 13, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.18), Inches(2.62), Inches(2.44), Inches(0.80),
+                [{"text": t, "size": 18, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.18), Inches(3.50), Inches(2.44), Inches(1.20),
+                [{"text": b, "size": 14, "color": BODY}])
     caps = ["Resume creation", "Job discovery", "Job matching", "Application optimization",
             "Cover letters", "Interview prep", "Career planning"]
     for i, c in enumerate(caps):
-        x = ML + i * Inches(1.65)
-        textbox(s, x, Inches(5.20), Inches(1.55), Inches(1.50),
-                [{"text": c, "size": 12, "color": MUTED}])
+        x = ML + i * Inches(1.66)
+        round_rect(s, x, Inches(5.10), Inches(1.55), Inches(1.70), fill=PALE)
+        textbox(s, x + Inches(0.08), Inches(5.45), Inches(1.39), Inches(1.10),
+                [{"text": c, "size": 13, "bold": True, "color": TITLE}])
     chrome(s, n)
 
 
@@ -580,14 +625,14 @@ def s_model(prs, n):
     ]
     for i, (t, b) in enumerate(streams):
         col, row = i % 3, i // 3
-        x = ML + col * Inches(3.90)
-        y = Inches(1.70) + row * Inches(2.50)
-        round_rect(s, x, y, Inches(3.70), Inches(2.30), fill=PALE)
+        x = ML + col * Inches(3.91)
+        y = Inches(1.55) + row * Inches(2.65)
+        round_rect(s, x, y, Inches(3.71), Inches(2.50), fill=PALE)
         badge(s, x + Inches(0.20), y + Inches(0.22), i + 1)
         textbox(s, x + Inches(0.72), y + Inches(0.22), Inches(2.78), Inches(0.40),
-                [{"text": t, "size": 15, "bold": True, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
-        textbox(s, x + Inches(0.20), y + Inches(0.85), Inches(3.30), Inches(1.20),
-                [{"text": b, "size": 13.5, "color": BODY}])
+                [{"text": t, "size": 16, "bold": True, "color": TITLE}], valign=MSO_ANCHOR.MIDDLE)
+        textbox(s, x + Inches(0.20), y + Inches(0.85), Inches(3.30), Inches(1.40),
+                [{"text": b, "size": 15, "color": BODY}])
     chrome(s, n)
 
 
@@ -598,16 +643,15 @@ def s_flywheel(prs, n):
              "Career services", "Job matching", "Recruitment / referral", "Advertising", "Employer services"]
     for i, st in enumerate(steps):
         col, row = i % 5, i // 5
-        x = ML + col * Inches(2.32)
-        y = Inches(1.70) + row * Inches(1.85)
-        round_rect(s, x, y, Inches(2.18), Inches(1.70), fill=PALE)
-        textbox(s, x + Inches(0.14), y + Inches(0.18), Inches(1.90), Inches(0.30),
-                [{"text": f"{i+1:02d}", "size": 12, "bold": True, "color": BLUE}])
-        textbox(s, x + Inches(0.14), y + Inches(0.55), Inches(1.90), Inches(0.95),
-                [{"text": st, "size": 14, "bold": True, "color": TITLE}])
-    textbox(s, ML, Inches(5.55), CW, Inches(1.20),
-            [{"text": "Revenue is not limited to the first AI Resume transaction. The long-term objective is to maximize lifetime value per career user.",
-              "size": 15, "color": BODY}])
+        x = ML + col * Inches(2.33)
+        y = Inches(1.55) + row * Inches(2.20)
+        round_rect(s, x, y, Inches(2.21), Inches(2.05), fill=PALE)
+        textbox(s, x + Inches(0.14), y + Inches(0.18), Inches(1.93), Inches(0.32),
+                [{"text": f"{i+1:02d}", "size": 14, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.14), y + Inches(0.60), Inches(1.93), Inches(1.20),
+                [{"text": st, "size": 16, "bold": True, "color": TITLE}])
+    conclusion(s, "Therefore",
+               "Revenue is not limited to the first AI Resume transaction. The objective is lifetime value per career user.")
     chrome(s, n)
 
 
@@ -620,16 +664,15 @@ def s_acquisition(prs, n):
         ("Offline", ["Universities", "Career fairs", "Student organizations", "Professional orgs", "Community events", "Employer events"]),
     ]
     for i, (t, items) in enumerate(cols):
-        x = ML + i * Inches(3.90)
-        round_rect(s, x, Inches(1.70), Inches(3.70), Inches(4.35), fill=PALE)
-        textbox(s, x + Inches(0.22), Inches(1.88), Inches(3.26), Inches(0.36),
-                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
+        x = ML + i * Inches(3.91)
+        round_rect(s, x, Inches(1.55), Inches(3.71), Inches(4.45), fill=PALE)
+        textbox(s, x + Inches(0.22), Inches(1.72), Inches(3.27), Inches(0.36),
+                [{"text": t, "size": 18, "bold": True, "color": TITLE}])
         for j, it in enumerate(items):
-            textbox(s, x + Inches(0.22), Inches(2.36) + j * Inches(0.48), Inches(3.26), Inches(0.44),
-                    [{"text": it, "size": 13.5, "color": BODY}])
-    textbox(s, ML, Inches(6.20), CW, Inches(0.65),
-            [{"text": "Core growth strategy: Free AI product  →  Low-friction acquisition  →  Registration  →  Engagement  →  Monetization",
-              "size": 13.5, "color": MUTED}])
+            textbox(s, x + Inches(0.22), Inches(2.20) + j * Inches(0.52), Inches(3.27), Inches(0.48),
+                    [{"text": it, "size": 15, "color": BODY}])
+    conclusion(s, "Core growth strategy",
+               "Free AI product  →  Low-friction acquisition  →  Registration  →  Engagement  →  Monetization")
     chrome(s, n)
 
 
@@ -645,13 +688,13 @@ def s_geo(prs, n):
          "Once product-market fit is established: North America → UK → Australia → Europe → Asia → other markets."),
     ]
     for i, (num, t, b) in enumerate(geos):
-        y = Inches(1.75) + i * Inches(1.65)
-        round_rect(s, ML, y, CW, Inches(1.50), fill=PALE)
+        y = Inches(1.55) + i * Inches(1.78)
+        round_rect(s, ML, y, CW, Inches(1.66), fill=PALE)
         badge(s, Inches(1.12), y + Inches(0.22), num)
-        textbox(s, Inches(1.70), y + Inches(0.18), Inches(10.4), Inches(0.40),
-                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
-        textbox(s, Inches(1.70), y + Inches(0.62), Inches(10.4), Inches(0.70),
-                [{"text": b, "size": 14, "color": BODY}])
+        textbox(s, Inches(1.70), y + Inches(0.18), Inches(10.4), Inches(0.42),
+                [{"text": t, "size": 18, "bold": True, "color": TITLE}])
+        textbox(s, Inches(1.70), y + Inches(0.68), Inches(10.4), Inches(0.78),
+                [{"text": b, "size": 15, "color": BODY}])
     chrome(s, n)
 
 
@@ -666,16 +709,15 @@ def s_compete(prs, n):
     ]
     for i, (t, b) in enumerate(quads):
         col, row = i % 2, i // 2
-        x = ML + col * Inches(5.85)
-        y = Inches(1.70) + row * Inches(1.90)
-        round_rect(s, x, y, Inches(5.65), Inches(1.72), fill=PALE)
-        textbox(s, x + Inches(0.24), y + Inches(0.22), Inches(5.17), Inches(0.36),
-                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.24), y + Inches(0.70), Inches(5.17), Inches(0.80),
-                [{"text": b, "size": 14, "color": BODY}])
-    textbox(s, ML, Inches(5.70), CW, Inches(1.10),
-            [{"text": "51 Careers combines AI, career expertise, services, and marketplace. We are not competing only with resume builders — we are building career infrastructure.",
-              "size": 14.5, "color": BODY}])
+        x = ML + col * Inches(5.87)
+        y = Inches(1.55) + row * Inches(2.20)
+        round_rect(s, x, y, Inches(5.66), Inches(2.05), fill=PALE)
+        textbox(s, x + Inches(0.24), y + Inches(0.28), Inches(5.18), Inches(0.42),
+                [{"text": t, "size": 18, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.24), y + Inches(0.82), Inches(5.18), Inches(0.95),
+                [{"text": b, "size": 16, "color": BODY}])
+    conclusion(s, "51 Careers",
+               "AI + career expertise + services + marketplace. We are building career infrastructure, not another resume builder.")
     chrome(s, n)
 
 
@@ -691,8 +733,15 @@ def s_advantages(prs, n):
         ("Platform potential", "The long-term opportunity extends beyond resumes into the career ecosystem."),
     ]
     for i, (t, b) in enumerate(items):
-        y = Inches(1.65) + i * Inches(0.85)
-        num_block(s, ML, y, i + 1, t, b, tw=11.0, bh=0.42)
+        col, row = i % 3, i // 3
+        x = ML + col * Inches(3.91)
+        y = Inches(1.55) + row * Inches(2.65)
+        round_rect(s, x, y, Inches(3.71), Inches(2.50), fill=PALE)
+        badge(s, x + Inches(0.20), y + Inches(0.22), i + 1)
+        textbox(s, x + Inches(0.20), y + Inches(0.78), Inches(3.30), Inches(0.70),
+                [{"text": t, "size": 16, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.20), y + Inches(1.52), Inches(3.30), Inches(0.78),
+                [{"text": b, "size": 14, "color": BODY}])
     chrome(s, n)
 
 
@@ -716,36 +765,36 @@ def s_leadership(prs, n):
     ]
     for i, (name, title, bio) in enumerate(leaders):
         col, row = i % 3, i // 3
-        x = ML + col * Inches(3.90)
-        y = Inches(1.90) + row * Inches(2.50)
-        round_rect(s, x, y, Inches(3.70), Inches(2.35), fill=PALE)
-        textbox(s, x + Inches(0.18), y + Inches(0.14), Inches(3.34), Inches(0.34),
-                [{"text": name, "size": 15, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.18), y + Inches(0.46), Inches(3.34), Inches(0.26),
-                [{"text": title.upper(), "size": 10, "bold": True, "color": BLUE}])
-        textbox(s, x + Inches(0.18), y + Inches(0.78), Inches(3.34), Inches(1.42),
-                [{"text": bio, "size": 11, "color": BODY}])
+        x = ML + col * Inches(3.91)
+        y = Inches(1.88) + row * Inches(2.52)
+        round_rect(s, x, y, Inches(3.71), Inches(2.40), fill=PALE)
+        textbox(s, x + Inches(0.18), y + Inches(0.12), Inches(3.35), Inches(0.34),
+                [{"text": name, "size": 16, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.18), y + Inches(0.44), Inches(3.35), Inches(0.24),
+                [{"text": title.upper(), "size": 11, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.18), y + Inches(0.72), Inches(3.35), Inches(1.54),
+                [{"text": bio, "size": 12, "color": BODY}])
     chrome(s, n)
 
 
 def s_team(prs, n):
     s = blank(prs)
     header(s, "Team", "Core Founding Team in Place  ·  Planned Hiring Funded by This Round")
-    round_rect(s, ML, Inches(1.70), Inches(3.70), Inches(4.95), fill=PALE)
-    textbox(s, Inches(1.12), Inches(1.90), Inches(3.30), Inches(0.26),
-            [{"text": "Existing", "size": 12, "bold": True, "color": BLUE}])
-    textbox(s, Inches(1.12), Inches(2.22), Inches(3.30), Inches(0.36),
-            [{"text": "Founding team", "size": 18, "bold": True, "color": TITLE}])
-    textbox(s, Inches(1.12), Inches(2.70), Inches(3.30), Inches(0.70),
-            [{"text": "4", "size": 40, "bold": True, "color": BLUE}])
+    round_rect(s, ML, Inches(1.55), Inches(3.70), Inches(5.40), fill=PALE)
+    textbox(s, Inches(1.12), Inches(1.72), Inches(3.30), Inches(0.24),
+            [{"text": "Existing", "size": 13, "bold": True, "color": BLUE}])
+    textbox(s, Inches(1.12), Inches(2.00), Inches(3.30), Inches(0.36),
+            [{"text": "Founding team", "size": 20, "bold": True, "color": TITLE}])
+    textbox(s, Inches(1.12), Inches(2.42), Inches(3.30), Inches(0.70),
+            [{"text": "4", "size": 44, "bold": True, "color": BLUE}])
     for i, line in enumerate([
         "In place today",
         "Product, capital, and go-to-market leadership",
         "Additional roles are not yet hired",
         "This round funds the planned operating team",
     ]):
-        textbox(s, Inches(1.12), Inches(3.50) + i * Inches(0.70), Inches(3.30), Inches(0.62),
-                [{"text": line, "size": 13, "color": BODY}])
+        textbox(s, Inches(1.12), Inches(3.25) + i * Inches(0.82), Inches(3.30), Inches(0.74),
+                [{"text": line, "size": 14, "color": BODY}])
     planned = [
         ("China technology", "7",
          [("Product Manager", "1"), ("Designer", "1"), ("QA / Testing", "1"),
@@ -757,18 +806,18 @@ def s_team(prs, n):
     ]
     for i, (title, count, roles) in enumerate(planned):
         x = Inches(4.80) + i * Inches(2.75)
-        round_rect(s, x, Inches(1.70), Inches(2.60), Inches(4.95), fill=PALE)
-        textbox(s, x + Inches(0.16), Inches(1.90), Inches(2.28), Inches(0.24),
-                [{"text": "Planned", "size": 11, "bold": True, "color": BLUE}])
-        textbox(s, x + Inches(0.16), Inches(2.18), Inches(2.28), Inches(0.55),
-                [{"text": title, "size": 14, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.16), Inches(2.72), Inches(2.28), Inches(0.42),
-                [{"text": count, "size": 24, "bold": True, "color": BLUE}])
+        round_rect(s, x, Inches(1.55), Inches(2.60), Inches(5.40), fill=PALE)
+        textbox(s, x + Inches(0.16), Inches(1.70), Inches(2.28), Inches(0.22),
+                [{"text": "Planned", "size": 12, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.16), Inches(1.96), Inches(2.28), Inches(0.50),
+                [{"text": title, "size": 15, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.16), Inches(2.48), Inches(2.28), Inches(0.42),
+                [{"text": count, "size": 26, "bold": True, "color": BLUE}])
         for j, (role, nhead) in enumerate(roles):
-            textbox(s, x + Inches(0.16), Inches(3.28) + j * Inches(0.48), Inches(1.70), Inches(0.44),
-                    [{"text": role, "size": 11, "color": BODY}])
-            textbox(s, x + Inches(1.80), Inches(3.28) + j * Inches(0.48), Inches(0.62), Inches(0.44),
-                    [{"text": nhead, "size": 11, "bold": True, "color": BLUE, "align": PP_ALIGN.RIGHT}])
+            textbox(s, x + Inches(0.16), Inches(3.05) + j * Inches(0.58), Inches(1.70), Inches(0.52),
+                    [{"text": role, "size": 12, "color": BODY}])
+            textbox(s, x + Inches(1.80), Inches(3.05) + j * Inches(0.58), Inches(0.62), Inches(0.52),
+                    [{"text": nhead, "size": 12, "bold": True, "color": BLUE, "align": PP_ALIGN.RIGHT}])
     chrome(s, n)
 
 
@@ -788,14 +837,14 @@ def s_funds(prs, n):
     data = CategoryChartData()
     data.categories = [a[0] for a in alloc]
     data.add_series("Use of Funds", (40, 22.5, 12.5, 7.5, 7.5, 5, 5))
-    chart = s.shapes.add_chart(XL_CHART_TYPE.DOUGHNUT, Inches(0.50), Inches(1.85), Inches(5.10), Inches(3.35), data).chart
+    chart = s.shapes.add_chart(XL_CHART_TYPE.DOUGHNUT, Inches(0.40), Inches(1.88), Inches(5.20), Inches(2.95), data).chart
     chart.has_legend = False
     for i, (name, pct, amt) in enumerate(alloc):
-        y = Inches(1.85) + i * Inches(0.48)
-        textbox(s, Inches(5.70), y, Inches(4.70), Inches(0.44),
-                [{"text": name, "size": 13, "color": BODY}])
-        textbox(s, Inches(10.40), y, Inches(1.95), Inches(0.44),
-                [{"text": f"{pct}   ·   {amt}", "size": 13, "bold": True, "color": TITLE, "align": PP_ALIGN.RIGHT}])
+        y = Inches(1.90) + i * Inches(0.42)
+        textbox(s, Inches(5.60), y, Inches(4.80), Inches(0.40),
+                [{"text": name, "size": 14, "color": BODY}])
+        textbox(s, Inches(10.35), y, Inches(2.08), Inches(0.40),
+                [{"text": f"{pct}   ·   {amt}", "size": 14, "bold": True, "color": TITLE, "align": PP_ALIGN.RIGHT}])
     kpis = [
         ("Personnel", "RMB 5.1M", "Planned hiring — not current payroll"),
         ("China ads", "RMB 1.0M", "Planned annual spend"),
@@ -803,13 +852,14 @@ def s_funds(prs, n):
         ("P+A budget", "RMB 13.1M", "Planned personnel + advertising"),
     ]
     for i, (lab, big, sub) in enumerate(kpis):
-        x = ML + i * Inches(2.90)
-        textbox(s, x, Inches(5.35), Inches(2.75), Inches(0.24),
-                [{"text": lab.upper(), "size": 11, "bold": True, "color": BLUE}])
-        textbox(s, x, Inches(5.60), Inches(2.75), Inches(0.40),
-                [{"text": big, "size": 18, "bold": True, "color": TITLE}])
-        textbox(s, x, Inches(6.05), Inches(2.75), Inches(0.70),
-                [{"text": sub, "size": 11, "color": MUTED}])
+        x = ML + i * Inches(2.91)
+        round_rect(s, x, Inches(5.05), Inches(2.80), Inches(1.90), fill=PALE)
+        textbox(s, x + Inches(0.16), Inches(5.16), Inches(2.48), Inches(0.24),
+                [{"text": lab.upper(), "size": 12, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.16), Inches(5.42), Inches(2.48), Inches(0.42),
+                [{"text": big, "size": 20, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.16), Inches(5.88), Inches(2.48), Inches(0.90),
+                [{"text": sub, "size": 13, "color": MUTED}])
     chrome(s, n)
 
 
@@ -825,16 +875,16 @@ def s_roadmap(prs, n):
          ["More English-speaking markets", "Localized products", "Global partnerships", "Employer ecosystem", "Marketplace capabilities", "Central America expansion"]),
     ]
     for i, (lab, title, items) in enumerate(phases):
-        x = ML + i * Inches(3.90)
-        round_rect(s, x, Inches(1.70), Inches(3.70), Inches(5.00), fill=PALE)
-        badge(s, x + Inches(0.20), Inches(1.90), i + 1)
-        textbox(s, x + Inches(0.72), Inches(1.90), Inches(2.78), Inches(0.40),
-                [{"text": lab, "size": 12, "bold": True, "color": BLUE}], valign=MSO_ANCHOR.MIDDLE)
-        textbox(s, x + Inches(0.20), Inches(2.45), Inches(3.30), Inches(0.40),
-                [{"text": title, "size": 16, "bold": True, "color": TITLE}])
+        x = ML + i * Inches(3.91)
+        round_rect(s, x, Inches(1.55), Inches(3.71), Inches(5.40), fill=PALE)
+        badge(s, x + Inches(0.20), Inches(1.72), i + 1)
+        textbox(s, x + Inches(0.72), Inches(1.72), Inches(2.78), Inches(0.40),
+                [{"text": lab, "size": 13, "bold": True, "color": BLUE}], valign=MSO_ANCHOR.MIDDLE)
+        textbox(s, x + Inches(0.20), Inches(2.24), Inches(3.31), Inches(0.42),
+                [{"text": title, "size": 18, "bold": True, "color": TITLE}])
         for j, it in enumerate(items):
-            textbox(s, x + Inches(0.20), Inches(2.95) + j * Inches(0.55), Inches(3.30), Inches(0.50),
-                    [{"text": it, "size": 13, "color": BODY}])
+            textbox(s, x + Inches(0.20), Inches(2.78) + j * Inches(0.64), Inches(3.31), Inches(0.58),
+                    [{"text": it, "size": 14, "color": BODY}])
     chrome(s, n)
 
 
@@ -865,22 +915,23 @@ def s_model_3yr(prs, n):
     ]
     years = ["2027E", "2028E", "2029E"]
     for i, (title, rows) in enumerate(panels):
-        x = ML + i * Inches(3.90)
-        round_rect(s, x, Inches(1.95), Inches(3.70), Inches(4.70), fill=PALE)
-        textbox(s, x + Inches(0.16), Inches(2.08), Inches(3.38), Inches(0.28),
-                [{"text": title, "size": 14, "bold": True, "color": TITLE}])
+        x = ML + i * Inches(3.91)
+        round_rect(s, x, Inches(1.88), Inches(3.71), Inches(5.07), fill=PALE)
+        textbox(s, x + Inches(0.16), Inches(2.00), Inches(3.39), Inches(0.28),
+                [{"text": title, "size": 16, "bold": True, "color": TITLE}])
         for yi, yr in enumerate(years):
-            textbox(s, x + Inches(1.10) + yi * Inches(0.85), Inches(2.40), Inches(0.85), Inches(0.24),
-                    [{"text": yr, "size": 10, "bold": True, "color": MUTED, "align": PP_ALIGN.CENTER}])
+            textbox(s, x + Inches(1.10) + yi * Inches(0.85), Inches(2.32), Inches(0.85), Inches(0.24),
+                    [{"text": yr, "size": 11, "bold": True, "color": MUTED, "align": PP_ALIGN.CENTER}])
+        row_h = 4.20 / max(len(rows), 1)
         for ri, (metric, *vals) in enumerate(rows):
-            y = Inches(2.70) + ri * Inches(0.62)
+            y = Inches(2.62) + ri * Inches(row_h)
             strong = metric in {"Total revenue", "Profitability", "Users"}
-            textbox(s, x + Inches(0.16), y, Inches(1.00), Inches(0.55),
-                    [{"text": metric, "size": 10, "bold": strong, "color": MUTED}])
+            textbox(s, x + Inches(0.16), y, Inches(1.00), Inches(row_h - 0.04),
+                    [{"text": metric, "size": 11, "bold": strong, "color": MUTED}])
             for vi, val in enumerate(vals):
                 accent = BLUE if (metric == "Profitability" and val == "Profitable") else TITLE
-                textbox(s, x + Inches(1.10) + vi * Inches(0.85), y, Inches(0.85), Inches(0.55),
-                        [{"text": val, "size": 12, "bold": True, "color": accent, "align": PP_ALIGN.CENTER}])
+                textbox(s, x + Inches(1.10) + vi * Inches(0.85), y, Inches(0.85), Inches(row_h - 0.04),
+                        [{"text": val, "size": 13, "bold": True, "color": accent, "align": PP_ALIGN.CENTER}])
     chrome(s, n)
 
 
@@ -895,16 +946,15 @@ def s_investment(prs, n):
     ]
     for i, (a, b) in enumerate(axes):
         col, row = i % 2, i // 2
-        x = ML + col * Inches(5.85)
-        y = Inches(1.70) + row * Inches(2.00)
-        round_rect(s, x, y, Inches(5.65), Inches(1.82), fill=PALE)
-        textbox(s, x + Inches(0.24), y + Inches(0.22), Inches(5.17), Inches(0.40),
-                [{"text": a, "size": 16, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.24), y + Inches(0.72), Inches(5.17), Inches(0.90),
-                [{"text": b, "size": 14, "color": BODY}])
-    textbox(s, ML, Inches(5.90), CW, Inches(0.90),
-            [{"text": "The AI Resume is the entry point; the ambition is the global AI career platform.",
-              "size": 15, "color": BODY}])
+        x = ML + col * Inches(5.87)
+        y = Inches(1.55) + row * Inches(2.20)
+        round_rect(s, x, y, Inches(5.66), Inches(2.05), fill=PALE)
+        textbox(s, x + Inches(0.24), y + Inches(0.28), Inches(5.18), Inches(0.46),
+                [{"text": a, "size": 20, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.24), y + Inches(0.86), Inches(5.18), Inches(0.95),
+                [{"text": b, "size": 16, "color": BODY}])
+    conclusion(s, "The opportunity",
+               "The AI Resume is the entry point; the ambition is the global AI career platform.")
     chrome(s, n)
 
 
@@ -921,15 +971,17 @@ def s_financing(prs, n):
     ]
     for i, (lab, a, b) in enumerate(terms):
         col, row = i % 3, i // 3
-        x = ML + col * Inches(3.90)
-        y = Inches(1.70) + row * Inches(2.35)
-        round_rect(s, x, y, Inches(3.70), Inches(2.18), fill=PALE)
-        textbox(s, x + Inches(0.22), y + Inches(0.22), Inches(3.26), Inches(0.28),
-                [{"text": lab.upper(), "size": 12, "bold": True, "color": BLUE}])
-        textbox(s, x + Inches(0.22), y + Inches(0.58), Inches(3.26), Inches(0.70),
+        x = ML + col * Inches(3.91)
+        y = Inches(1.55) + row * Inches(2.20)
+        round_rect(s, x, y, Inches(3.71), Inches(2.05), fill=PALE)
+        textbox(s, x + Inches(0.22), y + Inches(0.20), Inches(3.27), Inches(0.28),
+                [{"text": lab.upper(), "size": 13, "bold": True, "color": BLUE}])
+        textbox(s, x + Inches(0.22), y + Inches(0.54), Inches(3.27), Inches(0.70),
                 [{"text": a, "size": 22, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.22), y + Inches(1.35), Inches(3.26), Inches(0.60),
-                [{"text": b, "size": 14, "color": MUTED}])
+        textbox(s, x + Inches(0.22), y + Inches(1.28), Inches(3.27), Inches(0.55),
+                [{"text": b, "size": 15, "color": MUTED}])
+    conclusion(s, "Use of proceeds",
+               "Build the product, acquire users, expand globally, build monetization, and develop the career ecosystem.")
     chrome(s, n)
 
 
@@ -948,14 +1000,16 @@ def s_what_20m(prs, n):
     ]
     for i, (t, b) in enumerate(outcomes):
         col, row = i % 4, i // 4
-        x = ML + col * Inches(2.90)
-        y = Inches(1.70) + row * Inches(2.40)
-        round_rect(s, x, y, Inches(2.75), Inches(2.20), fill=PALE)
-        badge(s, x + Inches(0.16), y + Inches(0.18), i + 1)
-        textbox(s, x + Inches(0.16), y + Inches(0.70), Inches(2.43), Inches(0.50),
-                [{"text": t, "size": 14, "bold": True, "color": TITLE}])
-        textbox(s, x + Inches(0.16), y + Inches(1.22), Inches(2.43), Inches(0.80),
-                [{"text": b, "size": 12, "color": BODY}])
+        x = ML + col * Inches(2.91)
+        y = Inches(1.55) + row * Inches(2.20)
+        round_rect(s, x, y, Inches(2.80), Inches(2.05), fill=PALE)
+        badge(s, x + Inches(0.16), y + Inches(0.16), i + 1)
+        textbox(s, x + Inches(0.16), y + Inches(0.64), Inches(2.48), Inches(0.48),
+                [{"text": t, "size": 15, "bold": True, "color": TITLE}])
+        textbox(s, x + Inches(0.16), y + Inches(1.16), Inches(2.48), Inches(0.72),
+                [{"text": b, "size": 13, "color": BODY}])
+    conclusion(s, "RMB 20M",
+               "Product + users + benchmarks  →  revenue  →  next round  →  valuation step-up.")
     chrome(s, n)
 
 
@@ -963,40 +1017,64 @@ def s_vision(prs, n):
     s = prs.slides.add_slide(prs.slide_layouts[6])
     s.shapes.add_picture(COVER_BG, Inches(0), Inches(0), SW, SH)
     logo(s, light=True, cover=True)
-    textbox(s, ML, Inches(2.55), Inches(6.00), Inches(0.32),
-            [{"text": "VISION", "size": 12, "bold": True, "color": BLUE_LT}])
-    textbox(s, ML, Inches(2.95), Inches(11.20), Inches(1.10),
+    textbox(s, ML, Inches(1.70), Inches(11.20), Inches(0.28),
+            [{"text": "VISION", "size": 13, "bold": True, "color": BLUE_LT}])
+    textbox(s, ML, Inches(2.05), Inches(11.20), Inches(0.80),
             [{"text": "We are not building another AI resume tool.",
-              "size": 28, "bold": True, "color": WHITE}])
-    textbox(s, ML, Inches(4.15), Inches(11.20), Inches(1.00),
+              "size": 26, "bold": True, "color": WHITE}])
+    textbox(s, ML, Inches(2.90), Inches(11.20), Inches(0.80),
             [{"text": "We are building the Global AI Career Platform.",
-              "size": 28, "bold": True, "color": BLUE_LT}])
-    textbox(s, ML, Inches(5.40), Inches(10.5), Inches(0.32),
-            [{"text": "AI   ×   CAREER   ×   TALENT   ×   OPPORTUNITY", "size": 13, "color": BLUE_SOFT}])
-    textbox(s, ML, Inches(6.75), Inches(11.0), Inches(0.30),
-            [{"text": "China R&D   ·   U.S. commercialization   ·   Global distribution",
-              "size": 12, "color": COVER_META}])
-    textbox(s, Inches(12.10), Inches(7.10), Inches(0.35), Inches(0.26),
-            [{"text": str(n), "size": 8.5, "color": COVER_META, "align": PP_ALIGN.RIGHT}])
+              "size": 26, "bold": True, "color": BLUE_LT}])
+    pillars = [
+        ("China R&D", "Product, design, engineering, and AI built from the China base."),
+        ("U.S. commercialization", "The first international growth market for acquisition and brand."),
+        ("Global distribution", "A resume product that can serve English-speaking labor markets from day one."),
+    ]
+    for i, (t, b) in enumerate(pillars):
+        x = ML + i * Inches(3.91)
+        outlined_rect(s, x, Inches(3.90), Inches(3.71), Inches(2.15), COVER_CARD, COVER_LINE, 0.75)
+        textbox(s, x + Inches(0.22), Inches(4.08), Inches(3.27), Inches(0.42),
+                [{"text": t, "size": 16, "bold": True, "color": BLUE_LT}])
+        textbox(s, x + Inches(0.22), Inches(4.55), Inches(3.27), Inches(1.25),
+                [{"text": b, "size": 14, "color": COVER_SUB}])
+    textbox(s, ML, Inches(6.25), CW, Inches(0.28),
+            [{"text": "AI   ×   CAREER   ×   TALENT   ×   OPPORTUNITY", "size": 14, "color": BLUE_SOFT}])
+    textbox(s, ML, Inches(6.70), Inches(8.50), Inches(0.26),
+            [{"text": "51 Careers.AI   |   Proprietary and Confidential", "size": 10, "color": COVER_META}])
+    textbox(s, Inches(12.10), Inches(6.70), Inches(0.35), Inches(0.26),
+            [{"text": str(n), "size": 10, "color": COVER_META, "align": PP_ALIGN.RIGHT}])
 
 
 def s_contact(prs, n):
     s = prs.slides.add_slide(prs.slide_layouts[6])
     s.shapes.add_picture(COVER_BG, Inches(0), Inches(0), SW, SH)
     logo(s, light=True, cover=True)
-    textbox(s, ML, Inches(2.55), Inches(6.00), Inches(0.32),
-            [{"text": "THANK YOU", "size": 12, "bold": True, "color": BLUE_LT}])
-    textbox(s, ML, Inches(2.90), Inches(11.20), Inches(0.75),
+    textbox(s, ML, Inches(1.70), Inches(11.20), Inches(0.28),
+            [{"text": "THANK YOU", "size": 13, "bold": True, "color": BLUE_LT}])
+    textbox(s, ML, Inches(2.05), Inches(11.20), Inches(0.70),
             [{"text": "Questions and Discussion", "size": 32, "bold": True, "color": WHITE}])
-    outlined_rect(s, ML, Inches(4.00), Inches(6.10), Inches(2.50), COVER_CARD, COVER_LINE, 0.75)
-    textbox(s, Inches(1.20), Inches(4.20), Inches(5.60), Inches(2.15), [
-        {"text": "Rocky Chen", "size": 16, "bold": True, "color": WHITE, "space_after": 4},
-        {"text": "Founder & Chief Executive Officer", "size": 13, "color": BLUE_LT, "space_after": 10},
-        {"text": "rocky@helio.space", "size": 14, "color": COVER_SUB, "space_after": 4},
-        {"text": "19921169641", "size": 14, "color": COVER_SUB, "space_after": 10},
-        {"text": "info@helio.space  ·  (510) 545-2666", "size": 12, "color": COVER_META, "space_after": 2},
-        {"text": "2448 Sixth Street, Berkeley, CA 94710", "size": 12, "color": COVER_META},
-    ])
+    textbox(s, ML, Inches(2.80), Inches(11.20), Inches(0.40),
+            [{"text": "“Our mission is to make great jobs accessible to everyone.”",
+              "size": 16, "color": COVER_SUB}])
+    cards = [
+        ("EMAIL", "rocky@helio.space"),
+        ("PHONE", "19921169641"),
+        ("WEB", "www.helio.space"),
+    ]
+    for i, (lab, val) in enumerate(cards):
+        x = ML + i * Inches(3.91)
+        outlined_rect(s, x, Inches(3.40), Inches(3.71), Inches(1.85), COVER_CARD, COVER_LINE, 0.75)
+        textbox(s, x + Inches(0.22), Inches(3.58), Inches(3.27), Inches(0.28),
+                [{"text": lab, "size": 12, "bold": True, "color": BLUE_LT}])
+        textbox(s, x + Inches(0.22), Inches(4.00), Inches(3.27), Inches(0.95),
+                [{"text": val, "size": 16, "bold": True, "color": WHITE}])
+    outlined_rect(s, ML, Inches(5.45), CW, Inches(1.20), COVER_CARD, COVER_LINE, 0.75)
+    textbox(s, Inches(1.12), Inches(5.60), CW - Inches(0.44), Inches(0.32),
+            [{"text": "Rocky Chen  ·  Founder & Chief Executive Officer",
+              "size": 16, "bold": True, "color": WHITE}])
+    textbox(s, Inches(1.12), Inches(6.00), CW - Inches(0.44), Inches(0.42),
+            [{"text": "info@helio.space   ·   (510) 545-2666   ·   2448 Sixth Street, Berkeley, CA 94710",
+              "size": 14, "color": COVER_SUB}])
     textbox(s, Inches(10.20), Inches(7.08), Inches(2.25), Inches(0.26),
             [{"text": "Proprietary and Confidential", "size": 8.5, "color": COVER_META, "align": PP_ALIGN.RIGHT}])
 
