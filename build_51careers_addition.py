@@ -783,9 +783,42 @@ def s_advantages(prs, n):
     chrome(s, n)
 
 
+def s_leadership(prs, n):
+    s = blank(prs)
+    header(s, "18  ·  Leadership Team", "51 Careers.AI Executive Leadership",
+           "Founder-led. Globally distributed. Full biographies available in the data room.")
+    leaders = [
+        ("Rocky Chen", "FOUNDER & CEO",
+         "Founder of 51 Careers and 51 Careers.AI; investor and Managing Director at publicly listed Helio. Decade of international business, capital markets, and global resource integration."),
+        ("Stephanie Li", "CO-FOUNDER & CFO",
+         "Co-founder since 2016. U.S. CPA; M.S. Accounting, Pace University. Oversees financial strategy, corporate governance, and sustainable growth."),
+        ("Gavin Ding", "CO-FOUNDER, CTO & COO",
+         "Serial entrepreneur (10+ years) across SaaS, AI, and digital business; B.S. Computer Science, ECUST. Leads technology, operations, and AI."),
+        ("Robin Zhu", "HEAD OF PRODUCT",
+         "Leads product strategy, architecture, and development of the AI-powered platform. Former CTO & Director of Product, Ci Finance; senior roles at CPIC, Allinpay, and Noah."),
+        ("Chris Lin", "NORTH AMERICAN PARTNER",
+         "Full-stack engineer; previously at Amazon Web Services (AWS). B.S. Northwestern; M.S. Robotics. Extensive hiring-panel experience and mentorship."),
+        ("Jon Serbin", "SENIOR ADVISOR",
+         "Harvard and MIT; former senior executive at Morgan Stanley; founder of Cedar. 40+ years in tech M&A and capital raising; advises on growth and expansion."),
+    ]
+    for i, (name, title, bio) in enumerate(leaders):
+        col, row = i % 3, i // 3
+        x = ML + col * Inches(4.08)
+        y = Inches(1.22) + row * Inches(2.80)
+        round_rect(s, x, y, Inches(3.92), Inches(2.68), fill=WHITE)
+        rect(s, x, y, Inches(0.08), Inches(2.68), fill=TEAL)
+        textbox(s, x + Inches(0.22), y + Inches(0.18), Inches(3.50), Inches(0.40),
+                [{"text": name, "size": 18, "bold": True, "color": NAVY, "font": FONT_D}])
+        textbox(s, x + Inches(0.22), y + Inches(0.58), Inches(3.50), Inches(0.30),
+                [{"text": title, "size": 12, "bold": True, "color": TEAL}])
+        textbox(s, x + Inches(0.22), y + Inches(0.96), Inches(3.50), Inches(1.50),
+                [{"text": bio, "size": 13, "color": BODY}])
+    chrome(s, n)
+
+
 def s_team(prs, n):
     s = blank(prs)
-    header(s, "18  ·  Team & Operating Structure", "Core founding team in place  ·  Planned hiring funded by this round")
+    header(s, "19  ·  Team & Operating Structure", "Core founding team in place  ·  Planned hiring funded by this round")
     round_rect(s, ML, Inches(1.20), Inches(3.92), Inches(5.00), fill=WHITE)
     rect(s, ML, Inches(1.20), Inches(3.92), Inches(0.10), fill=TEAL)
     textbox(s, Inches(0.80), Inches(1.42), Inches(3.50), Inches(0.26),
@@ -840,7 +873,7 @@ def s_team(prs, n):
 
 def s_funds(prs, n):
     s = blank(prs)
-    header(s, "19  ·  Use of Funds", "RMB 20 Million Growth Financing",
+    header(s, "20  ·  Use of Funds", "RMB 20 Million Growth Financing",
            "RMB 13.1M is a planned personnel + advertising budget. Remaining capital funds infrastructure, AI, operations, events, expansion and working capital.")
     alloc = [
         ("Marketing & user acquisition", "40%", "RMB 8.0M"),
@@ -884,7 +917,7 @@ def s_funds(prs, n):
 
 def s_roadmap(prs, n):
     s = blank(prs)
-    header(s, "20  ·  Growth Roadmap", "Validation  →  Growth  →  Global Expansion")
+    header(s, "21  ·  Growth Roadmap", "Validation  →  Growth  →  Global Expansion")
     phases = [
         ("PHASE 1  ·  0–6 MONTHS", "Product validation",
          ["Launch AI Resume", "Improve AI quality", "Structured A/B testing", "Initial CAC benchmarks", "Conversion funnel", "Validate pricing"]),
@@ -911,7 +944,7 @@ def s_model_3yr(prs, n):
     s = blank(prs)
     header(
         s,
-        "21  ·  Three-Year Financial Model",
+        "22  ·  Three-Year Financial Model",
         "Users, Revenue, and Profitability",
         "Illustrative 2027E–2029E operating plan. Figures in US$.",
     )
@@ -994,7 +1027,7 @@ def s_model_3yr(prs, n):
 
 def s_investment(prs, n):
     s = blank(prs)
-    header(s, "22  ·  Investment Opportunity", "The Next Generation of Career Services Will Be AI + Human + Platform")
+    header(s, "23  ·  Investment Opportunity", "The Next Generation of Career Services Will Be AI + Human + Platform")
     axes = [
         ("Generative AI", "Professional content creation is now cheap, fast, and widely adopted."),
         ("Global employment", "Talent is mobile. English-language careers travel across markets."),
@@ -1022,7 +1055,7 @@ def s_investment(prs, n):
 
 def s_financing(prs, n):
     s = blank(prs)
-    header(s, "23  ·  Financing", "Current Financing Round")
+    header(s, "24  ·  Financing", "Current Financing Round")
     terms = [
         ("Raise", "RMB 20 million", "≈ US$2.97 million"),
         ("Pre-money", "RMB 180 million", "≈ US$26.7 million"),
@@ -1087,7 +1120,7 @@ def s_vision(prs, n):
     rect(s, Inches(0), Inches(0), SW, Inches(0.12), fill=TEAL)
     rect(s, Inches(0), Inches(0), Inches(0.16), SH, fill=TEAL)
     textbox(s, Inches(0.90), Inches(1.15), Inches(11.5), Inches(0.40),
-            [{"text": "24  ·  VISION", "size": 14, "bold": True, "color": TEAL}])
+            [{"text": "25  ·  VISION", "size": 14, "bold": True, "color": TEAL}])
     textbox(s, Inches(0.90), Inches(1.80), Inches(11.5), Inches(1.30),
             [{"text": "We are not building another AI resume tool.",
               "size": 32, "bold": True, "color": WHITE, "font": FONT_D}])
@@ -1106,6 +1139,41 @@ def s_vision(prs, n):
             [{"text": f"51 CAREERS   ·   CONFIDENTIAL   ·   {n}", "size": 10, "bold": True, "color": RGBColor(0x6B, 0x7C, 0x8F)}])
 
 
+def s_contact(prs, n):
+    s = prs.slides.add_slide(prs.slide_layouts[6])
+    set_bg(s, "0B1F33")
+    rect(s, Inches(0), Inches(0), SW, Inches(0.12), fill=TEAL)
+    rect(s, Inches(0), Inches(0), Inches(0.16), SH, fill=TEAL)
+    textbox(s, Inches(0.90), Inches(1.05), Inches(11.5), Inches(0.32),
+            [{"text": "CONTACT", "size": 14, "bold": True, "color": TEAL}])
+    textbox(s, Inches(0.90), Inches(1.50), Inches(11.5), Inches(1.10),
+            [{"text": "“Our mission is to make great jobs accessible to everyone.”",
+              "size": 26, "bold": True, "color": WHITE, "font": FONT_D}])
+    textbox(s, Inches(0.90), Inches(2.75), Inches(11.5), Inches(0.42),
+            [{"text": "Rocky Chen  ·  Founder & Chief Executive Officer",
+              "size": 18, "bold": True, "color": TEAL_SOFT, "font": FONT_D}])
+
+    cards = [
+        ("EMAIL", "info@51careers.com"),
+        ("WEB", "www.51careers.ai"),
+        ("OFFICE", "48 Wall Street, 11th Floor\nNew York, NY 10005"),
+    ]
+    for i, (lab, val) in enumerate(cards):
+        x = Inches(0.90) + i * Inches(4.00)
+        round_rect(s, x, Inches(3.45), Inches(3.80), Inches(2.15), fill=COVER)
+        rect(s, x, Inches(3.45), Inches(3.80), Inches(0.08), fill=TEAL)
+        textbox(s, x + Inches(0.22), Inches(3.68), Inches(3.36), Inches(0.28),
+                [{"text": lab, "size": 12, "bold": True, "color": TEAL}])
+        textbox(s, x + Inches(0.22), Inches(4.05), Inches(3.36), Inches(1.25),
+                [{"text": val, "size": 16, "bold": True, "color": WHITE, "font": FONT_D}])
+    rect(s, Inches(0), Inches(6.35), SW, Inches(1.15), fill=COVER)
+    textbox(s, Inches(0.90), Inches(6.58), Inches(11.5), Inches(0.32),
+            [{"text": "51 CAREERS.AI   ·   ROCKY CHEN   ·   INFO@51CAREERS.COM",
+              "size": 14, "bold": True, "color": TEAL_SOFT}])
+    textbox(s, Inches(0.90), Inches(6.95), Inches(11.5), Inches(0.32),
+            [{"text": f"51 CAREERS   ·   CONFIDENTIAL   ·   {n}", "size": 10, "bold": True, "color": RGBColor(0x6B, 0x7C, 0x8F)}])
+
+
 def build():
     prs = Presentation()
     prs.slide_width = SW
@@ -1114,9 +1182,9 @@ def build():
     builders = [
         s_exec, s_problem, s_opportunity, s_why_now, s_tam, s_solution, s_product,
         s_validation, s_tech, s_global_market, s_strategy, s_phases, s_model,
-        s_flywheel, s_acquisition, s_geo, s_compete, s_advantages, s_team,
+        s_flywheel, s_acquisition, s_geo, s_compete, s_advantages, s_leadership, s_team,
         s_funds, s_roadmap, s_model_3yr, s_investment, s_financing,
-        s_what_20m, s_vision,
+        s_what_20m, s_vision, s_contact,
     ]
     for i, fn in enumerate(builders, start=2):
         fn(prs, i)
