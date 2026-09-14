@@ -1154,21 +1154,24 @@ def s_contact(prs, n):
               "size": 18, "bold": True, "color": TEAL_SOFT, "font": FONT_D}])
 
     cards = [
-        ("EMAIL", "info@51careers.com"),
-        ("WEB", "www.51careers.ai"),
-        ("OFFICE", "48 Wall Street, 11th Floor\nNew York, NY 10005"),
+        ("EMAIL", "rocky@helio.space"),
+        ("PHONE", "19921169641"),
+        ("WEB", "www.helio.space"),
     ]
     for i, (lab, val) in enumerate(cards):
         x = Inches(0.90) + i * Inches(4.00)
-        round_rect(s, x, Inches(3.45), Inches(3.80), Inches(2.15), fill=COVER)
+        round_rect(s, x, Inches(3.45), Inches(3.80), Inches(1.85), fill=COVER)
         rect(s, x, Inches(3.45), Inches(3.80), Inches(0.08), fill=TEAL)
         textbox(s, x + Inches(0.22), Inches(3.68), Inches(3.36), Inches(0.28),
                 [{"text": lab, "size": 12, "bold": True, "color": TEAL}])
-        textbox(s, x + Inches(0.22), Inches(4.05), Inches(3.36), Inches(1.25),
+        textbox(s, x + Inches(0.22), Inches(4.05), Inches(3.36), Inches(0.95),
                 [{"text": val, "size": 16, "bold": True, "color": WHITE, "font": FONT_D}])
+    textbox(s, Inches(0.90), Inches(5.50), Inches(11.5), Inches(0.40),
+            [{"text": "info@helio.space   ·   (510) 545-2666   ·   2448 Sixth Street, Berkeley, CA 94710",
+              "size": 14, "color": TEAL_SOFT}])
     rect(s, Inches(0), Inches(6.35), SW, Inches(1.15), fill=COVER)
     textbox(s, Inches(0.90), Inches(6.58), Inches(11.5), Inches(0.32),
-            [{"text": "51 CAREERS.AI   ·   ROCKY CHEN   ·   INFO@51CAREERS.COM",
+            [{"text": "ROCKY CHEN   ·   ROCKY@HELIO.SPACE   ·   19921169641",
               "size": 14, "bold": True, "color": TEAL_SOFT}])
     textbox(s, Inches(0.90), Inches(6.95), Inches(11.5), Inches(0.32),
             [{"text": f"51 CAREERS   ·   CONFIDENTIAL   ·   {n}", "size": 10, "bold": True, "color": RGBColor(0x6B, 0x7C, 0x8F)}])
