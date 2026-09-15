@@ -1148,23 +1148,22 @@ def s_contact(prs, n):
             [{"text": "“Our mission is to make great jobs accessible to everyone.”",
               "size": 16, "color": COVER_SUB}], wrap=False)
     cards = [
-        ("EMAIL", "rocky@helio.space"),
-        ("PHONE", "19921169641"),
-        ("WEB", "www.helio.space"),
+        ("EMAIL", "rocky.chen@51careers.ai"),
+        ("PHONE", "(631) 704-4533"),
     ]
     for i, (lab, val) in enumerate(cards):
-        x = ML + i * Inches(3.91)
-        outlined_rect(s, x, Inches(3.10), Inches(3.71), Inches(2.00), COVER_CARD, COVER_LINE, 0.75)
-        textbox(s, x + Inches(0.22), Inches(3.32), Inches(3.27), Inches(0.28),
+        x = ML + i * Inches(5.87)
+        outlined_rect(s, x, Inches(3.10), Inches(5.66), Inches(2.00), COVER_CARD, COVER_LINE, 0.75)
+        textbox(s, x + Inches(0.28), Inches(3.32), Inches(5.10), Inches(0.28),
                 [{"text": lab, "size": 12, "bold": True, "color": BLUE_LT}], wrap=False)
-        textbox(s, x + Inches(0.22), Inches(3.72), Inches(3.27), Inches(1.10),
-                [{"text": val, "size": 18, "bold": True, "color": WHITE}], wrap=False)
+        textbox(s, x + Inches(0.28), Inches(3.72), Inches(5.10), Inches(1.10),
+                [{"text": val, "size": 22, "bold": True, "color": WHITE}], wrap=False)
     outlined_rect(s, ML, Inches(5.28), CW, Inches(1.32), COVER_CARD, COVER_LINE, 0.75)
     textbox(s, Inches(1.12), Inches(5.44), CW - Inches(0.44), Inches(0.36),
             [{"text": "Rocky Chen  ·  Founder & Chief Executive Officer",
               "size": 16, "bold": True, "color": WHITE}], wrap=False)
     textbox(s, Inches(1.12), Inches(5.88), CW - Inches(0.44), Inches(0.48),
-            [{"text": "info@helio.space   ·   (510) 545-2666   ·   2448 Sixth Street, Berkeley, CA 94710",
+            [{"text": "rocky.chen@51careers.ai   ·   (631) 704-4533",
               "size": 14, "color": COVER_SUB}], wrap=False)
     textbox(s, Inches(10.20), Inches(7.08), Inches(2.25), Inches(0.26),
             [{"text": "Proprietary and Confidential", "size": 8.5, "color": COVER_META, "align": PP_ALIGN.RIGHT}], wrap=False)
