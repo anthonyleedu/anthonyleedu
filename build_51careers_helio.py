@@ -1148,7 +1148,7 @@ def s_contact(prs, n):
             [{"text": "“Our mission is to make great jobs accessible to everyone.”",
               "size": 16, "color": COVER_SUB}], wrap=False)
     cards = [
-        ("EMAIL", "rocky.chen@51careers.ai"),
+        ("EMAIL", "rocky.chen@51careers.com"),
         ("PHONE", "(631) 704-4533"),
     ]
     for i, (lab, val) in enumerate(cards):
@@ -1163,7 +1163,7 @@ def s_contact(prs, n):
             [{"text": "Rocky Chen  ·  Founder & Chief Executive Officer",
               "size": 16, "bold": True, "color": WHITE}], wrap=False)
     textbox(s, Inches(1.12), Inches(5.88), CW - Inches(0.44), Inches(0.48),
-            [{"text": "rocky.chen@51careers.ai   ·   (631) 704-4533",
+            [{"text": "rocky.chen@51careers.com   ·   (631) 704-4533",
               "size": 14, "color": COVER_SUB}], wrap=False)
     textbox(s, Inches(10.20), Inches(7.08), Inches(2.25), Inches(0.26),
             [{"text": "Proprietary and Confidential", "size": 8.5, "color": COVER_META, "align": PP_ALIGN.RIGHT}], wrap=False)
