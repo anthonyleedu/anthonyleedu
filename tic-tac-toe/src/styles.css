@@ -96,9 +96,8 @@ h1 {
 
 .game {
   display: flex;
-  align-items: flex-start;
-  gap: 1.25rem;
-  width: min(100%, 52rem);
+  align-items: stretch;
+  gap: 1.1rem;
 }
 
 .panel {
@@ -207,8 +206,9 @@ h1 {
 
 .history {
   display: flex;
-  flex: 1 1 16rem;
+  flex: 0 0 17.75rem;
   flex-direction: column;
+  width: 17.75rem;
   min-width: 0;
   padding: 1.15rem 0.85rem 0.85rem;
 }
@@ -250,12 +250,25 @@ h1 {
 
 .history-list {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 0.2rem;
+  min-height: 0;
   max-height: 21.5rem;
   overflow: auto;
   padding: 0;
   list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(27, 25, 21, 0.22) transparent;
+}
+
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(27, 25, 21, 0.2);
+  border-radius: 99px;
 }
 
 .history-item.is-current,
@@ -306,20 +319,30 @@ h1 {
 @media (max-width: 760px) {
   .page {
     justify-content: flex-start;
-    padding: 2rem 1rem 2.5rem;
+    gap: 1.5rem;
+    padding: 1.75rem 1rem 2.5rem;
   }
 
   .game {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    width: min(100%, 20.5rem);
   }
 
+  .panel:first-child,
   .history {
-    width: min(100%, 19.5rem);
+    flex: none;
+    width: 100%;
+  }
+
+  .board {
+    width: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, minmax(4.6rem, 1fr));
   }
 
   .history-list {
-    max-height: 14rem;
+    max-height: 16rem;
   }
 }
 
