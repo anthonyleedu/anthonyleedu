@@ -1,55 +1,63 @@
 import { useState } from 'react';
 
-function Square({ value, onSquareClick }) {
+function Square({ value, isWinning, isPlayable, onSquareClick, label }) {
+  const classes = [
+    'square',
+    value === 'X' ? 'is-x' : '',
+    value === 'O' ? 'is-o' : '',
+    isWinning ? 'is-winning' : '',
+    isPlayable ? 'is-playable' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button
+      type="button"
+      className={classes}
+      onClick={onSquareClick}
+      aria-label={label}
+    >
       {value}
     </button>
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
-  function handleClick(i) {
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = 'X';
-    } else {
-      nextSquares[i] = 'O';
-    }
-    onPlay(nextSquares);
-  }
-
-  const winner = calculateWinner(squares);
-  let status;
-  if (winner) {
-    status = 'Winner: ' + winner;
-  } else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
-  }
-
+function Board({ squares, winningLine, gameOver, onSquareClick }) {
   return (
-    <>
-      <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
-      </div>
-    </>
+    <div className="board" role="grid" aria-label="Tic-tac-toe board">
+      {squares.map((value, index) => (
+        <Square
+          key={index}
+          value={value}
+          isWinning={winningLine.includes(index)}
+          isPlayable={!gameOver && !value}
+          onSquareClick={() => onSquareClick(index)}
+          label={value ? `${value} on square ${index + 1}` : `Square ${index + 1}`}
+        />
+      ))}
+    </div>
   );
+}
+
+function moveLocation(history, move) {
+  if (move === 0) {
+    return null;
+  }
+
+  const previous = history[move - 1];
+  const current = history[move];
+  const index = current.findIndex((value, i) => value !== previous[i]);
+
+  if (index < 0) {
+    return null;
+  }
+
+  return {
+    player: current[index],
+    row: Math.floor(index / 3) + 1,
+    col: (index % 3) + 1,
+  };
 }
 
 export default function Game() {
@@ -57,6 +65,12 @@ export default function Game() {
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
+  const result = calculateWinner(currentSquares);
+  const winner = result?.winner ?? null;
+  const winningLine = result?.line ?? [];
+  const isDraw = !winner && currentSquares.every(Boolean);
+  const gameOver = Boolean(winner) || isDraw;
+  const viewingPast = currentMove !== history.length - 1;
 
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -64,32 +78,110 @@ export default function Game() {
     setCurrentMove(nextHistory.length - 1);
   }
 
+  function handleSquareClick(index) {
+    if (calculateWinner(currentSquares) || currentSquares[index]) {
+      return;
+    }
+
+    const nextSquares = currentSquares.slice();
+    nextSquares[index] = xIsNext ? 'X' : 'O';
+    handlePlay(nextSquares);
+  }
+
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
   }
 
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
+  function resetGame() {
+    setHistory([Array(9).fill(null)]);
+    setCurrentMove(0);
+  }
+
+  let statusLabel = 'Next player';
+  let statusValue = xIsNext ? 'X' : 'O';
+  let statusState = 'play';
+
+  if (winner) {
+    statusLabel = 'Winner';
+    statusValue = winner;
+    statusState = 'win';
+  } else if (isDraw) {
+    statusLabel = 'Result';
+    statusValue = 'Draw';
+    statusState = 'draw';
+  }
+
+  const moves = history.map((_, move) => {
+    const location = moveLocation(history, move);
+    const isCurrent = move === currentMove;
+    const title = move === 0 ? 'Game start' : `Move ${move}`;
+    const detail = location ? `${location.player} at ${location.row}, ${location.col}` : 'Empty board';
+
+    if (isCurrent) {
+      return (
+        <li key={move} className="history-item is-current">
+          <div className="history-copy">
+            <span className="history-title">{title}</span>
+            <span className="history-detail">{detail}</span>
+          </div>
+          <span className="history-badge">Now</span>
+        </li>
+      );
     }
+
     return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+      <li key={move} className="history-item">
+        <button type="button" className="history-button" onClick={() => jumpTo(move)}>
+          <span className="history-copy">
+            <span className="history-title">{title}</span>
+            <span className="history-detail">{detail}</span>
+          </span>
+        </button>
       </li>
     );
   });
 
   return (
-    <div className="game">
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-      </div>
-      <div className="game-info">
-        <ol>{moves}</ol>
-      </div>
+    <div className="page">
+      <header className="intro">
+        <p className="eyebrow">React tutorial</p>
+        <h1>Tic-Tac-Toe</h1>
+      </header>
+
+      <main className="game">
+        <section className="panel" aria-label="Game board">
+          <div className={`status is-${statusState}`} aria-live="polite">
+            <span className="status-label">{statusLabel}</span>
+            <span className={`status-value${statusValue === 'X' || statusValue === 'O' ? ` is-${statusValue.toLowerCase()}` : ''}`}>
+              {statusValue}
+            </span>
+          </div>
+          {viewingPast && (
+            <p className="status-note">Viewing a previous position</p>
+          )}
+          <Board
+            squares={currentSquares}
+            winningLine={winningLine}
+            gameOver={gameOver}
+            onSquareClick={handleSquareClick}
+          />
+        </section>
+
+        <aside className="panel history" aria-label="Move history">
+          <div className="history-header">
+            <h2>History</h2>
+            <button
+              type="button"
+              className="reset"
+              onClick={resetGame}
+              disabled={history.length === 1}
+            >
+              Reset
+            </button>
+          </div>
+          <ol className="history-list">{moves}</ol>
+        </aside>
+      </main>
     </div>
   );
 }
@@ -105,11 +197,13 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return { winner: squares[a], line: [a, b, c] };
     }
   }
+
   return null;
 }
