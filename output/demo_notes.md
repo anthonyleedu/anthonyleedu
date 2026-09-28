@@ -27,7 +27,7 @@ Walk these exceptions (derived, not hardcoded):
 
 ## 3 minutes — plant manager (`vendor_performance.xlsx`)
 
-As-of date is **2026-05-17**, not today. May is labeled PARTIAL.
+As-of date is **2026-05-17**, not today. Boundary months 2025-09 and 2026-05 are labeled PARTIAL.
 
 Call-first (computed from lowest required-date OTD among vendors with enough due lines):
 **Continental Quality Heat Treat**

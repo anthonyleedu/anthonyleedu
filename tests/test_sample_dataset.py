@@ -20,6 +20,7 @@ from src.file_discovery import discover_from_data_dir
 from src.inputs import load_open_pos, load_vendor_master
 from src.part_crosswalk import build_historical_crosswalk
 from src.reconcile import reconcile
+from src.reporting import build_follow_ups
 from src.vendor_performance import analyze_vendor_performance
 
 DATA = Path("data")
@@ -175,6 +176,9 @@ def test_quickship_revision_qty_500(pipeline):
     superseded = [d for d in pipeline["resolved"].superseded if d.po_number == "PO-4500050030"]
     assert superseded
     assert any(ln.quantity == 450 for d in superseded for ln in d.lines)
+    assert "DOCUMENT_SUPERSEDED" not in row.issue_codes
+    assert "PRIOR_DOCUMENT_SUPERSEDED" in row.issue_codes
+    assert row.document_status == "ACTIVE"
 
 
 def test_quickship_invoice_not_ack(pipeline):
@@ -202,7 +206,11 @@ def test_historical_metrics(pipeline):
     for month, val in expected.items():
         assert month in monthly
         assert abs(monthly[month] - val) < 0.05
+    assert any(m.is_partial for m in perf.monthly if m.month == "2025-09")
     assert any(m.is_partial for m in perf.monthly if m.month == "2026-05")
+    assert all(
+        (m.is_partial is False) for m in perf.monthly if m.month not in {"2025-09", "2026-05"}
+    )
 
     by_name = {v.vendor_name: v for v in perf.vendors}
     assert abs(float(by_name["Apex Bar & Tube Co."].received_value) - 23978261.68) < 0.05
@@ -221,3 +229,18 @@ def test_no_hallucinated_missing_line(pipeline):
         for ln in d.lines:
             pns.append(ln.customer_part_number or ln.vendor_part_number)
     assert "BAR-A286-250" not in pns
+
+
+def test_quickship_invoice_follow_up_is_one_email(pipeline):
+    drafts = build_follow_ups(pipeline["rows"])
+    qs = [d for d in drafts if d["po"] == "PO-4500050032"]
+    assert len(qs) == 1
+    body = qs[0]["body"]
+    assert "MISC-WAS-A25" in body
+    assert "MISC-SPR-001" in body
+    assert "line 1" in body
+    assert "line 2" in body
+    assert "invoice" in body.lower() or "shipping" in body.lower()
+    pos = [d["po"] for d in drafts]
+    assert len(pos) == len(set(pos)) or all(pos.count(p) == 1 for p in ("PO-4500050032",))
+

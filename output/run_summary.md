@@ -1,6 +1,6 @@
 # Beacon Purchasing Copilot — run summary
 
-- Timestamp: 2026-09-28 19:43 UTC
+- Timestamp: 2026-09-28 19:57 UTC
 - Offline: False
 - LLM: openai / gpt-4o-mini
 
@@ -22,8 +22,8 @@
 - Vision + OpenAI: 4
 - Local parser/OCR fallback: 0
 - Required review: 0
-- Cached: 0
-- Fresh AI extractions: 35
+- Cached: 35
+- Fresh AI extractions: 0
 - Fresh local/OCR: 0
 - Failures: 0
 
@@ -52,7 +52,7 @@
 - Overall required-date OTD: 74.3%
 
 ### Received value by month
-- 2025-09: $114,453.14
+- 2025-09: $114,453.14 *(PARTIAL)*
 - 2025-10: $3,533,227.93
 - 2025-11: $4,785,787.08
 - 2025-12: $3,668,417.52

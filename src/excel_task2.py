@@ -98,8 +98,21 @@ def write_task2_workbook(
     ws.write(7, 0, "Overall required-date OTD", fmts["label"])
     if result.overall_otd_required is not None:
         ws.write_number(7, 1, result.overall_otd_required, fmts["kpi_pct"])
-    ws.write(8, 0, "Current month", fmts["label"])
-    ws.write(8, 1, f"{result.as_of.strftime('%Y-%m')} PARTIAL (receipts through {result.as_of.isoformat()})", fmts["subtitle"])
+    start_month = result.period_start.strftime("%Y-%m") if result.period_start else None
+    as_of_month = result.as_of.strftime("%Y-%m")
+    ws.write(8, 0, "Partial months", fmts["label"])
+    if result.period_start:
+        ws.write(
+            8,
+            1,
+            (
+                f"{start_month} PARTIAL (extract starts {result.period_start.isoformat()}); "
+                f"{as_of_month} PARTIAL (receipts through {result.as_of.isoformat()})"
+            ),
+            fmts["subtitle"],
+        )
+    else:
+        ws.write(8, 1, f"{as_of_month} PARTIAL (receipts through {result.as_of.isoformat()})", fmts["subtitle"])
 
     # Monthly table for the chart
     ws.write(10, 0, "Received value by month", fmts["section"])
@@ -339,7 +352,14 @@ def write_task2_workbook(
         "6. Invoices are not automatically treated as acknowledgments.",
         "7. QC holds are associated to supplier POs but not necessarily proven supplier-caused defects.",
         "8. MRP messages are part-level and are not used as a core vendor-performance metric (vendor attribution is ambiguous).",
-        f"9. {result.as_of.strftime('%B %Y')} historical data is PARTIAL through the analysis-as-of date {result.as_of.isoformat()}.",
+        (
+            f"9. Boundary months "
+            f"{result.period_start.strftime('%Y-%m') if result.period_start else 'start'} and "
+            f"{result.as_of.strftime('%Y-%m')} are PARTIAL: the extract starts "
+            f"{result.period_start.isoformat() if result.period_start else 'n/a'} and ends "
+            f"{result.as_of.isoformat()}. Dollar values are the receipts that exist in those months; "
+            "they are not annualized."
+        ),
         "10. New vendor part mappings are PROPOSED unless historical evidence_count >= 3 and purity >= 0.95.",
         "11. Receipt reversals use the signed qty stored in receipt_txn. RV rows are negative; they are not abs()'d or sign-flipped again.",
         "12. Active confirmations are rows where superseded_by IS NULL. If duplicates remain, the latest doc_date / conf_id is used.",

@@ -66,26 +66,65 @@ def write_vendor_metrics_csv(path: Path, result: PerformanceResult) -> None:
     pd.DataFrame(recs).to_csv(path, index=False)
 
 
-def build_follow_ups(rows: list[ReconciledLine], limit: int = 25) -> list[dict]:
-    drafts = []
-    reds = [r for r in rows if r.severity == Severity.RED and r.po_line_number is not None or r.unknown_po]
-    reds = [r for r in rows if r.severity == Severity.RED]
-    seen = set()
-    for r in reds:
-        key = (r.vendor_name, r.po_number, tuple(r.issue_codes[:3]), r.po_line_number)
-        if key in seen:
+def _follow_up_issue_key(codes: set[str]) -> str:
+    for name in (
+        "UNKNOWN_PO",
+        "NO_FORMAL_ACK_FOUND",
+        "MISSING_PO_LINE",
+        "QTY_SHORT",
+        "PROMISE_MISSING",
+        "PROMISE_LATE",
+        "PRICE_HIGH",
+    ):
+        if name in codes:
+            return name
+    return "|".join(sorted(codes))
+
+
+def _line_phrases(members: list[ReconciledLine]) -> str:
+    bits = []
+    for m in members:
+        if m.po_line_number is None:
+            bits.append(m.beacon_pn or "the referenced line")
             continue
-        seen.add(key)
+        pn = m.beacon_pn or "unidentified part"
+        bits.append(f"line {int(m.po_line_number)} {pn}")
+    if not bits:
+        return "the affected line"
+    if len(bits) == 1:
+        return bits[0]
+    if len(bits) == 2:
+        return f"{bits[0]} and {bits[1]}"
+    return ", ".join(bits[:-1]) + f", and {bits[-1]}"
+
+
+def build_follow_ups(rows: list[ReconciledLine], limit: int = 25) -> list[dict]:
+    """One draft per vendor + PO + issue. Multiple PO lines with the same issue are combined."""
+    drafts = []
+    reds = [r for r in rows if r.severity == Severity.RED]
+    groups: dict[tuple, list[ReconciledLine]] = {}
+    order: list[tuple] = []
+    for r in reds:
+        key = (r.vendor_name, r.po_number, _follow_up_issue_key(set(r.issue_codes)))
+        if key not in groups:
+            groups[key] = []
+            order.append(key)
+        groups[key].append(r)
+
+    for key in order:
+        members = groups[key]
+        r = members[0]
         vendor = r.vendor_name or "Supplier"
         po = r.po_number
-        codes = set(r.issue_codes)
+        issue = key[2]
         subject = f"{po} confirmation discrepancy"
+        lines_txt = _line_phrases(members)
         body_lines = [
             "Hello,",
             "",
             f"We received your document for {po}.",
         ]
-        if "QTY_SHORT" in codes and r.qty_ordered is not None and r.qty_confirmed is not None:
+        if issue == "QTY_SHORT" and r.qty_ordered is not None and r.qty_confirmed is not None:
             short = r.qty_ordered - r.qty_confirmed
             req = r.required_date.isoformat() if r.required_date else "the required date"
             body_lines.append(
@@ -94,39 +133,46 @@ def build_follow_ups(rows: list[ReconciledLine], limit: int = 25) -> list[dict]:
             body_lines.append(
                 f"Please confirm whether the remaining {short:,.0f} units can be supplied by {req}."
             )
-            subject = f"{po} confirmation discrepancy"
-        elif "MISSING_PO_LINE" in codes:
+        elif issue == "MISSING_PO_LINE":
             req = r.required_date.isoformat() if r.required_date else "the required date"
-            body_lines.append(
-                f"Beacon PO {po} line {r.po_line_number} ({r.beacon_pn}, qty {r.qty_ordered:,.0f} if ordered, required {req}) "
-                "does not appear on the acknowledgment. Please confirm this line."
-            )
-        elif "UNKNOWN_PO" in codes:
+            if len(members) == 1:
+                body_lines.append(
+                    f"Beacon PO {po} {lines_txt} ({r.beacon_pn}, qty {r.qty_ordered:,.0f} if ordered, required {req}) "
+                    "does not appear on the acknowledgment. Please confirm this line."
+                )
+            else:
+                body_lines.append(
+                    f"The following PO lines do not appear on the acknowledgment: {lines_txt}. Please confirm each line."
+                )
+        elif issue == "UNKNOWN_PO":
             body_lines.append(
                 f"We received an acknowledgment referencing {po}, which is not on our current open PO list. "
                 "Please confirm the correct Beacon PO number."
             )
-        elif "PROMISE_MISSING" in codes:
+        elif issue == "PROMISE_MISSING":
             body_lines.append(
-                f"Please provide a committed quantity and promise date for {po} line {r.po_line_number} ({r.beacon_pn})."
+                f"Please provide a committed quantity and promise date for {po} {lines_txt}."
             )
-        elif "PROMISE_LATE" in codes:
+        elif issue == "PROMISE_LATE":
             days = r.days_late if r.days_late is not None else r.minimum_late_days
             req = r.required_date.isoformat() if r.required_date else "the required date"
             body_lines.append(
                 f"The confirmed date for {r.beacon_pn} is {days} days after Beacon's required date of {req}. "
                 "Please advise whether the required date can be recovered."
             )
-        elif "PRICE_HIGH" in codes and r.unit_price_difference is not None:
+        elif issue == "PRICE_HIGH" and r.unit_price_difference is not None:
             body_lines.append(
                 f"The acknowledgment unit price differs from the PO by ${r.unit_price_difference:.4f}/unit. "
                 "Please confirm whether this is intended."
             )
-        elif "NO_FORMAL_ACK_FOUND" in codes:
+        elif issue == "NO_FORMAL_ACK_FOUND":
             body_lines.append(
-                f"We have shipment/invoice evidence for {po} but no formal order acknowledgment. "
-                "Please send a confirmation of quantity, price, and promise date."
+                f"Beacon has an invoice or shipping document for {po}, but no formal order acknowledgment."
             )
+            body_lines.append(
+                f"Please confirm quantity, price, and commitment date for {lines_txt}."
+            )
+            subject = f"{po} formal acknowledgment requested"
         else:
             body_lines.append(r.suggested_action or "Please review the attached discrepancy.")
         body_lines += ["", "Thank you.", "", "Lisa Morgan", "Purchasing, Beacon Fasteners"]
@@ -289,7 +335,7 @@ Walk these exceptions (derived, not hardcoded):
 
 ## 3 minutes — plant manager (`vendor_performance.xlsx`)
 
-As-of date is **{result.as_of.isoformat()}**, not today. May is labeled PARTIAL.
+As-of date is **{result.as_of.isoformat()}**, not today. Boundary months 2025-09 and 2026-05 are labeled PARTIAL.
 
 Call-first (computed from lowest required-date OTD among vendors with enough due lines):
 **{result.call_first.vendor_name if result.call_first else 'n/a'}**

@@ -177,9 +177,15 @@ def analyze_vendor_performance(
             vendor_val[hdr["vendor_id"]] += val
         line_receipt_value[(r["po_number"], int(r["line_no"]))] += val
 
+    period_start = min(txn_dates) if txn_dates else None
+    start_month = period_start.strftime("%Y-%m") if period_start else None
     as_of_month = as_of.strftime("%Y-%m")
     monthly = [
-        MonthlyValue(month=m, received_value=round_money(v, 2) or Decimal("0"), is_partial=(m == as_of_month))
+        MonthlyValue(
+            month=m,
+            received_value=round_money(v, 2) or Decimal("0"),
+            is_partial=(m == as_of_month or (start_month is not None and m == start_month)),
+        )
         for m, v in sorted(monthly_acc.items())
     ]
 
@@ -337,7 +343,11 @@ def analyze_vendor_performance(
 
     notes = [
         f"Analysis as-of date is MAX(receipt_txn.txn_date) = {as_of.isoformat()}, not today's date.",
-        f"{as_of_month} is a PARTIAL month because receipts stop on the as-of date.",
+        (
+            f"Boundary months {start_month} and {as_of_month} are PARTIAL "
+            f"because the extract starts {period_start.isoformat() if period_start else 'n/a'} "
+            f"and ends {as_of.isoformat()}."
+        ),
         "Received value = signed receipt_txn.qty * po_line.unit_price (Beacon base valuation).",
         "Reversals (action_type=RV) are stored as negative qty and are summed as signed values.",
         "On-time to required date uses the stable full-quantity completion date, not first receipt.",
@@ -347,7 +357,6 @@ def analyze_vendor_performance(
         "QC holds are associated to supplier POs but not proven supplier-caused.",
     ]
 
-    period_start = min(txn_dates) if txn_dates else None
     late_lines.sort(key=lambda x: (-(x.days_late_required or 0), x.vendor_name, x.po_number))
     return PerformanceResult(
         as_of=as_of,

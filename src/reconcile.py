@@ -180,7 +180,7 @@ def _severity_from_codes(codes: list[str], *, price_pct: Decimal | None, price_i
 
     info_codes = {
         "DOCUMENT_REVISION",
-        "DOCUMENT_SUPERSEDED",
+        "PRIOR_DOCUMENT_SUPERSEDED",
         "INVOICE_NOT_ACK",
     }
     if any(c in info_codes for c in codes):
@@ -436,7 +436,7 @@ def reconcile(
                     codes.append("PART_MATCH_UNCERTAIN")
 
             if superseded:
-                codes.append("DOCUMENT_SUPERSEDED")
+                codes.append("PRIOR_DOCUMENT_SUPERSEDED")
 
             qty_confirmed_out = qty_confirmed if line_matches else None
             qty_var = (qty_confirmed - po.qty_ordered) if qty_confirmed_out is not None else None
@@ -596,10 +596,10 @@ def reconcile(
                 days_late=days_late if days_late is not None else min_late,
             )
             # PRICE_NOT_STATED alone on a fully matched line -> INFO if no other issues
-            leftover = set(codes) - {"PRICE_NOT_STATED", "DOCUMENT_REVISION", "DOCUMENT_SUPERSEDED"}
+            leftover = set(codes) - {"PRICE_NOT_STATED", "DOCUMENT_REVISION", "PRIOR_DOCUMENT_SUPERSEDED"}
             if codes == ["PRICE_NOT_STATED"] or leftover == set() and "PRICE_NOT_STATED" in codes and row.severity != Severity.RED:
                 if row.severity != Severity.RED and "QTY_SHORT" not in codes:
-                    if set(codes) <= {"PRICE_NOT_STATED", "DOCUMENT_REVISION", "DOCUMENT_SUPERSEDED"}:
+                    if set(codes) <= {"PRICE_NOT_STATED", "DOCUMENT_REVISION", "PRIOR_DOCUMENT_SUPERSEDED"}:
                         row.severity = Severity.INFO
             row.suggested_action = _action_for(row)
             row.is_actionable = row.severity in {Severity.RED, Severity.YELLOW}
