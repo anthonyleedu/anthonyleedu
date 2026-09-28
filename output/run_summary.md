@@ -1,14 +1,14 @@
 # Beacon Purchasing Copilot — run summary
 
-- Timestamp: 2026-09-28 19:57 UTC
+- Timestamp: 2026-09-28 20:39 UTC
 - Offline: False
 - LLM: openai / gpt-4o-mini
 
 ## Inputs
-- open_pos: `/workspace/data/open_pos.csv`
-- vendor_master: `/workspace/data/vendor_master.csv`
-- erp: `/workspace/data/beacon_erp.db`
-- confirmations_dir: `/workspace/data/confirmations`
+- open_pos: `data/open_pos.csv`
+- vendor_master: `data/vendor_master.csv`
+- erp: `data/beacon_erp.db`
+- confirmations_dir: `data/confirmations`
 - pdf_count: `35`
 - skipped_pdfs: `(none)`
 
@@ -18,14 +18,15 @@
 - Revisions: 1
 - Invoices: 1
 - Scanned PDFs: 4
-- Native text + OpenAI: 31
-- Vision + OpenAI: 4
+- OpenAI-backed documents: 35
+- Native text + OpenAI (including cache): 31
+- Vision + OpenAI (including cache): 4
+- Fresh AI extractions this run: 0
+- Cached extractions: 35
 - Local parser/OCR fallback: 0
 - Required review: 0
-- Cached: 35
-- Fresh AI extractions: 0
-- Fresh local/OCR: 0
 - Failures: 0
+- Note: OpenAI-backed includes cached OpenAI results. Fresh AI extractions this run is the new API-call count.
 
 ## Task 1 — open PO exceptions
 - Open PO lines: 44
@@ -79,7 +80,7 @@ Continental Quality Heat Treat is the strongest candidate for an immediate suppl
 - Open PO prices are treated as USD.
 - Receipt reversals use signed qty.
 - Invoices are not formal acknowledgments.
-- May of the as-of year is partial through the last receipt date.
+- 2025-09 and 2026-05 are PARTIAL (extract starts 2025-09-06 and ends 2026-05-17).
 
 ## Generated files
 - `output/lisa_reconciliation.xlsx`

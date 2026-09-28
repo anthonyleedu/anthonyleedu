@@ -1,4 +1,4 @@
-# Demo notes (for a 10-minute walkthrough)
+# Demo notes (for a 30-minute presentation / live walkthrough)
 
 ## 30 seconds — what this is
 

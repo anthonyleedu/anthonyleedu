@@ -118,7 +118,7 @@ def _hyperlink(ws, r, c, path: str | None, fmt):
         ws.write_blank(r, c, None, fmt)
         return
     # Write a cwd-relative or basename path. Do not embed machine-absolute
-    # file:// URIs such as /workspace/data/... in the workbook.
+    # file:// URIs in the workbook.
     shown = display_path(path) or Path(path).name
     ws.write(r, c, shown, fmt)
 
