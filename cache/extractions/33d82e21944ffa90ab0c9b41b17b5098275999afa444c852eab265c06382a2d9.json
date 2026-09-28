@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:38:35.057155+00:00",
+  "timestamp": "2026-09-28T19:42:53.617197+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/heritage_06.pdf",
@@ -23,8 +23,8 @@
     "lines": [
       {
         "source_line_number": 1,
-        "customer_part_number": "APH-441-OS",
-        "vendor_part_number": null,
+        "customer_part_number": null,
+        "vendor_part_number": "APH-441-OS",
         "description": "(see PO for description)",
         "quantity": 15000.0,
         "uom": null,
@@ -46,7 +46,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:38:35.057155Z",
+    "extracted_at": "2026-09-28T19:42:53.617197Z",
     "page_count": 1,
     "native_text_chars": 507,
     "cached": false,

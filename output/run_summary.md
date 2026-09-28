@@ -1,6 +1,6 @@
 # Beacon Purchasing Copilot — run summary
 
-- Timestamp: 2026-09-28 19:40 UTC
+- Timestamp: 2026-09-28 19:43 UTC
 - Offline: False
 - LLM: openai / gpt-4o-mini
 
@@ -22,8 +22,8 @@
 - Vision + OpenAI: 4
 - Local parser/OCR fallback: 0
 - Required review: 0
-- Cached: 35
-- Fresh AI extractions: 0
+- Cached: 0
+- Fresh AI extractions: 35
 - Fresh local/OCR: 0
 - Failures: 0
 

@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:38:49.657562+00:00",
+  "timestamp": "2026-09-28T19:43:06.953009+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/liberty_07.pdf",
@@ -46,7 +46,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:38:49.657562Z",
+    "extracted_at": "2026-09-28T19:43:06.953009Z",
     "page_count": 1,
     "native_text_chars": 431,
     "cached": false,

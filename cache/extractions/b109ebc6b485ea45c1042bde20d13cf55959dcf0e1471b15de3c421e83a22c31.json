@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:38:01.345625+00:00",
+  "timestamp": "2026-09-28T19:42:22.105132+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/apex_04.pdf",
@@ -64,7 +64,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:38:01.345625Z",
+    "extracted_at": "2026-09-28T19:42:22.105132Z",
     "page_count": 1,
     "native_text_chars": 615,
     "cached": false,

@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:39:03.570824+00:00",
+  "timestamp": "2026-09-28T19:43:20.584179+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/quickship_03.pdf",
@@ -29,7 +29,7 @@
         "quantity": 500.0,
         "uom": null,
         "unit_price": "0.0600",
-        "currency": null,
+        "currency": "USD",
         "promise": {
           "raw_text": "ship 05/18/2026",
           "start_date": "2026-05-18",
@@ -47,7 +47,7 @@
         "quantity": 1000.0,
         "uom": null,
         "unit_price": "0.1800",
-        "currency": null,
+        "currency": "USD",
         "promise": {
           "raw_text": "ship 05/18/2026",
           "start_date": "2026-05-18",
@@ -64,7 +64,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:39:03.570824Z",
+    "extracted_at": "2026-09-28T19:43:20.584179Z",
     "page_count": 1,
     "native_text_chars": 372,
     "cached": false,

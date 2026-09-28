@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:38:37.510368+00:00",
+  "timestamp": "2026-09-28T19:42:56.094440+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/heritage_07.pdf",
@@ -82,7 +82,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:38:37.510368Z",
+    "extracted_at": "2026-09-28T19:42:56.094440Z",
     "page_count": 1,
     "native_text_chars": 627,
     "cached": false,

@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:38:51.668432+00:00",
+  "timestamp": "2026-09-28T19:43:09.124605+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/ostmark_01.pdf",
@@ -28,7 +28,7 @@
         "description": "(siehe Bestellung)",
         "quantity": 25.0,
         "uom": null,
-        "unit_price": null,
+        "unit_price": "1140.8000",
         "currency": "EUR",
         "promise": {
           "raw_text": "KW 20-22 / 2026",
@@ -46,7 +46,7 @@
         "description": "(siehe Bestellung)",
         "quantity": 50.0,
         "uom": null,
-        "unit_price": null,
+        "unit_price": "16.7440",
         "currency": "EUR",
         "promise": {
           "raw_text": "KW 20-22 / 2026",
@@ -64,7 +64,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:38:51.668432Z",
+    "extracted_at": "2026-09-28T19:43:09.124605Z",
     "page_count": 1,
     "native_text_chars": 582,
     "cached": false,

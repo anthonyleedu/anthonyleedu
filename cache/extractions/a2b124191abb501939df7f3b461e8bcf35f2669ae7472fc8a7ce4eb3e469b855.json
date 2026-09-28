@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:37:52.798906+00:00",
+  "timestamp": "2026-09-28T19:42:16.342197+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/apex_01.pdf",
@@ -29,7 +29,7 @@
         "quantity": 200.0,
         "uom": null,
         "unit_price": "4.7100",
-        "currency": null,
+        "currency": "USD",
         "promise": {
           "raw_text": "05/21/2026",
           "start_date": "2026-05-21",
@@ -46,7 +46,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:37:52.798906Z",
+    "extracted_at": "2026-09-28T19:42:16.342197Z",
     "page_count": 1,
     "native_text_chars": 541,
     "cached": false,

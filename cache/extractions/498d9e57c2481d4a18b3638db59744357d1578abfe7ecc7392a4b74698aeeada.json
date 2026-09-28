@@ -4,7 +4,7 @@
   "schema_version": "extracted-document-v1",
   "model": "gpt-4o-mini",
   "model_name": "gpt-4o-mini",
-  "timestamp": "2026-09-28T19:38:10.850937+00:00",
+  "timestamp": "2026-09-28T19:42:29.586023+00:00",
   "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/apex_08.pdf",
@@ -28,7 +28,7 @@
         "description": "A286 bar stock, 0.250 dia, mill-cert",
         "quantity": 1500.0,
         "uom": null,
-        "unit_price": "4.7100",
+        "unit_price": "4.71",
         "currency": "USD",
         "promise": {
           "raw_text": "06/09/2026",
@@ -46,7 +46,7 @@
     "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T19:38:10.850937Z",
+    "extracted_at": "2026-09-28T19:42:29.586023Z",
     "page_count": 1,
     "native_text_chars": 543,
     "cached": false,
