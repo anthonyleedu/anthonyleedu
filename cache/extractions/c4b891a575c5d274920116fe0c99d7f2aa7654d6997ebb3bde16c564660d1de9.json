@@ -2,10 +2,10 @@
   "file_hash": "c4b891a575c5d274920116fe0c99d7f2aa7654d6997ebb3bde16c564660d1de9",
   "prompt_version": "procurement-extract-v1",
   "schema_version": "extracted-document-v1",
-  "model": "local-parser-v1",
-  "model_name": "local-parser-v1",
-  "timestamp": "2026-09-28T18:50:24.158086+00:00",
-  "extraction_mode": "LOCAL_TEXT",
+  "model": "gpt-4o-mini",
+  "model_name": "gpt-4o-mini",
+  "timestamp": "2026-09-28T19:38:40.048100+00:00",
+  "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/liberty_01.pdf",
     "source_sha256": "c4b891a575c5d274920116fe0c99d7f2aa7654d6997ebb3bde16c564660d1de9",
@@ -14,7 +14,7 @@
     "document_number": "LIB-PO-9240",
     "document_date": "2026-05-13",
     "document_type": "ACKNOWLEDGEMENT",
-    "commitment_status": "PARTIAL",
+    "commitment_status": "UNKNOWN",
     "is_revision": false,
     "supersedes_all_prior_for_po": false,
     "partial_sequence": 1,
@@ -22,12 +22,12 @@
     "document_currency": null,
     "lines": [
       {
-        "source_line_number": null,
+        "source_line_number": 1,
         "customer_part_number": null,
         "vendor_part_number": null,
-        "description": "Passivation per AMS 2700, per piece [PASV]",
+        "description": "Passivation per AMS 2700, per piece",
         "quantity": 1500.0,
-        "uom": null,
+        "uom": "PASV",
         "unit_price": null,
         "currency": null,
         "promise": {
@@ -40,15 +40,13 @@
         "page_number": null
       }
     ],
-    "free_text_notes": [
-      "Split acknowledgment part 1 of 2"
-    ],
+    "free_text_notes": [],
     "extraction_warnings": [],
-    "extraction_mode": "LOCAL_TEXT",
-    "model_name": "local-parser-v1",
+    "extraction_mode": "NATIVE_TEXT",
+    "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T18:50:24.158086Z",
+    "extracted_at": "2026-09-28T19:38:40.048100Z",
     "page_count": 1,
     "native_text_chars": 441,
     "cached": false,

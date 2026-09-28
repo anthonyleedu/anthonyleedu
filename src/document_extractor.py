@@ -29,7 +29,7 @@ from src.llm_client import (
     is_auth_error,
     sanitize_error,
 )
-from src.local_extractor import parse_document_text
+from src.local_extractor import classify_document, parse_document_text
 from src.models import (
     CommitmentStatus,
     ConfirmationLine,
@@ -38,7 +38,14 @@ from src.models import (
     ExtractedDocument,
     ExtractionMode,
 )
-from src.normalize import detect_currency, extract_po_number, normalize_po_number, parse_date, parse_promise
+from src.normalize import (
+    detect_currency,
+    extract_po_number,
+    normalize_part_number,
+    normalize_po_number,
+    parse_date,
+    parse_promise,
+)
 from src.pdf_reader import PdfDocument, ocr_pdf, read_pdf, render_pages_png
 
 logger = logging.getLogger("beacon")
@@ -241,6 +248,82 @@ def _safe_exc(exc: BaseException) -> str:
     return sanitize_error(exc)
 
 
+def _line_match_key(customer_pn, vendor_pn, quantity, source_line_number) -> tuple:
+    pn = normalize_part_number(customer_pn or vendor_pn or "") or ""
+    qty = None
+    if quantity is not None and quantity != "":
+        try:
+            qty = float(quantity)
+        except (TypeError, ValueError):
+            qty = None
+    return (pn, qty, source_line_number)
+
+
+def refine_extracted_document(doc: ExtractedDocument, native_text: str) -> ExtractedDocument:
+    """Python-owned corrections from document text. Never invents omitted lines."""
+    text = native_text or ""
+    if not text.strip() or doc.extraction_mode == ExtractionMode.FAILED:
+        return doc
+
+    doc_type, is_rev, supersedes, commitment = classify_document(text)
+    if doc_type == DocumentType.RECEIPT_ONLY:
+        doc.document_type = DocumentType.RECEIPT_ONLY
+        doc.commitment_status = CommitmentStatus.RECEIPT_ACKNOWLEDGED_NO_SCHEDULE
+        doc.is_revision = False
+        doc.supersedes_all_prior_for_po = False
+    elif doc_type == DocumentType.INVOICE:
+        doc.document_type = DocumentType.INVOICE
+    elif doc_type == DocumentType.REVISION:
+        doc.document_type = DocumentType.REVISION
+        doc.is_revision = True
+        if supersedes:
+            doc.supersedes_all_prior_for_po = True
+        if doc.commitment_status == CommitmentStatus.UNKNOWN:
+            doc.commitment_status = commitment
+
+    currency = detect_currency(text, doc.document_currency)
+    if currency:
+        doc.document_currency = currency
+        for ln in doc.lines:
+            if not ln.currency:
+                ln.currency = currency
+
+    local = parse_document_text(text)
+    local_by_pn_qty: dict[tuple, dict] = {}
+    local_by_src: dict[int, dict] = {}
+    for raw in local.get("lines") or []:
+        key = _line_match_key(
+            raw.get("customer_part_number"),
+            raw.get("vendor_part_number"),
+            raw.get("quantity"),
+            raw.get("source_line_number"),
+        )
+        if key[0] or key[1] is not None:
+            local_by_pn_qty[(key[0], key[1])] = raw
+        if raw.get("source_line_number") is not None:
+            local_by_src[int(raw["source_line_number"])] = raw
+
+    for ln in doc.lines:
+        raw = None
+        key = _line_match_key(ln.customer_part_number, ln.vendor_part_number, ln.quantity, ln.source_line_number)
+        if (key[0], key[1]) in local_by_pn_qty:
+            raw = local_by_pn_qty[(key[0], key[1])]
+        elif ln.source_line_number is not None:
+            raw = local_by_src.get(int(ln.source_line_number))
+        if not raw:
+            continue
+        if ln.unit_price is None and raw.get("unit_price") not in (None, ""):
+            try:
+                ln.unit_price = Decimal(str(raw["unit_price"]))
+            except Exception:
+                pass
+        if not ln.currency and raw.get("currency"):
+            ln.currency = str(raw["currency"]).upper()
+        if (not ln.promise.raw_text) and raw.get("promise_raw_text"):
+            ln.promise = parse_promise(raw.get("promise_raw_text"), header_hint=raw.get("date_type") or "")
+    return doc
+
+
 def _try_llm(client: LLMClient, pdf: PdfDocument, use_vision: bool) -> dict:
     last_err = None
     for attempt in range(config.LLM_MAX_RETRIES):
@@ -284,7 +367,7 @@ def extract_one(
             model_name=model_name,
         )
         if cached:
-            cached.extraction_mode = cached.extraction_mode
+            refine_extracted_document(cached, pdf.native_text)
             return cached
 
     if offline and llm is None:
@@ -364,6 +447,7 @@ def extract_one(
 
     if not doc.document_currency:
         doc.document_currency = detect_currency(pdf.native_text, doc.document_currency)
+    refine_extracted_document(doc, pdf.native_text)
 
     save_cache(cache_dir, doc, model_name=model_name)
     return doc

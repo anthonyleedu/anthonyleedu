@@ -1,8 +1,8 @@
 # Beacon Purchasing Copilot — run summary
 
-- Timestamp: 2026-09-28 19:27 UTC
-- Offline: True
-- LLM: local / local-parser-v1
+- Timestamp: 2026-09-28 19:40 UTC
+- Offline: False
+- LLM: openai / gpt-4o-mini
 
 ## Inputs
 - open_pos: `/workspace/data/open_pos.csv`
@@ -18,9 +18,9 @@
 - Revisions: 1
 - Invoices: 1
 - Scanned PDFs: 4
-- Native text + OpenAI: 0
-- Vision + OpenAI: 0
-- Local parser/OCR fallback: 35
+- Native text + OpenAI: 31
+- Vision + OpenAI: 4
+- Local parser/OCR fallback: 0
 - Required review: 0
 - Cached: 35
 - Fresh AI extractions: 0
@@ -31,14 +31,14 @@
 - Open PO lines: 44
 - Matched: 40
 - Missing lines: 1
-- RED: 10  ·  YELLOW: 4  ·  unknown POs: 1
+- RED: 10  ·  YELLOW: 8  ·  unknown POs: 1
 
 ### Top RED issues
 - PO-4500050001 L2 · Apex Bar & Tube Co. · MISSING_PO_LINE · Ask Apex Bar & Tube Co. to confirm PO-4500050001 line 2, BAR-A286-250, qty 1,500, required 2026-06-10.
 - PO-4500050007 L1 · Apex Bar & Tube Co. · QTY_SHORT · Resolve 75-unit short confirmation on PO-4500050007 line 1 (BAR-A286-250) before release.
 - PO-4500050032 L1 · QuickShip Industrial · NO_FORMAL_ACK_FOUND;INVOICE_NOT_ACK · No formal acknowledgment found for PO-4500050032 line 1. Request an order confirmation (the invoice/shipping notice is not sufficient).
 - PO-4500050032 L2 · QuickShip Industrial · NO_FORMAL_ACK_FOUND;INVOICE_NOT_ACK · No formal acknowledgment found for PO-4500050032 line 2. Request an order confirmation (the invoice/shipping notice is not sufficient).
-- PO-4500060619 L— · Apex Bar & Tube Co. · UNKNOWN_PO · Verify whether this acknowledgment belongs to Beacon and whether PO number PO-4500060619 is correct.
+- PO-4500060619 L— · APEX BAR & TUBE CO. · UNKNOWN_PO · Verify whether this acknowledgment belongs to Beacon and whether PO number PO-4500060619 is correct.
 - PO-4500050002 L1 · Apex Bar & Tube Co. · PRICE_HIGH · Confirm acceptance of $0.0902/unit increase (~2.30%) on PO-4500050002 line 1.
 - PO-4500050022 L1 · Continental Quality Heat Treat · PRICE_NOT_STATED;PROMISE_LATE · Ask Continental Quality Heat Treat whether required date 2026-05-21 can be recovered; current promise is 21 days late.
 - PO-4500050012 L1 · Heritage Cold Heading · PROMISE_LATE · Ask Heritage Cold Heading whether required date 2026-06-04 can be recovered; current promise is 14 days late.

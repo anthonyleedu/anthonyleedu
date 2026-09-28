@@ -2,10 +2,10 @@
   "file_hash": "7dbe09998647f2ef9c8ab11a26ae13cd3d7159d9e8cf5a1a72a89b30af82f678",
   "prompt_version": "procurement-extract-v1",
   "schema_version": "extracted-document-v1",
-  "model": "local-parser-v1",
-  "model_name": "local-parser-v1",
-  "timestamp": "2026-09-28T18:50:24.174730+00:00",
-  "extraction_mode": "LOCAL_TEXT",
+  "model": "gpt-4o-mini",
+  "model_name": "gpt-4o-mini",
+  "timestamp": "2026-09-28T19:38:53.712626+00:00",
+  "extraction_mode": "NATIVE_TEXT",
   "document": {
     "source_file": "/workspace/data/confirmations/ostmark_02.pdf",
     "source_sha256": "7dbe09998647f2ef9c8ab11a26ae13cd3d7159d9e8cf5a1a72a89b30af82f678",
@@ -34,7 +34,7 @@
           "raw_text": "08.06.2026",
           "start_date": "2026-06-08",
           "end_date": "2026-06-08",
-          "date_type": "PROMISE_DATE",
+          "date_type": "SHIP_DATE",
           "precision": "EXACT_DATE"
         },
         "page_number": null
@@ -52,7 +52,7 @@
           "raw_text": "08.06.2026",
           "start_date": "2026-06-08",
           "end_date": "2026-06-08",
-          "date_type": "PROMISE_DATE",
+          "date_type": "SHIP_DATE",
           "precision": "EXACT_DATE"
         },
         "page_number": null
@@ -60,11 +60,11 @@
     ],
     "free_text_notes": [],
     "extraction_warnings": [],
-    "extraction_mode": "LOCAL_TEXT",
-    "model_name": "local-parser-v1",
+    "extraction_mode": "NATIVE_TEXT",
+    "model_name": "gpt-4o-mini",
     "prompt_version": "procurement-extract-v1",
     "schema_version": "extracted-document-v1",
-    "extracted_at": "2026-09-28T18:50:24.174730Z",
+    "extracted_at": "2026-09-28T19:38:53.712626Z",
     "page_count": 1,
     "native_text_chars": 572,
     "cached": false,
