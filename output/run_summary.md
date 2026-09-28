@@ -1,6 +1,6 @@
 # Beacon Purchasing Copilot — run summary
 
-- Timestamp: 2026-09-28 18:51 UTC
+- Timestamp: 2026-09-28 19:27 UTC
 - Offline: True
 - LLM: local / local-parser-v1
 
@@ -18,9 +18,13 @@
 - Revisions: 1
 - Invoices: 1
 - Scanned PDFs: 4
+- Native text + OpenAI: 0
+- Vision + OpenAI: 0
+- Local parser/OCR fallback: 35
+- Required review: 0
 - Cached: 35
-- AI extractions: 0
-- Local/OCR: 0
+- Fresh AI extractions: 0
+- Fresh local/OCR: 0
 - Failures: 0
 
 ## Task 1 — open PO exceptions

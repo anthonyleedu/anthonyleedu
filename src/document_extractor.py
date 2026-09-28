@@ -21,7 +21,14 @@ from pydantic import ValidationError
 
 from src import config
 from src.config import PROMPT_VERSION, SCHEMA_VERSION
-from src.llm_client import ExtractionError, LLMClient, build_llm_client, llm_available
+from src.llm_client import (
+    AuthenticationFailed,
+    ExtractionError,
+    LLMClient,
+    build_llm_client,
+    is_auth_error,
+    sanitize_error,
+)
 from src.local_extractor import parse_document_text
 from src.models import (
     CommitmentStatus,
@@ -208,7 +215,10 @@ def _payload_to_document(
 
 
 def re_search_de(text: str) -> bool:
-    return bool(text) and any(tok in text.lower() for tok in ("gmbh", "ostmark", "deutschland", "nürnberg"))
+    return bool(text) and any(
+        tok in text.lower()
+        for tok in ("gmbh", "ostmark", "deutschland", "n\u00fcrnberg", "nuernberg")
+    )
 
 
 def failed_document(pdf: PdfDocument, error: str, mode: ExtractionMode, model_name: str) -> ExtractedDocument:
@@ -228,11 +238,7 @@ def failed_document(pdf: PdfDocument, error: str, mode: ExtractionMode, model_na
 
 
 def _safe_exc(exc: BaseException) -> str:
-    import re
-
-    text = str(exc)
-    text = re.sub(r"sk-[A-Za-z0-9_\-]+", "sk-***", text)
-    return text[:300]
+    return sanitize_error(exc)
 
 
 def _try_llm(client: LLMClient, pdf: PdfDocument, use_vision: bool) -> dict:
@@ -250,9 +256,11 @@ def _try_llm(client: LLMClient, pdf: PdfDocument, use_vision: bool) -> dict:
                 raise ExtractionError("Model did not return a JSON object")
             payload.setdefault("lines", [])
             return payload
-        except Exception as exc:  # noqa: BLE001 — retry malformed responses
+        except Exception as exc:  # noqa: BLE001 � retry malformed responses only
+            if is_auth_error(exc):
+                raise AuthenticationFailed(_safe_exc(exc)) from exc
             last_err = exc
-            logger.info("  LLM extraction attempt %s failed: %s", attempt + 1, exc)
+            logger.info("  LLM extraction attempt %s failed: %s", attempt + 1, _safe_exc(exc))
     raise ExtractionError(f"LLM extraction failed after retries: {last_err}")
 
 
@@ -294,6 +302,8 @@ def extract_one(
                 try:
                     payload = _try_llm(llm, pdf, use_vision=False)
                     mode = ExtractionMode.NATIVE_TEXT
+                except AuthenticationFailed:
+                    raise
                 except Exception as exc:  # noqa: BLE001
                     logger.warning(
                         "OpenAI text extraction failed for %s; falling back to local parser (%s)",
@@ -313,6 +323,8 @@ def extract_one(
                 try:
                     payload = _try_llm(llm, pdf, use_vision=True)
                     mode = ExtractionMode.VISION
+                except AuthenticationFailed:
+                    raise
                 except Exception as exc:  # noqa: BLE001
                     logger.warning(
                         "OpenAI vision extraction failed for %s; falling back to OCR (%s)",
@@ -336,6 +348,8 @@ def extract_one(
                 payload = parse_document_text(ocr_text)
                 mode = ExtractionMode.OCR_LOCAL
                 payload.setdefault("extraction_warnings", []).append("Extracted via OCR; native PDF text was empty")
+    except AuthenticationFailed:
+        raise
     except Exception as exc:  # noqa: BLE001
         doc = failed_document(pdf, f"Extraction failed: {_safe_exc(exc)}", ExtractionMode.FAILED, model_name)
         save_cache(cache_dir, doc, model_name=model_name)

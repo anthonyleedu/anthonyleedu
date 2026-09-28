@@ -94,9 +94,14 @@ python main.py \
 Useful flags:
 
 ```bash
+python main.py --ping-llm
 python main.py --data-dir ./data --output ./output --refresh-cache
 python main.py --data-dir ./data --output ./output --offline
 ```
+
+`--ping-llm` loads `.env` and makes one tiny authenticated OpenAI call. It logs key presence and length, never the key itself.
+
+If an API key is present, extraction authenticates first. A rejected key aborts the run so local-parser fallback cannot be cached as if it were an OpenAI result. Use `--offline` when you want the local/OCR path on purpose.
 
 `--offline` makes no API calls. Valid cache entries are reused; anything else is parsed locally / via OCR.
 

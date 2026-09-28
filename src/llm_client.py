@@ -10,7 +10,7 @@ import json
 import logging
 from typing import Any, Protocol
 
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from src import config
 from src.config import EXTRACTION_SYSTEM_PROMPT
@@ -114,6 +114,42 @@ class ExtractionError(Exception):
     """Raised when the model response cannot be repaired."""
 
 
+class AuthenticationFailed(ExtractionError):
+    """API rejected the configured key. Do not retry or silently fall back."""
+
+
+def sanitize_error(exc: BaseException) -> str:
+    """Strip secret-looking tokens from provider errors before logging."""
+    import re
+
+    text = str(exc)
+    text = re.sub(r"sk-[A-Za-z0-9_\-\*]+", "sk-***", text)
+    return text[:300]
+
+
+def is_auth_error(exc: BaseException) -> bool:
+    name = type(exc).__name__.lower()
+    text = str(exc).lower()
+    if isinstance(exc, AuthenticationFailed):
+        return True
+    if "authentication" in name or name in {"permissiondeniederror", "permissionerror"}:
+        return True
+    markers = (
+        "invalid_api_key",
+        "token_invalidated",
+        "incorrect api key",
+        "invalidated",
+        "unauthorized",
+    )
+    if any(m in text for m in markers):
+        return True
+    return "error code: 401" in text or "status code: 401" in text
+
+
+def _retryable_llm_error(exc: BaseException) -> bool:
+    return not is_auth_error(exc)
+
+
 class LLMClient(Protocol):
     provider_name: str
     model_name: str
@@ -149,12 +185,18 @@ def ping_openai() -> dict:
         status["error"] = "OPENAI_API_KEY is empty after python-dotenv load"
         return status
     client = OpenAI(api_key=config.OPENAI_API_KEY, timeout=min(config.LLM_TIMEOUT_SECONDS, 30))
-    response = client.chat.completions.create(
-        model=status["model"],
-        messages=[{"role": "user", "content": "Reply with the single word pong."}],
-        max_tokens=8,
-        temperature=0,
-    )
+    try:
+        response = client.chat.completions.create(
+            model=status["model"],
+            messages=[{"role": "user", "content": "Reply with the single word pong."}],
+            max_tokens=8,
+            temperature=0,
+        )
+    except Exception as exc:  # noqa: BLE001
+        status["ok"] = False
+        status["auth_failed"] = is_auth_error(exc)
+        status["error"] = sanitize_error(exc)
+        return status
     text = (response.choices[0].message.content or "").strip()
     status.update(
         {
@@ -238,22 +280,27 @@ class OpenAIClient:
         reraise=True,
         stop=stop_after_attempt(2),
         wait=wait_exponential(multiplier=1, min=1, max=8),
-        retry=retry_if_exception_type(Exception),
+        retry=retry_if_exception(_retryable_llm_error),
     )
     def _complete(self, messages: list[dict]) -> dict:
-        response = self._client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-            temperature=0,
-            response_format={
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "extracted_confirmation",
-                    "strict": True,
-                    "schema": EXTRACTION_JSON_SCHEMA,
+        try:
+            response = self._client.chat.completions.create(
+                model=self.model_name,
+                messages=messages,
+                temperature=0,
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "extracted_confirmation",
+                        "strict": True,
+                        "schema": EXTRACTION_JSON_SCHEMA,
+                    },
                 },
-            },
-        )
+            )
+        except Exception as exc:  # noqa: BLE001
+            if is_auth_error(exc):
+                raise AuthenticationFailed(sanitize_error(exc)) from exc
+            raise
         content = response.choices[0].message.content
         if not content:
             raise ExtractionError("Empty model response")
@@ -303,16 +350,21 @@ class AnthropicClient:
         reraise=True,
         stop=stop_after_attempt(2),
         wait=wait_exponential(multiplier=1, min=1, max=8),
-        retry=retry_if_exception_type(Exception),
+        retry=retry_if_exception(_retryable_llm_error),
     )
     def _complete(self, messages: list) -> dict:
-        response = self._client.messages.create(
-            model=self.model_name,
-            max_tokens=4096,
-            system=EXTRACTION_SYSTEM_PROMPT,
-            messages=messages,
-            temperature=0,
-        )
+        try:
+            response = self._client.messages.create(
+                model=self.model_name,
+                max_tokens=4096,
+                system=EXTRACTION_SYSTEM_PROMPT,
+                messages=messages,
+                temperature=0,
+            )
+        except Exception as exc:  # noqa: BLE001
+            if is_auth_error(exc):
+                raise AuthenticationFailed(sanitize_error(exc)) from exc
+            raise
         text = "".join(block.text for block in response.content if getattr(block, "type", "") == "text")
         text = text.strip()
         if text.startswith("```"):

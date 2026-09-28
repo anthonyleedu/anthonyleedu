@@ -19,7 +19,7 @@ from src.file_discovery import resolve_inputs
 from src.currency import FxTable
 from src.inputs import load_open_pos, load_vendor_master
 from src.logging_utils import setup_logging
-from src.llm_client import llm_available, ping_openai
+from src.llm_client import AuthenticationFailed, llm_available, ping_openai
 from src.models import DocumentType, ExtractionMode, ReconciledLine, RunStats, Severity
 from src.part_crosswalk import build_historical_crosswalk
 from src.reconcile import reconcile
@@ -56,7 +56,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return p.parse_args(argv)
 
 
-def tally_stats(docs, rows: list[ReconciledLine], stats: RunStats) -> None:
+def tally_stats(docs, rows: list[ReconciledLine], stats: RunStats, review_count: int = 0) -> None:
     stats.pdfs_processed = len(docs)
     stats.acknowledgments = sum(1 for d in docs if d.document_type == DocumentType.ACKNOWLEDGEMENT)
     stats.revisions = sum(1 for d in docs if d.document_type == DocumentType.REVISION)
@@ -67,13 +67,19 @@ def tally_stats(docs, rows: list[ReconciledLine], stats: RunStats) -> None:
         if d.extraction_mode in {ExtractionMode.VISION, ExtractionMode.OCR_LOCAL} or (d.native_text_chars or 0) < 80
     )
     stats.cached_extractions = sum(1 for d in docs if d.cached)
+    stats.native_text_openai = sum(1 for d in docs if d.extraction_mode == ExtractionMode.NATIVE_TEXT)
+    stats.vision_openai = sum(1 for d in docs if d.extraction_mode == ExtractionMode.VISION)
+    stats.local_fallback = sum(
+        1 for d in docs if d.extraction_mode in {ExtractionMode.LOCAL_TEXT, ExtractionMode.OCR_LOCAL}
+    )
+    stats.review_required = review_count
     stats.ai_extractions = sum(
         1 for d in docs if d.extraction_mode in {ExtractionMode.NATIVE_TEXT, ExtractionMode.VISION} and not d.cached
     )
     stats.local_extractions = sum(
         1 for d in docs if d.extraction_mode in {ExtractionMode.LOCAL_TEXT, ExtractionMode.OCR_LOCAL} and not d.cached
     )
-    stats.vision_extractions = sum(1 for d in docs if d.extraction_mode == ExtractionMode.VISION)
+    stats.vision_extractions = stats.vision_openai
     stats.extraction_failures = sum(1 for d in docs if d.extraction_mode == ExtractionMode.FAILED)
     stats.open_po_lines = sum(1 for r in rows if r.po_line_number is not None and not r.unknown_po)
     stats.matched_lines = sum(
@@ -134,6 +140,16 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
         env.get("openai_key_present"),
         env.get("openai_key_length"),
     )
+    if not args.offline and llm_available():
+        ping = ping_openai()
+        if not ping.get("ok"):
+            logger.error(
+                "OpenAI authentication failed before extraction (%s). "
+                "Refusing to extract so local-parser fallback cannot poison the API cache. "
+                "Fix OPENAI_API_KEY in .env or rerun with --offline.",
+                ping.get("error") or "ping unsuccessful",
+            )
+            return 1
 
     open_pos = load_open_pos(discovered.open_pos)
     vendors = load_vendor_master(discovered.vendor_master)
@@ -151,13 +167,20 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
         logger.info("Historical crosswalk entries: %s (approved %s)", len(historical), sum(1 for e in historical if e.status.value == "APPROVED"))
 
         logger.info("Extracting %s PDFs (offline=%s refresh=%s) ...", len(discovered.confirmations), args.offline, args.refresh_cache)
-        documents = extract_all(
-            discovered.confirmations,
-            cache_dir=cache_dir,
-            refresh_cache=args.refresh_cache,
-            offline=args.offline,
-            logger_=logger,
-        )
+        try:
+            documents = extract_all(
+                discovered.confirmations,
+                cache_dir=cache_dir,
+                refresh_cache=args.refresh_cache,
+                offline=args.offline,
+                logger_=logger,
+            )
+        except AuthenticationFailed as exc:
+            logger.error(
+                "OpenAI authentication failed during extraction (%s). Cache was not updated.",
+                exc,
+            )
+            return 1
         resolved = resolve_active_documents(documents)
         logger.info(
             "Documents active=%s superseded=%s informational=%s review=%s",
@@ -177,7 +200,7 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
         crosswalk = historical + proposed
 
         perf = analyze_vendor_performance(erp_data, crosswalk=crosswalk)
-        tally_stats(documents, rows, stats)
+        tally_stats(documents, rows, stats, review_count=len(resolved.review))
         follow_ups = build_follow_ups(rows)
 
         out_task1 = output / "lisa_reconciliation.xlsx"
@@ -211,7 +234,11 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
         logger.info("")
         logger.info("Processed: %s", stats.pdfs_processed)
         logger.info("Successful: %s", stats.pdfs_processed - stats.extraction_failures)
+        logger.info("Native text + OpenAI: %s", stats.native_text_openai)
+        logger.info("Vision + OpenAI: %s", stats.vision_openai)
+        logger.info("Local parser/OCR fallback: %s", stats.local_fallback)
         logger.info("Cached: %s", stats.cached_extractions)
+        logger.info("Review required: %s", stats.review_required)
         logger.info("Vision/OCR scans: %s", stats.scanned_pdfs)
         logger.info("Warnings: %s", stats.warnings)
         logger.info("RED issues: %s  YELLOW: %s  missing lines: %s  unknown POs: %s", stats.red_issues, stats.yellow_issues, stats.missing_lines, stats.unknown_pos)
