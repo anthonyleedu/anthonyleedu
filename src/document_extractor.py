@@ -227,6 +227,14 @@ def failed_document(pdf: PdfDocument, error: str, mode: ExtractionMode, model_na
     )
 
 
+def _safe_exc(exc: BaseException) -> str:
+    import re
+
+    text = str(exc)
+    text = re.sub(r"sk-[A-Za-z0-9_\-]+", "sk-***", text)
+    return text[:300]
+
+
 def _try_llm(client: LLMClient, pdf: PdfDocument, use_vision: bool) -> dict:
     last_err = None
     for attempt in range(config.LLM_MAX_RETRIES):
@@ -283,15 +291,44 @@ def extract_one(
     try:
         if pdf.text_usable:
             if use_llm:
-                payload = _try_llm(llm, pdf, use_vision=False)
-                mode = ExtractionMode.NATIVE_TEXT
+                try:
+                    payload = _try_llm(llm, pdf, use_vision=False)
+                    mode = ExtractionMode.NATIVE_TEXT
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning(
+                        "OpenAI text extraction failed for %s; falling back to local parser (%s)",
+                        pdf.filename,
+                        _safe_exc(exc),
+                    )
+                    payload = parse_document_text(pdf.native_text)
+                    mode = ExtractionMode.LOCAL_TEXT
+                    payload.setdefault("extraction_warnings", []).append(
+                        "Fell back to local text parser after LLM error"
+                    )
             else:
                 payload = parse_document_text(pdf.native_text)
                 mode = ExtractionMode.LOCAL_TEXT
         else:
             if use_llm:
-                payload = _try_llm(llm, pdf, use_vision=True)
-                mode = ExtractionMode.VISION
+                try:
+                    payload = _try_llm(llm, pdf, use_vision=True)
+                    mode = ExtractionMode.VISION
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning(
+                        "OpenAI vision extraction failed for %s; falling back to OCR (%s)",
+                        pdf.filename,
+                        _safe_exc(exc),
+                    )
+                    ocr_text = ocr_pdf(pdf.path)
+                    if not ocr_text.strip():
+                        raise ExtractionError(
+                            "Vision LLM failed and OCR produced empty output"
+                        ) from exc
+                    payload = parse_document_text(ocr_text)
+                    mode = ExtractionMode.OCR_LOCAL
+                    payload.setdefault("extraction_warnings", []).append(
+                        "Fell back to OCR after LLM vision error; native PDF text was empty"
+                    )
             else:
                 ocr_text = ocr_pdf(pdf.path)
                 if not ocr_text.strip():
@@ -300,7 +337,7 @@ def extract_one(
                 mode = ExtractionMode.OCR_LOCAL
                 payload.setdefault("extraction_warnings", []).append("Extracted via OCR; native PDF text was empty")
     except Exception as exc:  # noqa: BLE001
-        doc = failed_document(pdf, f"Extraction failed: {exc}", ExtractionMode.FAILED, model_name)
+        doc = failed_document(pdf, f"Extraction failed: {_safe_exc(exc)}", ExtractionMode.FAILED, model_name)
         save_cache(cache_dir, doc, model_name=model_name)
         return doc
 

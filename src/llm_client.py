@@ -134,6 +134,40 @@ def llm_available() -> bool:
     return bool(config.OPENAI_API_KEY)
 
 
+def ping_openai() -> dict:
+    """Tiny authenticated request. Does not echo the API key."""
+    from openai import OpenAI
+
+    status = {
+        "env_file_exists": bool(config._ENV_STATUS.get("env_file_exists")),
+        "key_present": bool(config.OPENAI_API_KEY),
+        "key_length": len(config.OPENAI_API_KEY or ""),
+        "model": config.LLM_MODEL or "gpt-4o-mini",
+        "ok": False,
+    }
+    if not config.OPENAI_API_KEY:
+        status["error"] = "OPENAI_API_KEY is empty after python-dotenv load"
+        return status
+    client = OpenAI(api_key=config.OPENAI_API_KEY, timeout=min(config.LLM_TIMEOUT_SECONDS, 30))
+    response = client.chat.completions.create(
+        model=status["model"],
+        messages=[{"role": "user", "content": "Reply with the single word pong."}],
+        max_tokens=8,
+        temperature=0,
+    )
+    text = (response.choices[0].message.content or "").strip()
+    status.update(
+        {
+            "ok": True,
+            "response_id_present": bool(getattr(response, "id", None)),
+            "finish_reason": response.choices[0].finish_reason,
+            "reply_chars": len(text),
+            "resolved_model": getattr(response, "model", None),
+        }
+    )
+    return status
+
+
 def build_llm_client() -> LLMClient | None:
     if not llm_available():
         return None

@@ -19,7 +19,7 @@ from src.file_discovery import resolve_inputs
 from src.currency import FxTable
 from src.inputs import load_open_pos, load_vendor_master
 from src.logging_utils import setup_logging
-from src.llm_client import llm_available
+from src.llm_client import llm_available, ping_openai
 from src.models import DocumentType, ExtractionMode, ReconciledLine, RunStats, Severity
 from src.part_crosswalk import build_historical_crosswalk
 from src.reconcile import reconcile
@@ -48,6 +48,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--cache-dir", type=Path, default=config.DEFAULT_CACHE_DIR, help="Extraction cache directory.")
     p.add_argument("--refresh-cache", action="store_true", help="Ignore extraction cache and re-extract.")
     p.add_argument("--offline", action="store_true", help="Do not call LLM APIs. Use cache and local/OCR parsers.")
+    p.add_argument(
+        "--ping-llm",
+        action="store_true",
+        help="Load .env, verify OPENAI_API_KEY is present, and make one tiny authenticated API call.",
+    )
     return p.parse_args(argv)
 
 
@@ -120,6 +125,15 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
     logger.info("Vendor master:   %s", discovered.vendor_master)
     logger.info("ERP database:    %s", discovered.erp)
     logger.info("PDFs discovered: %s (skipped %s)", len(discovered.confirmations), len(discovered.skipped_pdfs))
+    env = config._ENV_STATUS
+    logger.info(
+        "LLM config: provider=%s model=%s .env_exists=%s key_present=%s key_length=%s",
+        stats.llm_provider,
+        stats.llm_model,
+        env.get("env_file_exists"),
+        env.get("openai_key_present"),
+        env.get("openai_key_length"),
+    )
 
     open_pos = load_open_pos(discovered.open_pos)
     vendors = load_vendor_master(discovered.vendor_master)
@@ -212,6 +226,28 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     logger = setup_logging()
+    if args.ping_llm:
+        logger.info(
+            "dotenv: env_file_exists=%s openai_key_present=%s openai_key_length=%s",
+            config._ENV_STATUS.get("env_file_exists"),
+            config._ENV_STATUS.get("openai_key_present"),
+            config._ENV_STATUS.get("openai_key_length"),
+        )
+        try:
+            result = ping_openai()
+        except Exception as exc:  # noqa: BLE001
+            logger.error("OpenAI ping failed: %s", exc)
+            return 1
+        if not result.get("ok"):
+            logger.error("OpenAI ping unsuccessful: %s", result.get("error"))
+            return 1
+        logger.info(
+            "OpenAI authentication OK (model=%s finish=%s reply_chars=%s)",
+            result.get("resolved_model") or result.get("model"),
+            result.get("finish_reason"),
+            result.get("reply_chars"),
+        )
+        return 0
     try:
         return run(args, logger)
     except FileNotFoundError as exc:

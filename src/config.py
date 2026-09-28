@@ -11,7 +11,25 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_environment() -> dict:
+    """Load repo-root .env via python-dotenv. Never returns secret values."""
+    env_file = REPO_ROOT / ".env"
+    # Repo-root first, then cwd, without overriding a key already in the process env.
+    load_dotenv(dotenv_path=env_file, override=False)
+    load_dotenv(override=False)
+    key = (os.getenv("OPENAI_API_KEY") or "").strip()
+    return {
+        "env_file": str(env_file),
+        "env_file_exists": env_file.exists(),
+        "openai_key_present": bool(key),
+        "openai_key_length": len(key),
+    }
+
+
+_ENV_STATUS = load_environment()
 
 # --- Extraction ---
 TEXT_MIN_CHARS = 80
@@ -56,8 +74,8 @@ MIN_DUE_LINES_FOR_CALL = 20
 # --- LLM ---
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").strip().lower()
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini").strip()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
+OPENAI_API_KEY = (os.getenv("OPENAI_API_KEY") or "").strip()
+ANTHROPIC_API_KEY = (os.getenv("ANTHROPIC_API_KEY") or "").strip()
 LLM_TIMEOUT_SECONDS = int(os.getenv("LLM_TIMEOUT_SECONDS", "60"))
 LLM_MAX_RETRIES = 3
 
