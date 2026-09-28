@@ -1,0 +1,57 @@
+{
+  "file_hash": "e8a55dd92b824eea4a76e60e7d113a054b09e0d6ea981c9a38a50dd9c8d6506b",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:24.166335+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/liberty_05.pdf",
+    "source_sha256": "e8a55dd92b824eea4a76e60e7d113a054b09e0d6ea981c9a38a50dd9c8d6506b",
+    "vendor_name_raw": "Liberty Surface Finishing",
+    "po_number": "PO-4500050021",
+    "document_number": "LIB-PO-9126",
+    "document_date": "2026-05-10",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": null,
+    "lines": [
+      {
+        "source_line_number": null,
+        "customer_part_number": null,
+        "vendor_part_number": null,
+        "description": "Passivation per AMS 2700, per piece [PASV]",
+        "quantity": 2500.0,
+        "uom": null,
+        "unit_price": null,
+        "currency": null,
+        "promise": {
+          "raw_text": "05/13/2026",
+          "start_date": "2026-05-13",
+          "end_date": "2026-05-13",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:24.166335Z",
+    "page_count": 1,
+    "native_text_chars": 427,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

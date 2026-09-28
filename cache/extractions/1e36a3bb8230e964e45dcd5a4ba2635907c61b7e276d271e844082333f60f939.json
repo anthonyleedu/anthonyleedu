@@ -1,0 +1,57 @@
+{
+  "file_hash": "1e36a3bb8230e964e45dcd5a4ba2635907c61b7e276d271e844082333f60f939",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:22.406215+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/apex_03.pdf",
+    "source_sha256": "1e36a3bb8230e964e45dcd5a4ba2635907c61b7e276d271e844082333f60f939",
+    "vendor_name_raw": "Apex Bar & Tube Co.",
+    "po_number": "PO-4500050007",
+    "document_number": "APX-978346",
+    "document_date": "2026-05-15",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "USD",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": "BAR-A286-250",
+        "vendor_part_number": null,
+        "description": "A286 bar stock, 0.250 dia, mill-cert",
+        "quantity": 1425.0,
+        "uom": null,
+        "unit_price": "4.7100",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "06/15/2026",
+          "start_date": "2026-06-15",
+          "end_date": "2026-06-15",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:22.406215Z",
+    "page_count": 1,
+    "native_text_chars": 543,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

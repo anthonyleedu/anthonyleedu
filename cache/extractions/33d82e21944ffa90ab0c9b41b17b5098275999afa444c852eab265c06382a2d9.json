@@ -1,0 +1,57 @@
+{
+  "file_hash": "33d82e21944ffa90ab0c9b41b17b5098275999afa444c852eab265c06382a2d9",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:24.153345+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/heritage_06.pdf",
+    "source_sha256": "33d82e21944ffa90ab0c9b41b17b5098275999afa444c852eab265c06382a2d9",
+    "vendor_name_raw": "Heritage Cold Heading",
+    "po_number": "PO-4500050012",
+    "document_number": "HCH-74805",
+    "document_date": "2026-05-11",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "USD",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": null,
+        "vendor_part_number": "APH-441-OS",
+        "description": "(see PO for description)",
+        "quantity": 15000.0,
+        "uom": null,
+        "unit_price": "0.8600",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "06/18/2026",
+          "start_date": "2026-06-18",
+          "end_date": "2026-06-18",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:24.153345Z",
+    "page_count": 1,
+    "native_text_chars": 507,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

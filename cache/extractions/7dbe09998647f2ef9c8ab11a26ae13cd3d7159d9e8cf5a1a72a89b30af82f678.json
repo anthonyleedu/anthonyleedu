@@ -1,0 +1,75 @@
+{
+  "file_hash": "7dbe09998647f2ef9c8ab11a26ae13cd3d7159d9e8cf5a1a72a89b30af82f678",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:24.174730+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/ostmark_02.pdf",
+    "source_sha256": "7dbe09998647f2ef9c8ab11a26ae13cd3d7159d9e8cf5a1a72a89b30af82f678",
+    "vendor_name_raw": "Ostmark Werkzeug GmbH",
+    "po_number": "PO-4500050029",
+    "document_number": "OST-224427",
+    "document_date": "2026-05-07",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "EUR",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": null,
+        "vendor_part_number": "TOOL-DIE-9472",
+        "description": "(siehe Bestellung)",
+        "quantity": 5.0,
+        "uom": null,
+        "unit_price": "1140.8000",
+        "currency": "EUR",
+        "promise": {
+          "raw_text": "08.06.2026",
+          "start_date": "2026-06-08",
+          "end_date": "2026-06-08",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      },
+      {
+        "source_line_number": 2,
+        "customer_part_number": null,
+        "vendor_part_number": "OST-CAR-A-100",
+        "description": "(siehe Bestellung)",
+        "quantity": 250.0,
+        "uom": null,
+        "unit_price": "16.7440",
+        "currency": "EUR",
+        "promise": {
+          "raw_text": "08.06.2026",
+          "start_date": "2026-06-08",
+          "end_date": "2026-06-08",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:24.174730Z",
+    "page_count": 1,
+    "native_text_chars": 572,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

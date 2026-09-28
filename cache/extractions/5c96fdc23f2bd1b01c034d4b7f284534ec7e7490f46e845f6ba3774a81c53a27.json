@@ -1,0 +1,75 @@
+{
+  "file_hash": "5c96fdc23f2bd1b01c034d4b7f284534ec7e7490f46e845f6ba3774a81c53a27",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:24.144860+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/heritage_03.pdf",
+    "source_sha256": "5c96fdc23f2bd1b01c034d4b7f284534ec7e7490f46e845f6ba3774a81c53a27",
+    "vendor_name_raw": "Heritage Cold Heading",
+    "po_number": "PO-4500050013",
+    "document_number": "HCH-77346",
+    "document_date": "2026-05-08",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "USD",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": null,
+        "vendor_part_number": "CHB-7715",
+        "description": "(see PO for description)",
+        "quantity": 25000.0,
+        "uom": null,
+        "unit_price": "0.6200",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "05/18/2026",
+          "start_date": "2026-05-18",
+          "end_date": "2026-05-18",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      },
+      {
+        "source_line_number": 2,
+        "customer_part_number": null,
+        "vendor_part_number": "APH-441",
+        "description": "(see PO for description)",
+        "quantity": 5000.0,
+        "uom": null,
+        "unit_price": "0.8400",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "05/18/2026",
+          "start_date": "2026-05-18",
+          "end_date": "2026-05-18",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:24.144860Z",
+    "page_count": 1,
+    "native_text_chars": 565,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

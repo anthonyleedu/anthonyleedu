@@ -1,0 +1,57 @@
+{
+  "file_hash": "e091bfef23ea2e80ac42f81140db94f59dd1e6d89c8833aea26ebb71cac4221f",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:24.164435+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/liberty_04.pdf",
+    "source_sha256": "e091bfef23ea2e80ac42f81140db94f59dd1e6d89c8833aea26ebb71cac4221f",
+    "vendor_name_raw": "Liberty Surface Finishing",
+    "po_number": "PO-4500050017",
+    "document_number": "LIB-PO-9182",
+    "document_date": "2026-05-15",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": null,
+    "lines": [
+      {
+        "source_line_number": null,
+        "customer_part_number": null,
+        "vendor_part_number": null,
+        "description": "Cadmium plating per QQ-P-416, per piece [CAD]",
+        "quantity": 2500.0,
+        "uom": null,
+        "unit_price": null,
+        "currency": null,
+        "promise": {
+          "raw_text": "05/28/2026",
+          "start_date": "2026-05-28",
+          "end_date": "2026-05-28",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:24.164435Z",
+    "page_count": 1,
+    "native_text_chars": 430,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

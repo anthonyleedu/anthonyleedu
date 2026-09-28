@@ -1,0 +1,75 @@
+{
+  "file_hash": "b109ebc6b485ea45c1042bde20d13cf55959dcf0e1471b15de3c421e83a22c31",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:22.408304+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/apex_04.pdf",
+    "source_sha256": "b109ebc6b485ea45c1042bde20d13cf55959dcf0e1471b15de3c421e83a22c31",
+    "vendor_name_raw": "Apex Bar & Tube Co.",
+    "po_number": "PO-4500050008",
+    "document_number": "APX-737955",
+    "document_date": "2026-05-07",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "USD",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": "BAR-A286-250",
+        "vendor_part_number": null,
+        "description": "A286 bar stock, 0.250 dia, mill-cert",
+        "quantity": 1000.0,
+        "uom": null,
+        "unit_price": "4.7100",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "05/28/2026",
+          "start_date": "2026-05-28",
+          "end_date": "2026-05-28",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      },
+      {
+        "source_line_number": 2,
+        "customer_part_number": "BAR-TI64-188",
+        "vendor_part_number": null,
+        "description": "Ti-6Al-4V bar stock, 0.188 dia",
+        "quantity": 1000.0,
+        "uom": null,
+        "unit_price": "22.5000",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "05/28/2026",
+          "start_date": "2026-05-28",
+          "end_date": "2026-05-28",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:22.408304Z",
+    "page_count": 1,
+    "native_text_chars": 615,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

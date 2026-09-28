@@ -1,0 +1,57 @@
+{
+  "file_hash": "3a93a05eccfb126302790eec9d5afccdd7fee5f05c8c6b3e21091182d4a88725",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:22.414265+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/apex_07.pdf",
+    "source_sha256": "3a93a05eccfb126302790eec9d5afccdd7fee5f05c8c6b3e21091182d4a88725",
+    "vendor_name_raw": "Apex Bar & Tube Co.",
+    "po_number": "PO-4500050003",
+    "document_number": "APX-932684",
+    "document_date": "2026-05-16",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "USD",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": "BAR-CRES-250",
+        "vendor_part_number": null,
+        "description": "CRES 17-4 PH bar stock, 0.250 dia",
+        "quantity": 1500.0,
+        "uom": null,
+        "unit_price": "3.9200",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "05/30/2026",
+          "start_date": "2026-05-30",
+          "end_date": "2026-05-30",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:22.414265Z",
+    "page_count": 1,
+    "native_text_chars": 540,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "file_hash": "af20c417f7de7093647785d66d466f590ef7f5b40cde54f32d17cdc079d390a2",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:24.178874+00:00",
+  "extraction_mode": "LOCAL_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/ostmark_04.pdf",
+    "source_sha256": "af20c417f7de7093647785d66d466f590ef7f5b40cde54f32d17cdc079d390a2",
+    "vendor_name_raw": "Ostmark Werkzeug GmbH",
+    "po_number": "PO-4500050028",
+    "document_number": "OST-226935",
+    "document_date": "2026-04-30",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "EUR",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": null,
+        "vendor_part_number": "TOOL-DIE-9472",
+        "description": "(siehe Bestellung)",
+        "quantity": 5.0,
+        "uom": null,
+        "unit_price": "1140.8000",
+        "currency": "EUR",
+        "promise": {
+          "raw_text": "13.06.2026",
+          "start_date": "2026-06-13",
+          "end_date": "2026-06-13",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "LOCAL_TEXT",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:24.178874Z",
+    "page_count": 1,
+    "native_text_chars": 513,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

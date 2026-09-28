@@ -1,0 +1,59 @@
+{
+  "file_hash": "bccc160e1d7a3b9d6f503a3edc058aefb1794e72ca9bf5d0b961ba62e14b60e0",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "local-parser-v1",
+  "model_name": "local-parser-v1",
+  "timestamp": "2026-09-28T18:50:23.308231+00:00",
+  "extraction_mode": "OCR_LOCAL",
+  "document": {
+    "source_file": "/workspace/data/confirmations/continental_02.pdf",
+    "source_sha256": "bccc160e1d7a3b9d6f503a3edc058aefb1794e72ca9bf5d0b961ba62e14b60e0",
+    "vendor_name_raw": "Continental Quality Heat Treat",
+    "po_number": "PO-4500050025",
+    "document_number": "CQH-48302",
+    "document_date": "2026-05-14",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": null,
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": null,
+        "vendor_part_number": null,
+        "description": "Solution treat + age, per Ib",
+        "quantity": 350.0,
+        "uom": "lbs",
+        "unit_price": null,
+        "currency": null,
+        "promise": {
+          "raw_text": "05/07/2026",
+          "start_date": "2026-05-07",
+          "end_date": "2026-05-07",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [
+      "Extracted via OCR; native PDF text was empty"
+    ],
+    "extraction_mode": "OCR_LOCAL",
+    "model_name": "local-parser-v1",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T18:50:23.308231Z",
+    "page_count": 1,
+    "native_text_chars": 0,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}
