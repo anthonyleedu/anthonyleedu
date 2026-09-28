@@ -152,7 +152,7 @@ def match_document_to_po(
                     source_document=doc,
                     method=MatchMethod.APPROVED_VENDOR_CROSSWALK,
                     confidence=0.92,
-                    explanation=f"Approved crosswalk {vpn} ? {beacon}",
+                    explanation=f"Approved crosswalk {vpn} maps to {beacon}",
                 )
             )
             take_po(po)

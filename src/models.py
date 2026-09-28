@@ -281,6 +281,7 @@ class RunStats(BaseModel):
     vision_openai: int = 0
     local_fallback: int = 0
     review_required: int = 0
+    openai_backed: int = 0
     extraction_failures: int = 0
     open_po_lines: int = 0
     matched_lines: int = 0

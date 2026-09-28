@@ -118,7 +118,7 @@ If an API key is present, extraction authenticates first. A rejected key aborts 
 | `output/vendor_metrics.csv` | Machine-readable Task 2 |
 | `output/run_summary.md` | Presentation notes for this run |
 | `output/follow_up_drafts.xlsx` | Unsent email drafts for RED issues |
-| `output/demo_notes.md` | 10-minute walkthrough script |
+| `output/demo_notes.md` | 30-minute presentation / live walkthrough script |
 
 ### Lisa's workbook
 
@@ -157,7 +157,7 @@ Unit tests cover dates (including `KW 20-22 / 2026`), FX, revisions vs splits vs
 6. Invoices are not formal acknowledgments.
 7. QC holds are associated to a supplier's POs, not proven supplier-caused defects.
 8. MRP messages are part-level and are **not** used as a vendor metric.
-9. The last month of the extract is **PARTIAL** through `MAX(receipt_txn.txn_date)` (not today's date).
+9. Boundary months **2025-09** and **2026-05** are **PARTIAL**: the extract starts 2025-09-06 and ends 2026-05-17 (as-of is `MAX(receipt_txn.txn_date)`, not today's date).
 10. New vendor part mappings are **PROPOSED** unless historical `evidence_count >= 3` and `purity >= 0.95`.
 11. Receipt reversals use the **signed** `qty` in the database. `RV` rows are already negative; they are not abs()'d.
 12. On-time means the **stable full-quantity completion date**, not first receipt.

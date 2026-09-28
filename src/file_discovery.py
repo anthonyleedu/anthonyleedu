@@ -55,6 +55,19 @@ def _pick_best(matches: list[Path], preferred_names: tuple[str, ...]) -> Path | 
     return sorted(matches, key=lambda p: (len(p.name), p.name.lower()))[0]
 
 
+def display_path(path: str | Path | None) -> str | None:
+    """Prefer a cwd-relative path so audit files do not embed machine-absolute Cursor paths."""
+    if path is None or str(path).strip() == "":
+        return None
+    p = Path(path)
+    try:
+        resolved = p.resolve()
+        rel = resolved.relative_to(Path.cwd().resolve())
+        return rel.as_posix()
+    except (ValueError, OSError):
+        return p.name
+
+
 def is_vendor_confirmation_pdf(path: Path) -> bool:
     name = path.name.lower()
     if path.suffix.lower() != ".pdf":

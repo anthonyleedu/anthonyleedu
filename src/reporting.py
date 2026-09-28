@@ -219,7 +219,7 @@ def write_run_summary_md(
     stats: RunStats,
     rows: list[ReconciledLine],
     result: PerformanceResult,
-    generated: list[Path],
+    generated: list,
 ) -> None:
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     top = [r for r in rows if r.severity == Severity.RED][:12]
@@ -242,14 +242,15 @@ def write_run_summary_md(
         f"- Revisions: {stats.revisions}",
         f"- Invoices: {stats.invoices}",
         f"- Scanned PDFs: {stats.scanned_pdfs}",
-        f"- Native text + OpenAI: {stats.native_text_openai}",
-        f"- Vision + OpenAI: {stats.vision_openai}",
+        f"- OpenAI-backed documents: {stats.openai_backed}",
+        f"- Native text + OpenAI (including cache): {stats.native_text_openai}",
+        f"- Vision + OpenAI (including cache): {stats.vision_openai}",
+        f"- Fresh AI extractions this run: {stats.ai_extractions}",
+        f"- Cached extractions: {stats.cached_extractions}",
         f"- Local parser/OCR fallback: {stats.local_fallback}",
         f"- Required review: {stats.review_required}",
-        f"- Cached: {stats.cached_extractions}",
-        f"- Fresh AI extractions: {stats.ai_extractions}",
-        f"- Fresh local/OCR: {stats.local_extractions}",
         f"- Failures: {stats.extraction_failures}",
+        "- Note: OpenAI-backed includes cached OpenAI results. Fresh AI extractions this run is the new API-call count.",
         "",
         "## Task 1 — open PO exceptions",
         f"- Open PO lines: {stats.open_po_lines}",
@@ -295,7 +296,7 @@ def write_run_summary_md(
         "- Open PO prices are treated as USD.",
         "- Receipt reversals use signed qty.",
         "- Invoices are not formal acknowledgments.",
-        "- May of the as-of year is partial through the last receipt date.",
+        "- 2025-09 and 2026-05 are PARTIAL (extract starts 2025-09-06 and ends 2026-05-17).",
         "",
         "## Generated files",
     ]
@@ -306,7 +307,7 @@ def write_run_summary_md(
 
 def write_demo_notes(path: Path, result: PerformanceResult, rows: list[ReconciledLine]) -> None:
     reds = [r for r in rows if r.severity == Severity.RED]
-    text = f"""# Demo notes (for a 10-minute walkthrough)
+    text = f"""# Demo notes (for a 30-minute presentation / live walkthrough)
 
 ## 30 seconds — what this is
 

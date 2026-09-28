@@ -13,10 +13,12 @@ from src.normalize import parse_promise
 
 
 def test_sanitize_error_strips_openai_key_material():
-    raw = "Error code: 401 - Incorrect API key provided: sk-proj-abcDEF123-restofkeyazEA"
+    # Concatenated so the file does not contain a scanner-looking sk-proj token.
+    fake_token = "sk-" + "proj-EXAMPLEONLY-NOTAREALSECRET-TESTFIXTURE"
+    raw = f"Error code: 401 - Incorrect API key provided: {fake_token}"
     cleaned = sanitize_error(Exception(raw))
-    assert "sk-proj-abcDEF123" not in cleaned
-    assert "restofkeyazEA" not in cleaned
+    assert fake_token not in cleaned
+    assert "NOTAREALSECRET" not in cleaned
     assert "sk-***" in cleaned
 
 

@@ -8,6 +8,8 @@ from pathlib import Path
 
 import xlsxwriter
 
+from src.file_discovery import display_path
+
 from src.models import (
     CrosswalkEntry,
     ExtractedDocument,
@@ -115,12 +117,10 @@ def _hyperlink(ws, r, c, path: str | None, fmt):
     if not path:
         ws.write_blank(r, c, None, fmt)
         return
-    p = Path(path)
-    name = p.name
-    if p.exists():
-        ws.write_url(r, c, p.resolve().as_uri(), fmt, string=name)
-    else:
-        ws.write(r, c, name, fmt)
+    # Write a cwd-relative or basename path. Do not embed machine-absolute
+    # file:// URIs such as /workspace/data/... in the workbook.
+    shown = display_path(path) or Path(path).name
+    ws.write(r, c, shown, fmt)
 
 
 ACTION_COLUMNS = [
@@ -286,7 +286,7 @@ def write_task1_workbook(
     _write_header(ws, dheaders, fmts, dwidths)
     for i, doc in enumerate(documents, start=1):
         vals = [
-            Path(doc.source_file).name,
+            display_path(doc.source_file) or Path(doc.source_file).name,
             doc.source_sha256[:12],
             doc.vendor_name_raw,
             doc.po_number,
@@ -378,9 +378,12 @@ def write_task1_workbook(
         ("Revisions", stats.revisions),
         ("Invoices", stats.invoices),
         ("Scanned PDFs", stats.scanned_pdfs),
+        ("OpenAI-backed documents", stats.openai_backed),
+        ("Native text + OpenAI (incl. cache)", stats.native_text_openai),
+        ("Vision + OpenAI (incl. cache)", stats.vision_openai),
+        ("Fresh AI extractions this run", stats.ai_extractions),
         ("Cached extractions", stats.cached_extractions),
-        ("AI extractions", stats.ai_extractions),
-        ("Local/OCR extractions", stats.local_extractions),
+        ("Local/OCR fallbacks", stats.local_fallback),
         ("Open PO lines", stats.open_po_lines),
         ("Matched lines", stats.matched_lines),
         ("Missing lines", stats.missing_lines),
@@ -397,11 +400,18 @@ def write_task1_workbook(
     for i, (k, v) in enumerate(items, start=4):
         ws.write(i, 0, k, fmts["label"])
         ws.write(i, 1, v if v is not None else "", fmts["text"])
-    ws.write(24, 0, "Assumptions", fmts["label"])
-    ws.write(25, 0, "Open PO unit prices are treated as USD (CSV has no currency column).", fmts["subtitle"])
-    ws.write(26, 0, "AI extracts document facts; Python computes qty/price/date discrepancies.", fmts["subtitle"])
-    ws.write(27, 0, "Invoices are not treated as formal acknowledgments.", fmts["subtitle"])
-    ws.write(28, 0, "QuickShip 'ship' dates are compared for visibility and flagged DATE_SEMANTICS_WARNING.", fmts["subtitle"])
+    note_row = 4 + len(items) + 2
+    ws.write(note_row, 0, "Assumptions", fmts["label"])
+    ws.write(note_row + 1, 0, "Open PO unit prices are treated as USD (CSV has no currency column).", fmts["subtitle"])
+    ws.write(note_row + 2, 0, "AI extracts document facts; Python computes qty/price/date discrepancies.", fmts["subtitle"])
+    ws.write(note_row + 3, 0, "Invoices are not treated as formal acknowledgments.", fmts["subtitle"])
+    ws.write(note_row + 4, 0, "QuickShip 'ship' dates are compared for visibility and flagged DATE_SEMANTICS_WARNING.", fmts["subtitle"])
+    ws.write(
+        note_row + 5,
+        0,
+        "Cached OpenAI results still count as OpenAI-backed; Fresh AI extractions this run is the API-call count.",
+        fmts["subtitle"],
+    )
 
     if follow_ups:
         ws = wb.add_worksheet("FOLLOW_UPS")

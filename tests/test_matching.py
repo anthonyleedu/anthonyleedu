@@ -74,6 +74,7 @@ def test_approved_crosswalk():
     doc = _doc([ConfirmationLine(vendor_part_number="APH-441", quantity=50000, unit_price=Decimal("0.84"))])
     matches, _ = match_document_to_po(doc, [po], crosswalk=xw, fx=FX, expected_vendor_id="V002", expected_vendor_name="Heritage")
     assert matches[0].method == MatchMethod.APPROVED_VENDOR_CROSSWALK
+    assert matches[0].explanation == "Approved crosswalk APH-441 maps to CHB-9472-3"
 
 
 def test_vendor_pn_equals_beacon_pn():

@@ -15,7 +15,7 @@ from src.document_versions import resolve_active_documents
 from src.erp import load_erp
 from src.excel_task1 import write_task1_workbook
 from src.excel_task2 import write_task2_workbook
-from src.file_discovery import resolve_inputs
+from src.file_discovery import display_path, resolve_inputs
 from src.currency import FxTable
 from src.inputs import load_open_pos, load_vendor_master
 from src.logging_utils import setup_logging
@@ -72,6 +72,7 @@ def tally_stats(docs, rows: list[ReconciledLine], stats: RunStats, review_count:
     stats.local_fallback = sum(
         1 for d in docs if d.extraction_mode in {ExtractionMode.LOCAL_TEXT, ExtractionMode.OCR_LOCAL}
     )
+    stats.openai_backed = stats.native_text_openai + stats.vision_openai
     stats.review_required = review_count
     stats.ai_extractions = sum(
         1 for d in docs if d.extraction_mode in {ExtractionMode.NATIVE_TEXT, ExtractionMode.VISION} and not d.cached
@@ -120,10 +121,11 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     stats.inputs = {
-        "open_pos": str(discovered.open_pos),
-        "vendor_master": str(discovered.vendor_master),
-        "erp": str(discovered.erp),
-        "confirmations_dir": str(Path(discovered.confirmations[0]).parent),
+        "open_pos": display_path(discovered.open_pos) or str(discovered.open_pos),
+        "vendor_master": display_path(discovered.vendor_master) or str(discovered.vendor_master),
+        "erp": display_path(discovered.erp) or str(discovered.erp),
+        "confirmations_dir": display_path(Path(discovered.confirmations[0]).parent)
+        or str(Path(discovered.confirmations[0]).parent),
         "pdf_count": str(len(discovered.confirmations)),
         "skipped_pdfs": ", ".join(p.name for p in discovered.skipped_pdfs) or "(none)",
     }
@@ -201,6 +203,12 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
 
         perf = analyze_vendor_performance(erp_data, crosswalk=crosswalk)
         tally_stats(documents, rows, stats, review_count=len(resolved.review))
+        for doc in documents:
+            doc.source_file = display_path(doc.source_file) or doc.source_file
+        for row in rows:
+            if row.source_file:
+                row.source_file = display_path(row.source_file) or row.source_file
+            row.extra_source_files = [display_path(p) or p for p in row.extra_source_files]
         follow_ups = build_follow_ups(rows)
 
         out_task1 = output / "lisa_reconciliation.xlsx"
@@ -226,28 +234,30 @@ def run(args: argparse.Namespace, logger: logging.Logger) -> int:
         write_vendor_metrics_csv(out_vm, perf)
         write_follow_ups_xlsx(out_fu, follow_ups)
         generated = [out_task1, out_task2, out_jsonl, out_csv, out_vm, out_md, out_fu, out_demo]
-        stats.generated_files = [str(p) for p in generated]
-        write_run_summary_md(out_md, stats=stats, rows=rows, result=perf, generated=generated)
+        stats.generated_files = [display_path(p) or str(p) for p in generated]
+        write_run_summary_md(out_md, stats=stats, rows=rows, result=perf, generated=stats.generated_files)
         write_demo_notes(out_demo, perf, rows)
 
         stats.finished_at = datetime.now(timezone.utc)
         logger.info("")
         logger.info("Processed: %s", stats.pdfs_processed)
         logger.info("Successful: %s", stats.pdfs_processed - stats.extraction_failures)
-        logger.info("Native text + OpenAI: %s", stats.native_text_openai)
-        logger.info("Vision + OpenAI: %s", stats.vision_openai)
+        logger.info("OpenAI-backed: %s (fresh this run %s, cached %s)", stats.openai_backed, stats.ai_extractions, stats.cached_extractions)
         logger.info("Local parser/OCR fallback: %s", stats.local_fallback)
-        logger.info("Cached: %s", stats.cached_extractions)
         logger.info("Review required: %s", stats.review_required)
         logger.info("Vision/OCR scans: %s", stats.scanned_pdfs)
         logger.info("Warnings: %s", stats.warnings)
         logger.info("RED issues: %s  YELLOW: %s  missing lines: %s  unknown POs: %s", stats.red_issues, stats.yellow_issues, stats.missing_lines, stats.unknown_pos)
         if perf.call_first:
             logger.info("Call first: %s (required-date OTD %.1f%%)", perf.call_first.vendor_name, 100 * (perf.call_first.otd_required or 0))
-        logger.info("Output: %s", output.resolve())
-        return 0 if stats.extraction_failures == 0 else 0
+        logger.info("Output: %s", display_path(output) or str(output))
+        return extraction_exit_code(stats.extraction_failures)
     finally:
         conn.close()
+
+
+def extraction_exit_code(failures: int) -> int:
+    return 0 if failures == 0 else 1
 
 
 def main(argv: list[str] | None = None) -> int:
