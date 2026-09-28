@@ -1,0 +1,57 @@
+{
+  "file_hash": "78e12caee3d0db3c45e9084ce6baafd21f30cba363eb64cfb38702993f29923c",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "gpt-4o-mini",
+  "model_name": "gpt-4o-mini",
+  "timestamp": "2026-09-28T19:42:25.434052+00:00",
+  "extraction_mode": "NATIVE_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/apex_06.pdf",
+    "source_sha256": "78e12caee3d0db3c45e9084ce6baafd21f30cba363eb64cfb38702993f29923c",
+    "vendor_name_raw": "APEX BAR & TUBE CO.",
+    "po_number": "PO-4500050006",
+    "document_number": "APX-253836",
+    "document_date": "2026-05-04",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "USD",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": "BAR-A286-375",
+        "vendor_part_number": null,
+        "description": "A286 bar stock, 0.375 dia, mill-cert",
+        "quantity": 5000.0,
+        "uom": null,
+        "unit_price": "7.8400",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "06/14/2026",
+          "start_date": "2026-06-14",
+          "end_date": "2026-06-14",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "NATIVE_TEXT",
+    "model_name": "gpt-4o-mini",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T19:42:25.434052Z",
+    "page_count": 1,
+    "native_text_chars": 543,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

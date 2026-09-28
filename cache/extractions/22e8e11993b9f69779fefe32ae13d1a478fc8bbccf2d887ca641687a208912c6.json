@@ -1,0 +1,93 @@
+{
+  "file_hash": "22e8e11993b9f69779fefe32ae13d1a478fc8bbccf2d887ca641687a208912c6",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "gpt-4o-mini",
+  "model_name": "gpt-4o-mini",
+  "timestamp": "2026-09-28T19:42:56.094440+00:00",
+  "extraction_mode": "NATIVE_TEXT",
+  "document": {
+    "source_file": "/workspace/data/confirmations/heritage_07.pdf",
+    "source_sha256": "22e8e11993b9f69779fefe32ae13d1a478fc8bbccf2d887ca641687a208912c6",
+    "vendor_name_raw": "Heritage Cold Heading",
+    "po_number": "PO-4500050011",
+    "document_number": "HCH-72939",
+    "document_date": "2026-05-10",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "FULL",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": "USD",
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": null,
+        "vendor_part_number": "APH-441",
+        "description": "(see PO for description)",
+        "quantity": 5000.0,
+        "uom": null,
+        "unit_price": "0.8400",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "06/04/2026",
+          "start_date": "2026-06-04",
+          "end_date": "2026-06-04",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      },
+      {
+        "source_line_number": 2,
+        "customer_part_number": null,
+        "vendor_part_number": "CHB-3301",
+        "description": "(see PO for description)",
+        "quantity": 25000.0,
+        "uom": null,
+        "unit_price": "0.4100",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "06/04/2026",
+          "start_date": "2026-06-04",
+          "end_date": "2026-06-04",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      },
+      {
+        "source_line_number": 3,
+        "customer_part_number": null,
+        "vendor_part_number": "CHB-7715",
+        "description": "(see PO for description)",
+        "quantity": 25000.0,
+        "uom": null,
+        "unit_price": "0.6200",
+        "currency": "USD",
+        "promise": {
+          "raw_text": "06/04/2026",
+          "start_date": "2026-06-04",
+          "end_date": "2026-06-04",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": null
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "NATIVE_TEXT",
+    "model_name": "gpt-4o-mini",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T19:42:56.094440Z",
+    "page_count": 1,
+    "native_text_chars": 627,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

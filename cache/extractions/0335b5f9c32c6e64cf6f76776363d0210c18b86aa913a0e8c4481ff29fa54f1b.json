@@ -1,0 +1,57 @@
+{
+  "file_hash": "0335b5f9c32c6e64cf6f76776363d0210c18b86aa913a0e8c4481ff29fa54f1b",
+  "prompt_version": "procurement-extract-v1",
+  "schema_version": "extracted-document-v1",
+  "model": "gpt-4o-mini",
+  "model_name": "gpt-4o-mini",
+  "timestamp": "2026-09-28T19:42:39.947642+00:00",
+  "extraction_mode": "VISION",
+  "document": {
+    "source_file": "/workspace/data/confirmations/continental_04.pdf",
+    "source_sha256": "0335b5f9c32c6e64cf6f76776363d0210c18b86aa913a0e8c4481ff29fa54f1b",
+    "vendor_name_raw": "CONTINENTAL QUALITY HEAT TREAT",
+    "po_number": "PO-4500050023",
+    "document_number": "CQH-42657",
+    "document_date": "2026-05-12",
+    "document_type": "ACKNOWLEDGEMENT",
+    "commitment_status": "UNKNOWN",
+    "is_revision": false,
+    "supersedes_all_prior_for_po": false,
+    "partial_sequence": null,
+    "partial_total": null,
+    "document_currency": null,
+    "lines": [
+      {
+        "source_line_number": 1,
+        "customer_part_number": null,
+        "vendor_part_number": null,
+        "description": "Precipitation heat treat A286, per lb",
+        "quantity": 750.0,
+        "uom": "lbs",
+        "unit_price": null,
+        "currency": null,
+        "promise": {
+          "raw_text": "05/23/2026",
+          "start_date": "2026-05-23",
+          "end_date": "2026-05-23",
+          "date_type": "PROMISE_DATE",
+          "precision": "EXACT_DATE"
+        },
+        "page_number": 1
+      }
+    ],
+    "free_text_notes": [],
+    "extraction_warnings": [],
+    "extraction_mode": "VISION",
+    "model_name": "gpt-4o-mini",
+    "prompt_version": "procurement-extract-v1",
+    "schema_version": "extracted-document-v1",
+    "extracted_at": "2026-09-28T19:42:39.947642Z",
+    "page_count": 1,
+    "native_text_chars": 0,
+    "cached": false,
+    "lifecycle": "ACTIVE",
+    "vendor_id": null,
+    "vendor_name_resolved": null
+  }
+}

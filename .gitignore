@@ -1,0 +1,27 @@
+.env
+.env.local
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Generated sample outputs are committed so reviewers can open the workbooks
+# without a full run. Re-running `python main.py` refreshes them.
+
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

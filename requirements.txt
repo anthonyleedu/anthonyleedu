@@ -1,0 +1,11 @@
+pandas>=2.2
+pymupdf>=1.24
+pydantic>=2.7
+python-dotenv>=1.0
+rapidfuzz>=3.9
+tenacity>=8.5
+xlsxwriter>=3.2
+pytest>=8.2
+openai>=1.40
+anthropic>=0.34
+openpyxl>=3.1
