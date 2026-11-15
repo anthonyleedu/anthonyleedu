@@ -163,6 +163,9 @@ def edit_slide_10(slide):
     ]
     for x, y, name in tiles:
         pic(slide, f"{GEN}/{name}", x + 2.42, y + 0.14, 0.26, 0.26)
+    # keep the data-loop labels on one line (Feedback / Outcomes were wrapping)
+    for sid in (412, 413, 415, 416, 418, 419, 421, 422, 424, 425, 427, 428, 430, 431, 433, 434):
+        set_run_size(by_id(slide, sid), 13, wrap=False)
 
 
 def edit_slide_11(slide):
@@ -226,7 +229,7 @@ def edit_slide_14(slide):
 
 
 def edit_slide_16(slide):
-    """Official channel logos on the Digital acquisition column."""
+    """Official channel logos on Digital; icons on every Organic and Offline row."""
     logos = [
         (1.96, "logo_google.png"),
         (2.52, "logo_meta.png"),
@@ -239,11 +242,39 @@ def edit_slide_16(slide):
         pic(slide, f"{GEN}/{logo}", 1.16, y + 0.10, 0.30, 0.30)
         pos(by_id(slide, tid), l=1.54, w=2.82)
 
-    # modest icons on organic + offline lead items
-    pic(slide, f"{GEN}/icon_search.png", 5.07, 1.96 + 0.10, 0.28, 0.28)
-    pos(by_id(slide, 677), l=5.42, w=2.85)  # SEO
-    pic(slide, f"{GEN}/icon_university.png", 8.98, 1.96 + 0.10, 0.28, 0.28)
-    pos(by_id(slide, 686), l=9.34, w=2.85)  # Universities
+    digital_more = [
+        (4.76, 673, "icon_search.png"),
+        (5.32, 674, "icon_content.png"),
+    ]
+    for y, tid, icon in digital_more:
+        pic(slide, f"{GEN}/{icon}", 1.16, y + 0.10, 0.28, 0.28)
+        pos(by_id(slide, tid), l=1.54, w=2.82)
+
+    organic = [
+        (1.96, 677, "icon_search.png"),
+        (2.52, 678, "icon_ai.png"),
+        (3.08, 679, "icon_content.png"),
+        (3.64, 680, "icon_jd.png"),
+        (4.20, 681, "icon_referral.png"),
+        (4.76, 682, "icon_link.png"),
+        (5.32, 683, "icon_services.png"),
+    ]
+    for y, tid, icon in organic:
+        pic(slide, f"{GEN}/{icon}", 5.07, y + 0.10, 0.28, 0.28)
+        pos(by_id(slide, tid), l=5.42, w=2.85)
+
+    offline = [
+        (1.96, 686, "icon_university.png"),
+        (2.52, 687, "icon_calendar.png"),
+        (3.08, 688, "icon_role.png"),
+        (3.64, 689, "icon_b2b.png"),
+        (4.20, 690, "icon_sponsor.png"),
+        (4.76, 691, "icon_employer.png"),
+        (5.32, 692, "icon_services.png"),
+    ]
+    for y, tid, icon in offline:
+        pic(slide, f"{GEN}/{icon}", 8.98, y + 0.10, 0.28, 0.28)
+        pos(by_id(slide, tid), l=9.34, w=2.85)
 
 
 def edit_slide_17(slide):
@@ -321,6 +352,8 @@ def edit_slide_24(slide):
     ):
         set_run_size(by_id(slide, sid), 11)
     set_run_size(by_id(slide, 1051), 10)  # Profitability label
+    for sid in (997, 1010, 1035, 1043):
+        set_run_size(by_id(slide, sid), 10, wrap=True)
 
 
 def main():

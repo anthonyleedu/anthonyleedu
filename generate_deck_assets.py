@@ -936,6 +936,30 @@ def make_icons():
     d.line((118, 168, 176, 96), fill=stroke(), width=16)
     paths["ats"] = save_icon(im, "ats")
 
+    # calendar / events
+    im, d = icon_base()
+    d.rounded_rectangle((48, 56, 208, 220), 16, outline=stroke(), width=12)
+    d.line((48, 100, 208, 100), fill=stroke(), width=12)
+    d.line((88, 36, 88, 76), fill=stroke(), width=12)
+    d.line((168, 36, 168, 76), fill=stroke(), width=12)
+    for x, y in ((84, 132), (128, 132), (172, 132), (84, 172), (128, 172)):
+        d.rounded_rectangle((x - 10, y - 10, x + 10, y + 10), 3, fill=stroke())
+    paths["calendar"] = save_icon(im, "calendar")
+
+    # link / affiliate
+    im, d = icon_base()
+    d.ellipse((36, 88, 140, 192), outline=stroke(), width=12)
+    d.ellipse((116, 64, 220, 168), outline=stroke(), width=12)
+    paths["link"] = save_icon(im, "link")
+
+    # content / article
+    im, d = icon_base()
+    d.rounded_rectangle((56, 36, 200, 220), 16, outline=stroke(), width=12)
+    d.line((84, 80, 172, 80), fill=stroke(), width=12)
+    d.line((84, 120, 172, 120), fill=stroke(), width=12)
+    d.line((84, 160, 148, 160), fill=stroke(), width=12)
+    paths["content"] = save_icon(im, "content")
+
     return paths
 
 
