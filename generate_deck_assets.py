@@ -565,38 +565,92 @@ def resume_rewrite():
             lines.append(cur)
         return lines or [""]
 
-    # ----- BEFORE: compact full-width candidate input -----
-    bx0, bx1, by0, by1 = 24, 2376, 80, 168
-    rounded_rect(d, (bx0, by0, bx1, by1), 12, (252, 253, 254), (226, 233, 238), 1)
-    d.rounded_rectangle((bx0 + 14, by0 + 12, bx0 + 108, by0 + 36), 7, fill=(140, 151, 160))
-    d.text((bx0 + 28, by0 + 16), "BEFORE", font=sans(12, True), fill=(255, 255, 255))
-    d.text((bx0 + 118, by0 + 14), "Candidate input", font=font(16, True), fill=(16, 34, 47))
-    notes = (
-        "Alex Chen — looking for software job in NY  ·  Startup software person  ·  Helped with the website  ·  "
-        "python / javascript / some AWS  ·  intern work  ·  tutored students  ·  built a dashboard for PMs  ·  "
-        "graduated from a university  ·  want a software engineer role"
-    )
-    ny = by0 + 44
-    for line in wrap(notes, sans(14), bx1 - bx0 - 28)[:2]:
-        d.text((bx0 + 14, ny), line, font=sans(14), fill=(30, 42, 51))
-        ny += 18
+    # ----- BEFORE: a bad, unstructured résumé -----
+    bx0, bx1, by0, by1 = 24, 1096, 80, 1098
+    rounded_rect(d, (bx0, by0, bx1, by1), 12, (252, 252, 248), (226, 233, 238), 1)
+    d.rounded_rectangle((bx0 + 14, by0 + 10, bx0 + 108, by0 + 34), 6, fill=(140, 151, 160))
+    d.text((bx0 + 28, by0 + 14), "BEFORE", font=sans(12, True), fill=(255, 255, 255))
+    d.text((bx0 + 118, by0 + 12), "Candidate résumé", font=font(15, True), fill=(16, 34, 47))
 
-    # ----- AFTER: full-width Jack Kolb page, left margin to right margin -----
-    ax0, ax1, ay0, ay1 = 24, 2376, 180, 1098
+    lx, rx = bx0 + 28, bx1 - 28
+    yy = by0 + 48
+    d.text((lx, yy), "My Resume", font=sans(28, True), fill=(40, 90, 180))
+    yy += 38
+    d.text((lx + 8, yy), "alex chen", font=sans(18), fill=(60, 60, 60))
+    yy += 24
+    d.text((lx + 8, yy), "new york   alex.chen@email.com   6465550192", font=sans(12), fill=(90, 90, 90))
+    yy += 22
+    d.line((lx, yy, rx - 80, yy), fill=(40, 90, 180), width=3)
+    yy += 16
+    d.text((lx, yy), "Objective", font=sans(16, True), fill=(40, 90, 180))
+    yy += 22
+    obj = "I am a hard worker looking for a software engineer job in NY where I can use my skills and grow with the company. I have experience with coding and teamwork."
+    for line in wrap(obj, sans(13), rx - lx):
+        d.text((lx + 4, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 14
+    d.text((lx + 12, yy), "Education", font=sans(16, True), fill=(40, 90, 180))
+    yy += 22
+    for line in wrap("I went to NYU. Computer science. GPA is pretty good. Took some coding classes.", sans(13), rx - lx - 20):
+        d.text((lx + 16, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 16
+    d.text((lx, yy), "Work Experience", font=sans(16, True), fill=(40, 90, 180))
+    yy += 24
+    d.text((lx + 4, yy), "Northstar Labs - software person  (2022-now)", font=sans(13, True), fill=(40, 40, 40))
+    yy += 20
+    for line in wrap(
+        "Worked at a startup doing coding. Helped with the company website. Worked with the team on projects. Used python and javascript. Did some cloud stuff on AWS. Made the site faster I think.",
+        sans(13),
+        rx - lx - 8,
+    ):
+        d.text((lx + 8, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 12
+    d.text((lx + 4, yy), "Harbor Labs intern", font=sans(13, True), fill=(40, 40, 40))
+    yy += 20
+    for line in wrap("Some intern work before that. Built tools. Wrote code for the team.", sans(13), rx - lx - 8):
+        d.text((lx + 8, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 12
+    d.text((lx + 4, yy), "school IT job", font=sans(13, True), fill=(40, 40, 40))
+    yy += 20
+    for line in wrap("I did scripts for the school. Helped people with tickets.", sans(13), rx - lx - 8):
+        d.text((lx + 8, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 18
+    d.text((lx, yy), "Skills", font=sans(16, True), fill=(40, 90, 180))
+    yy += 22
+    for line in wrap("coding, teamwork, python, javascript, AWS, microsoft office, communication, hard worker", sans(13), rx - lx):
+        d.text((lx + 4, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 16
+    d.text((lx + 20, yy), "Other", font=sans(15, True), fill=(40, 90, 180))
+    yy += 22
+    for line in wrap("tutored other students. built a dashboard for PMs. want a software engineer role", sans(13), rx - lx - 24):
+        d.text((lx + 24, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+
+    # arrow — bad résumé to rewritten résumé
+    d.rounded_rectangle((1118, 548, 1254, 684), 68, fill=(0, 123, 203))
+    d.polygon([(1154, 580), (1226, 616), (1154, 652)], fill=(255, 255, 255))
+    d.text((1128, 698), "AI rewrite", font=sans(13, True), fill=(0, 123, 203))
+
+    # ----- AFTER: Jack Kolb IB template applied to Alex -----
+    ax0, ax1, ay0, ay1 = 1272, 2376, 80, 1098
     rounded_rect(d, (ax0, ay0, ax1, ay1), 12, (255, 255, 255), (226, 233, 238), 1)
-    d.rounded_rectangle((ax0 + 14, ay0 + 8, ax0 + 92, ay0 + 28), 6, fill=(0, 123, 203))
-    d.text((ax0 + 26, ay0 + 11), "AFTER", font=sans(11, True), fill=(255, 255, 255))
-    d.text((ax0 + 100, ay0 + 10), "51 Careers.AI rewrite", font=font(14, True), fill=(16, 34, 47))
+    d.rounded_rectangle((ax0 + 14, ay0 + 10, ax0 + 108, ay0 + 34), 6, fill=(0, 123, 203))
+    d.text((ax0 + 32, ay0 + 14), "AFTER", font=sans(12, True), fill=(255, 255, 255))
+    d.text((ax0 + 118, ay0 + 12), "Rewritten résumé", font=font(15, True), fill=(16, 34, 47))
 
-    # Jack Kolb page margins (~0.33") so rules and dates run margin-to-margin
-    px0, py0 = ax0 + 56, ay0 + 34
-    px1, py1 = ax1 - 56, ay1 - 16
+    px0, py0 = ax0 + 22, ay0 + 42
+    px1, py1 = ax1 - 22, ay1 - 14
     page_w = px1 - px0
-    f10 = times(22)
-    f10b = times(22, bold=True)
-    f10i = times(22, italic=True)
-    f11b = times(24, bold=True)
-    nf = times(44, bold=True)
+    f10 = times(14)
+    f10b = times(14, bold=True)
+    f10i = times(14, italic=True)
+    f11b = times(16, bold=True)
+    nf = times(28, bold=True)
     date_samples = [
         "May 2021",
         "GPA: 3.82/4.00",
@@ -662,7 +716,7 @@ def resume_rewrite():
         y = py0
         name = "ALEX CHEN"
         draw.text((px0 + (page_w - tw(name, nf)) / 2, y), name, font=nf, fill=BLACK)
-        y += 46
+        y += 32
         draw.line((px0, y, px1, y), fill=BLACK, width=2)
         y += 4
         draw.line((px0, y, px1, y), fill=BLACK, width=4)
@@ -782,8 +836,8 @@ def resume_rewrite():
 
     probe = Image.new("RGB", (8, 8))
     probe_d = ImageDraw.Draw(probe)
-    lo, hi = 18.0, 30.0
-    best_lh = 18.0
+    lo, hi = 15.0, 22.0
+    best_lh = 15.0
     for _ in range(14):
         mid = (lo + hi) / 2
         end_y = paint(probe_d, mid)
