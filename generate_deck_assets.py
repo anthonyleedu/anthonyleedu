@@ -615,22 +615,22 @@ def resume_rewrite():
     d.rounded_rectangle((618, 548, 722, 652), 52, fill=(0, 123, 203))
     d.polygon([(646, 576), (698, 600), (646, 624)], fill=(255, 255, 255))
 
-    # ----- AFTER: Jack Kolb IB template applied to Alex -----
+    # ----- AFTER: Jack Kolb IB template applied to Alex (fills the card) -----
     ax0, ax1, ay0, ay1 = 740, 2376, 80, 1098
     rounded_rect(d, (ax0, ay0, ax1, ay1), 14, (255, 255, 255), (226, 233, 238), 1)
-    d.rounded_rectangle((ax0 + 16, ay0 + 10, ax0 + 110, ay0 + 36), 7, fill=(0, 123, 203))
-    d.text((ax0 + 32, ay0 + 14), "AFTER", font=sans(13, True), fill=(255, 255, 255))
-    d.text((ax0 + 122, ay0 + 12), "51 Careers.AI rewrite", font=font(16, True), fill=(16, 34, 47))
+    d.rounded_rectangle((ax0 + 14, ay0 + 8, ax0 + 92, ay0 + 28), 6, fill=(0, 123, 203))
+    d.text((ax0 + 26, ay0 + 11), "AFTER", font=sans(11, True), fill=(255, 255, 255))
+    d.text((ax0 + 100, ay0 + 10), "51 Careers.AI rewrite", font=font(14, True), fill=(16, 34, 47))
 
-    # inner page — Times, small-caps name, underlined sections, italic right-tab dates
-    px0, py0 = ax0 + 22, ay0 + 42
-    px1, py1 = ax1 - 22, ay1 - 14
+    # inner page uses the full AFTER card — Times, small-caps name, right-tab dates
+    px0, py0 = ax0 + 18, ay0 + 32
+    px1, py1 = ax1 - 18, ay1 - 10
     page_w = px1 - px0
-    f10 = times(16)
-    f10b = times(16, bold=True)
-    f10i = times(16, italic=True)
-    f11b = times(18, bold=True)
-    nf = times(34, bold=True)
+    f10 = times(17)
+    f10b = times(17, bold=True)
+    f10i = times(17, italic=True)
+    f11b = times(19, bold=True)
+    nf = times(36, bold=True)
     date_samples = [
         "May 2021",
         "GPA: 3.82/4.00",
@@ -641,185 +641,192 @@ def resume_rewrite():
         "October 2020",
         "September 2019 – May 2021",
     ]
-    DATE_W = max(tw(s, f10i) for s in date_samples) + 18
+    DATE_W = max(tw(s, f10i) for s in date_samples) + 16
 
-    def section(y, title, lh):
-        d.text((px0, y), title, font=f11b, fill=BLACK)
-        y += lh + 2
-        d.line((px0, y, px1, y), fill=BLACK, width=2)
-        return y + 4
-
-    def org_line(y, org, loc, date, lh):
-        loc_s = f" – {loc}" if loc else ""
-        dw = tw(date, f10i)
-        d.text((px1 - dw, y), date, font=f10i, fill=BLACK)
-        d.text((px0, y), org, font=f10b, fill=BLACK)
-        d.text((px0 + tw(org, f10b), y), loc_s, font=f10, fill=BLACK)
-        return y + lh
-
-    def degree_line(y, degree, gpa, lh):
-        dw = tw(gpa, f10b)
-        d.text((px1 - dw, y), gpa, font=f10b, fill=BLACK)
-        d.text((px0, y), degree, font=f10i, fill=BLACK)
-        return y + lh
-
-    def subhead(y, title, lh):
-        d.text((px0, y), title, font=f10b, fill=BLACK)
-        return y + lh
-
-    def role(y, title, lh):
-        d.text((px0, y), title, font=f10i, fill=BLACK)
-        return y + lh
-
-    def bullets(y, items, lh):
-        indent, hang = 16, 14
-        for item in items:
-            lines = wrap(item, f10, page_w - indent - hang)
-            d.text((px0 + indent, y), "•", font=f10, fill=BLACK)
-            for line in lines:
-                d.text((px0 + indent + hang, y), line, font=f10, fill=BLACK)
-                y += lh
+    def section(draw, y, title, lh):
+        draw.text((px0, y), title, font=f11b, fill=BLACK)
+        y += lh
+        draw.line((px0, y, px1, y), fill=BLACK, width=2)
         return y + 3
 
-    def honors_rows(y, rows, lh):
+    def org_line(draw, y, org, loc, date, lh):
+        loc_s = f" – {loc}" if loc else ""
+        dw = tw(date, f10i)
+        draw.text((px1 - dw, y), date, font=f10i, fill=BLACK)
+        draw.text((px0, y), org, font=f10b, fill=BLACK)
+        draw.text((px0 + tw(org, f10b), y), loc_s, font=f10, fill=BLACK)
+        return y + lh
+
+    def degree_line(draw, y, degree, gpa, lh):
+        dw = tw(gpa, f10b)
+        draw.text((px1 - dw, y), gpa, font=f10b, fill=BLACK)
+        draw.text((px0, y), degree, font=f10i, fill=BLACK)
+        return y + lh
+
+    def subhead(draw, y, title, lh):
+        draw.text((px0, y), title, font=f10b, fill=BLACK)
+        return y + lh
+
+    def role(draw, y, title, lh):
+        draw.text((px0, y), title, font=f10i, fill=BLACK)
+        return y + lh
+
+    def bullets(draw, y, items, lh):
+        indent, hang = 16, 14
+        wrap_w = page_w - indent - hang
+        for item in items:
+            lines = wrap(item, f10, wrap_w)
+            draw.text((px0 + indent, y), "•", font=f10, fill=BLACK)
+            for line in lines:
+                draw.text((px0 + indent + hang, y), line, font=f10, fill=BLACK)
+                y += lh
+        return y + 2
+
+    def honors_rows(draw, y, rows, lh):
         for label, rest in rows:
-            d.text((px0, y), label, font=f10b, fill=BLACK)
+            draw.text((px0, y), label, font=f10b, fill=BLACK)
             lw = tw(label, f10b)
             for line in wrap(rest, f10, page_w - lw):
-                d.text((px0 + lw, y), line, font=f10, fill=BLACK)
+                draw.text((px0 + lw, y), line, font=f10, fill=BLACK)
                 y += lh
                 lw = 0
         return y
 
-    def paint(lh):
+    def paint(draw, lh):
         y = py0
         name = "ALEX CHEN"
-        d.text((px0 + (page_w - tw(name, nf)) / 2, y), name, font=nf, fill=BLACK)
-        y += 38
-        # Jack Kolb header: name bottom rule + thinThickLargeGap + contact + hairline
-        d.line((px0, y, px1, y), fill=BLACK, width=2)
-        y += 5
-        d.line((px0, y, px1, y), fill=BLACK, width=4)
-        y += 7
+        draw.text((px0 + (page_w - tw(name, nf)) / 2, y), name, font=nf, fill=BLACK)
+        y += 36
+        draw.line((px0, y, px1, y), fill=BLACK, width=2)
+        y += 4
+        draw.line((px0, y, px1, y), fill=BLACK, width=4)
+        y += 6
         contact = "(646) 555-0192  ▪  alex.chen@email.com  ▪  New York, NY  ▪  github.com/alexchen"
-        d.text((px0 + (page_w - tw(contact, f10)) / 2, y), contact, font=f10, fill=BLACK)
-        y += lh + 2
-        d.line((px0, y, px1, y), fill=BLACK, width=1)
-        y += 8
+        draw.text((px0 + (page_w - tw(contact, f10)) / 2, y), contact, font=f10, fill=BLACK)
+        y += lh + 1
+        draw.line((px0, y, px1, y), fill=BLACK, width=1)
+        y += 6
 
-        y = section(y, "EDUCATION", lh)
-        y = org_line(y, "New York University", "Courant Institute", "May 2021", lh)
-        y = degree_line(y, "Bachelor of Science in Computer Science", "GPA: 3.82/4.00", lh)
-        y = subhead(y, "NYU Computer Science Honors Program", lh)
+        y = section(draw, y, "EDUCATION", lh)
+        y = org_line(draw, y, "New York University", "Courant Institute", "May 2021", lh)
+        y = degree_line(draw, y, "Bachelor of Science in Computer Science", "GPA: 3.82/4.00", lh)
+        y = subhead(draw, y, "NYU Computer Science Honors Program", lh)
         y = bullets(
+            draw,
             y,
             [
-                "Selected as 1 of 40 students for a research-intensive CS honors sequence covering algorithms, operating systems and distributed systems",
-                "Completed honors thesis on distributed cache consistency and presented findings at the undergraduate research symposium",
+                "Selected as 1 of 40 students for a research-intensive CS honors sequence covering algorithms, operating systems, distributed systems and computer networks, with weekly faculty seminars",
+                "Completed honors thesis on distributed cache consistency; built a Go prototype and presented findings at the undergraduate research symposium to faculty and industry reviewers",
             ],
             lh,
         )
-        y = subhead(y, "AWS Certified Solutions Architect – Associate", lh)
+        y = subhead(draw, y, "AWS Certified Solutions Architect – Associate", lh)
         y = bullets(
+            draw,
             y,
             [
-                "Completed 40 hours of hands-on training covering VPC design, IAM, EC2/S3 and production incident response on AWS",
-                "Scored 90% on the certification exam; designed a three-tier web architecture from scratch in a timed lab",
-            ],
-            lh,
-        )
-
-        y = section(y, "EXPERIENCE", lh)
-        y = org_line(y, "Northstar Labs", "New York, NY", "August 2022 – Present", lh)
-        y = role(y, "Software Engineer", lh)
-        y = bullets(
-            y,
-            [
-                "Engineered customer-facing web platform serving 40,000 MAU, cutting p95 page load 35% and reducing infrastructure cost 18%",
-                "Shipped 12 production releases with PM and design; reduced defect escape 28% through tighter QA gates and staging checks",
-                "Owned AWS infrastructure for 4 production services; introduced CI/CD that cut deploy time from 45 minutes to 12 minutes",
-            ],
-            lh,
-        )
-        y = org_line(y, "Harbor Labs", "New York, NY", "June 2021 – August 2021", lh)
-        y = role(y, "Engineering Intern", lh)
-        y = bullets(
-            y,
-            [
-                "Built internal QA tooling that cut cycle time from 4 days to 1.5 days across a 6-person engineering team",
-                "Wrote TypeScript services and PostgreSQL migrations used in staging by 3 product squads during summer launch",
-            ],
-            lh,
-        )
-        y = org_line(y, "NYU Information Technology", "New York, NY", "January 2020 – May 2021", lh)
-        y = role(y, "Student Developer", lh)
-        y = bullets(
-            y,
-            [
-                "Maintained internal Python scripts supporting 3,000 campus users; reduced ticket backlog 22% over two semesters",
-                "Documented APIs and onboarding guides that cut new-hire ramp time on the student developer team from 4 weeks to 10 days",
+                "Completed 40 hours of hands-on training covering VPC design, IAM, EC2/S3, load balancing and production incident response, building three-tier architectures in timed labs",
+                "Scored 90% on the certification exam; designed a three-tier web architecture from scratch with auto-scaling, multi-AZ failover and least-privilege IAM in under 45 minutes",
             ],
             lh,
         )
 
-        y = section(y, "LEADERSHIP", lh)
-        y = org_line(y, "NYU Computer Science Tutoring", "New York, NY", "September 2020 – May 2021", lh)
-        y = role(y, "Head Tutor", lh)
+        y = section(draw, y, "EXPERIENCE", lh)
+        y = org_line(draw, y, "Northstar Labs", "New York, NY", "August 2022 – Present", lh)
+        y = role(draw, y, "Software Engineer", lh)
         y = bullets(
+            draw,
             y,
             [
-                "Led 12 tutors supporting 80 students per semester in data structures and algorithms; raised average exam scores 11%",
-                "Standardized office-hour materials and a shared problem bank, cutting onboarding time for new tutors from 3 weeks to 1",
+                "Engineered customer-facing web platform serving 40,000 MAU, cutting p95 page load 35% and reducing infrastructure cost 18% through query batching, CDN caching and image compression",
+                "Shipped 12 production releases with PM and design; reduced defect escape 28% by adding staging checks, tighter QA gates and a shared runbook for rollback within 10 minutes",
+                "Owned AWS infrastructure for 4 production services; introduced CI/CD that cut deploy time from 45 minutes to 12 minutes and restored 99.9% weekly uptime after a reliability cluster",
             ],
             lh,
         )
-        y = org_line(y, "NYU Hackathon", "New York, NY", "October 2020", lh)
-        y = role(y, "Mentor", lh)
+        y = org_line(draw, y, "Harbor Labs", "New York, NY", "June 2021 – August 2021", lh)
+        y = role(draw, y, "Engineering Intern", lh)
         y = bullets(
+            draw,
             y,
             [
-                "Mentored 6 student teams over a 36-hour build; 2 teams placed in the top 10 of 48 submissions and one took first overall",
+                "Built internal QA tooling that cut cycle time from 4 days to 1.5 days across a 6-person engineering team by automating fixture setup, flake retries and screenshot diffs on pull requests",
+                "Wrote TypeScript services and PostgreSQL migrations used in staging by 3 product squads during summer launch, unblocking a 2-week slip on the checkout rewrite",
             ],
             lh,
         )
-        y = org_line(y, "ACM Student Chapter", "New York, NY", "September 2019 – May 2021", lh)
-        y = role(y, "Vice President", lh)
+        y = org_line(draw, y, "NYU Information Technology", "New York, NY", "January 2020 – May 2021", lh)
+        y = role(draw, y, "Student Developer", lh)
         y = bullets(
+            draw,
             y,
             [
-                "Organized 14 workshops and a 120-person recruiting night with 8 engineering employers; membership grew 40% year over year",
+                "Maintained internal Python scripts supporting 3,000 campus users; reduced ticket backlog 22% over two semesters by automating account provisioning and password resets",
+                "Documented APIs and onboarding guides that cut new-hire ramp time on the student developer team from 4 weeks to 10 days and became the default training packet",
             ],
             lh,
         )
 
-        y = section(y, "HONORS, ACTIVITIES & INTERESTS", lh)
+        y = section(draw, y, "LEADERSHIP", lh)
+        y = org_line(draw, y, "NYU Computer Science Tutoring", "New York, NY", "September 2020 – May 2021", lh)
+        y = role(draw, y, "Head Tutor", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Led 12 tutors supporting 80 students per semester in data structures and algorithms; raised average exam scores 11% by standardizing weekly problem sets and review sessions",
+                "Built a shared problem bank and office-hour materials that cut onboarding time for new tutors from 3 weeks to 1 and kept coverage across 6 weekday slots",
+            ],
+            lh,
+        )
+        y = org_line(draw, y, "NYU Hackathon", "New York, NY", "October 2020", lh)
+        y = role(draw, y, "Mentor", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Mentored 6 student teams over a 36-hour build on scoping, APIs and demo narrative; 2 teams placed in the top 10 of 48 submissions and one took first overall",
+            ],
+            lh,
+        )
+        y = org_line(draw, y, "ACM Student Chapter", "New York, NY", "September 2019 – May 2021", lh)
+        y = role(draw, y, "Vice President", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Organized 14 workshops and a 120-person recruiting night with 8 engineering employers; membership grew 40% year over year and workshop NPS held at 4.6 / 5.0",
+            ],
+            lh,
+        )
+
+        y = section(draw, y, "HONORS, ACTIVITIES & INTERESTS", lh)
         y = honors_rows(
+            draw,
             y,
             [
-                ("Technical:  ", "Python, TypeScript, React, AWS, PostgreSQL, Docker, Git"),
-                ("Honors:  ", "Dean’s List (6 semesters), NYU Hackathon 1st Place, CS Department Tutoring Award"),
-                ("Activities:  ", "NYU Hackathon Mentor, Open-Source Contributor, CS Teaching Assistant"),
-                ("Interests:  ", "Distance running, jazz piano, New York City food maps"),
+                ("Technical:  ", "Python, TypeScript, React, AWS, PostgreSQL, Docker, Git, CI/CD, REST APIs, Linux"),
+                ("Honors:  ", "Dean’s List (6 semesters), NYU Hackathon 1st Place, CS Department Tutoring Award, AWS Certified Solutions Architect"),
+                ("Activities:  ", "NYU Hackathon Mentor, Open-Source Contributor, CS Teaching Assistant, ACM Student Chapter"),
+                ("Interests:  ", "Distance running, jazz piano, New York City food maps, weekend hackathons"),
             ],
             lh,
         )
         return y
 
-    # pick line-height so the one-pager fills the AFTER card without clipping
-    best_lh, best_y = 18, 0
     probe = Image.new("RGB", (8, 8))
     probe_d = ImageDraw.Draw(probe)
-    saved_d = d
-    for trial in range(17, 23):
-        d = probe_d
-        end_y = paint(trial)
+    lo, hi = 16.0, 23.0
+    best_lh = 16.0
+    for _ in range(14):
+        mid = (lo + hi) / 2
+        end_y = paint(probe_d, mid)
         if end_y <= py1:
-            best_lh, best_y = trial, end_y
+            best_lh = mid
+            lo = mid
         else:
-            break
-    d = saved_d
-    end_y = paint(best_lh)
-    # if a couple of lines remain, nudge the last honors block isn't needed; page is packed
+            hi = mid
+    end_y = paint(d, best_lh)
 
     path = os.path.join(OUT, "resume_before_after.png")
     im.save(path, "PNG")
