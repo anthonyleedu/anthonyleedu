@@ -518,169 +518,308 @@ def round_png(path, radius=48):
     im.save(path)
 
 
+def times(size, bold=False, italic=False):
+    name = "LiberationSerif"
+    if bold and italic:
+        fname = f"{name}-BoldItalic.ttf"
+    elif bold:
+        fname = f"{name}-Bold.ttf"
+    elif italic:
+        fname = f"{name}-Italic.ttf"
+    else:
+        fname = f"{name}-Regular.ttf"
+    return ImageFont.truetype(f"/usr/share/fonts/truetype/liberation/{fname}", size)
+
+
 def resume_rewrite():
-    """Full-bleed product screenshot — aspect matches the 11.53×5.62 slide frame."""
+    """Before/after using the Jack Kolb IB resume template for Alex."""
     W, H = 2400, 1170
     im = Image.new("RGB", (W, H), (243, 247, 250))
     d = ImageDraw.Draw(im)
+    BLACK = (0, 0, 0)
 
     rounded_rect(d, (8, 8, W - 8, H - 8), 26, (255, 255, 255), (214, 224, 232), 2)
-    d.rectangle((8, 8, W - 8, 72), fill=(243, 247, 250))
+    d.rectangle((8, 8, W - 8, 68), fill=(243, 247, 250))
     for i, col in enumerate([(255, 95, 86), (255, 189, 46), (39, 201, 63)]):
-        d.ellipse((28 + i * 24, 28, 46 + i * 24, 46), fill=col)
-    d.text((112, 26), "51careers.ai  /  resume", font=sans(20), fill=(92, 107, 118))
-    d.text((500, 22), "AI Resume Rewrite  ·  Software Engineer, New York", font=font(26, True), fill=(16, 34, 47))
-    d.rounded_rectangle((1988, 22, 2360, 56), 10, fill=(0, 123, 203))
-    d.text((2020, 28), "Illustrative output", font=sans(16, True), fill=(255, 255, 255))
+        d.ellipse((28 + i * 24, 26, 46 + i * 24, 44), fill=col)
+    d.text((112, 24), "51careers.ai  /  resume", font=sans(18), fill=(92, 107, 118))
+    d.text((500, 18), "AI Resume Rewrite  ·  Software Engineer, New York", font=font(24, True), fill=(16, 34, 47))
+    d.rounded_rectangle((1988, 18, 2360, 52), 10, fill=(0, 123, 203))
+    d.text((2020, 24), "Illustrative output", font=sans(16, True), fill=(255, 255, 255))
 
-    def chips(x, y, max_x, items):
-        xx = x
-        yy = y
-        for t in items:
-            bbox = d.textbbox((0, 0), t, font=sans(14, True))
-            tw = bbox[2] - bbox[0]
-            w = tw + 22
-            if xx + w > max_x:
-                xx = x
-                yy += 34
-            d.rounded_rectangle((xx, yy, xx + w, yy + 26), 8, fill=(232, 244, 251), outline=(169, 205, 224))
-            d.text((xx + 11, yy + 4), t, font=sans(14, True), fill=(0, 123, 203))
-            xx += w + 8
-        return yy + 34
+    def tw(text, fnt):
+        return d.textbbox((0, 0), text, font=fnt)[2] - d.textbbox((0, 0), text, font=fnt)[0]
 
-    def panel(x0, x1, y0, y1, tag, tag_fill, title, blocks):
-        rounded_rect(d, (x0, y0, x1, y1), 16, (252, 253, 254), (226, 233, 238), 1)
-        d.rounded_rectangle((x0 + 22, y0 + 16, x0 + 22 + 108, y0 + 46), 8, fill=tag_fill)
-        d.text((x0 + 40, y0 + 21), tag, font=sans(15, True), fill=(255, 255, 255))
-        d.text((x0 + 148, y0 + 18), title, font=font(24, True), fill=(16, 34, 47))
-        yy = y0 + 62
-        for kind, text, extra in blocks:
-            if kind == "rule":
-                d.line((x0 + 22, yy, x1 - 22, yy), fill=(230, 236, 241), width=1)
-                yy += 12
-            elif kind == "head":
-                d.text((x0 + 22, yy), text, font=sans(26, True), fill=(16, 34, 47))
-                yy += 32
-            elif kind == "sub":
-                d.text((x0 + 22, yy), text, font=sans(16), fill=(92, 107, 118))
-                yy += 24
-            elif kind == "sec":
-                d.text((x0 + 22, yy), text, font=sans(13, True), fill=(0, 123, 203) if extra else (140, 151, 160))
-                yy += 24
-            elif kind == "job":
-                d.text((x0 + 22, yy), text, font=sans(16, True), fill=(16, 34, 47))
-                yy += 24
-            elif kind == "chips":
-                yy = chips(x0 + 22, yy, x1 - 22, extra)
-            elif kind == "quote":
-                d.rounded_rectangle((x0 + 22, yy, x1 - 22, yy + 70), 10, fill=(243, 247, 250), outline=(226, 233, 238))
-                d.text((x0 + 36, yy + 10), text, font=sans(15), fill=(30, 42, 51))
-                d.text((x0 + 36, yy + 36), extra, font=sans(15), fill=(0, 123, 203))
-                yy += 82
-            elif kind == "ghost":
-                d.rounded_rectangle((x0 + 22, yy + 2, x1 - 70, yy + 16), 4, fill=(232, 237, 241))
-                yy += 22
-            elif kind == "dash":
-                d.rounded_rectangle((x0 + 22, yy, x1 - 22, yy + 86), 12, outline=(214, 224, 232), width=2)
-                d.text((x0 + 40, yy + 32), text, font=sans(14), fill=(140, 151, 160))
-                yy += 100
+    def wrap(text, fnt, maxw):
+        words = text.split()
+        lines, cur = [], ""
+        for w in words:
+            trial = (cur + " " + w).strip()
+            if tw(trial, fnt) <= maxw:
+                cur = trial
             else:
-                fill = (0, 123, 203) if extra else (30, 42, 51)
-                prefix = "•  " if kind == "bullet" else ""
-                d.text((x0 + 22, yy), prefix + text, font=sans(16, bold=bool(extra)), fill=fill)
-                yy += 24
-        return yy
+                if cur:
+                    lines.append(cur)
+                cur = w
+        if cur:
+            lines.append(cur)
+        return lines or [""]
 
-    before = [
-        ("head", "Alex Chen", False),
-        ("sub", "Looking for software job in NY", False),
-        ("rule", "", False),
-        ("sec", "NOTES  ·  UNSTRUCTURED INPUT", False),
-        ("body", "Startup — software person", False),
-        ("body", "Worked at a startup doing coding", False),
-        ("body", "Helped with the company website", False),
-        ("body", "Worked with the team on projects", False),
-        ("body", "Used python and javascript", False),
-        ("body", "Did some cloud stuff on AWS", False),
-        ("body", "Made the site faster I think", False),
-        ("body", "Some intern work before that", False),
-        ("rule", "", False),
-        ("sec", "EDUCATION / SKILLS", False),
-        ("body", "Graduated from a university", False),
-        ("body", "Skills: coding, teamwork, python", False),
-        ("body", "Want a software engineer role", False),
-        ("rule", "", False),
-        ("dash", "Paste more career facts — education, dates, metrics…", False),
-        ("ghost", "", False),
-        ("ghost", "", False),
-        ("ghost", "", False),
-        ("ghost", "", False),
-        ("ghost", "", False),
-        ("ghost", "", False),
-        ("ghost", "", False),
-        ("ghost", "", False),
+    # ----- BEFORE: unstructured notes -----
+    bx0, bx1, by0, by1 = 24, 600, 80, 1098
+    rounded_rect(d, (bx0, by0, bx1, by1), 14, (252, 253, 254), (226, 233, 238), 1)
+    d.rounded_rectangle((bx0 + 16, by0 + 14, bx0 + 118, by0 + 42), 8, fill=(140, 151, 160))
+    d.text((bx0 + 32, by0 + 18), "BEFORE", font=sans(14, True), fill=(255, 255, 255))
+    d.text((bx0 + 130, by0 + 16), "Candidate input", font=font(20, True), fill=(16, 34, 47))
+    yy = by0 + 56
+    d.text((bx0 + 16, yy), "Alex Chen", font=sans(22, True), fill=(16, 34, 47))
+    yy += 28
+    d.text((bx0 + 16, yy), "Looking for software job in NY", font=sans(14), fill=(92, 107, 118))
+    yy += 26
+    d.line((bx0 + 16, yy, bx1 - 16, yy), fill=(230, 236, 241), width=1)
+    yy += 10
+    d.text((bx0 + 16, yy), "NOTES  ·  UNSTRUCTURED INPUT", font=sans(12, True), fill=(140, 151, 160))
+    yy += 24
+    notes = [
+        "Startup — software person",
+        "Worked at a startup doing coding",
+        "Helped with the company website",
+        "Worked with the team on projects",
+        "Used python and javascript",
+        "Did some cloud stuff on AWS",
+        "Made the site faster I think",
+        "Some intern work before that",
+        "Tutored other students",
+        "Built a dashboard for PMs",
     ]
-    after = [
-        ("head", "Alex Chen", False),
-        ("sub", "Software Engineer  ·  New York, NY  ·  alex@email.com", False),
-        ("rule", "", False),
-        ("sec", "PROFESSIONAL SUMMARY", True),
-        ("body", "Software engineer who ships customer-facing product and", False),
-        ("body", "owns delivery metrics — 40K MAU, 35% faster loads, 28% fewer defects.", True),
-        ("rule", "", False),
-        ("sec", "EXPERIENCE", True),
-        ("job", "Software Engineer, Northstar Labs  ·  2022–Present", False),
-        ("bullet", "Engineered web platform serving 40,000 MAU; cut p95 load 35%.", True),
-        ("bullet", "Shipped 12 releases with PM and design; reduced defect escape 28%.", True),
-        ("bullet", "Owned AWS infrastructure for 4 production services.", True),
-        ("job", "Engineering Intern, Harbor Labs  ·  2021", False),
-        ("bullet", "Built internal tools that cut QA cycle time from 4 days to 1.5.", True),
-        ("rule", "", False),
-        ("sec", "EDUCATION / SKILLS", True),
-        ("body", "B.S. Computer Science  ·  Python, TypeScript, AWS, PostgreSQL", False),
-        ("chips", "", ["Python", "TypeScript", "AWS", "PostgreSQL", "ATS-ready", "New York market"]),
-        ("rule", "", False),
-        ("sec", "SELECTED PROJECT", True),
-        ("job", "Customer metrics dashboard  ·  Northstar Labs", False),
-        ("bullet", "Shipped a weekly dashboard used by 8 PMs to track 40K MAU.", True),
-        ("rule", "", False),
-        ("sec", "TARGET ROLE FIT", True),
-        ("job", "Software Engineer  ·  New York  ·  ATS 94  ·  JD match 91", False),
-        ("bullet", "Impact metrics, AWS ownership, and shipping cadence on the page.", True),
-        ("bullet", "Language and structure matched to U.S. software-engineer JDs.", True),
-        ("rule", "", False),
-        ("sec", "COVER LETTER EXCERPT", True),
-        (
-            "quote",
-            "I ship quantified product work — 40K MAU, 35% faster p95 —",
-            "and I am targeting software-engineer roles in New York.",
-        ),
-        ("chips", "", ["Software Engineer · NY", "Backend", "Full-stack", "Cover letter"]),
+    for n in notes:
+        d.text((bx0 + 16, yy), n, font=sans(14), fill=(30, 42, 51))
+        yy += 22
+    yy += 6
+    d.line((bx0 + 16, yy, bx1 - 16, yy), fill=(230, 236, 241), width=1)
+    yy += 10
+    d.text((bx0 + 16, yy), "EDUCATION / SKILLS", font=sans(12, True), fill=(140, 151, 160))
+    yy += 24
+    for n in ("Graduated from a university", "Skills: coding, teamwork, python", "Want a software engineer role"):
+        d.text((bx0 + 16, yy), n, font=sans(14), fill=(30, 42, 51))
+        yy += 22
+    yy += 8
+    d.rounded_rectangle((bx0 + 16, yy, bx1 - 16, yy + 72), 10, outline=(214, 224, 232), width=2)
+    d.text((bx0 + 28, yy + 26), "Paste more career facts — dates, metrics…", font=sans(13), fill=(140, 151, 160))
+    yy += 86
+    while yy + 18 < by1 - 16:
+        d.rounded_rectangle((bx0 + 16, yy + 2, bx1 - 70, yy + 14), 4, fill=(232, 237, 241))
+        yy += 20
+
+    # arrow
+    d.rounded_rectangle((618, 548, 722, 652), 52, fill=(0, 123, 203))
+    d.polygon([(646, 576), (698, 600), (646, 624)], fill=(255, 255, 255))
+
+    # ----- AFTER: Jack Kolb IB template applied to Alex -----
+    ax0, ax1, ay0, ay1 = 740, 2376, 80, 1098
+    rounded_rect(d, (ax0, ay0, ax1, ay1), 14, (255, 255, 255), (226, 233, 238), 1)
+    d.rounded_rectangle((ax0 + 16, ay0 + 10, ax0 + 110, ay0 + 36), 7, fill=(0, 123, 203))
+    d.text((ax0 + 32, ay0 + 14), "AFTER", font=sans(13, True), fill=(255, 255, 255))
+    d.text((ax0 + 122, ay0 + 12), "51 Careers.AI rewrite", font=font(16, True), fill=(16, 34, 47))
+
+    # inner page — Times, small-caps name, underlined sections, italic right-tab dates
+    px0, py0 = ax0 + 22, ay0 + 42
+    px1, py1 = ax1 - 22, ay1 - 14
+    page_w = px1 - px0
+    f10 = times(16)
+    f10b = times(16, bold=True)
+    f10i = times(16, italic=True)
+    f11b = times(18, bold=True)
+    nf = times(34, bold=True)
+    date_samples = [
+        "May 2021",
+        "GPA: 3.82/4.00",
+        "August 2022 – Present",
+        "June 2021 – August 2021",
+        "January 2020 – May 2021",
+        "September 2020 – May 2021",
+        "October 2020",
+        "September 2019 – May 2021",
     ]
+    DATE_W = max(tw(s, f10i) for s in date_samples) + 18
 
-    panel_top, panel_bot = 88, 1076
-    panel(28, 1124, panel_top, panel_bot, "BEFORE", (140, 151, 160), "Candidate input", before)
-    d.rounded_rectangle((1144, 548, 1256, 660), 56, fill=(0, 123, 203))
-    d.polygon([(1178, 578), (1230, 604), (1178, 630)], fill=(255, 255, 255))
-    y_after = panel(1276, 2372, panel_top, panel_bot, "AFTER", (0, 123, 203), "51 Careers.AI rewrite", after)
+    def section(y, title, lh):
+        d.text((px0, y), title, font=f11b, fill=BLACK)
+        y += lh + 2
+        d.line((px0, y, px1, y), fill=BLACK, width=2)
+        return y + 4
 
-    stats = [("94", "ATS score"), ("91", "JD match"), ("12", "Metrics on page"), ("3", "Versions")]
-    x0, x1 = 1276, 2372
-    yy = min(max(y_after + 8, panel_bot - 78), panel_bot - 70)
-    sw = (x1 - x0 - 44 - 24) / 4
-    for i, (val, lab) in enumerate(stats):
-        x = x0 + 22 + i * (sw + 8)
-        d.rounded_rectangle((x, yy, x + sw, yy + 56), 10, fill=(232, 244, 251), outline=(169, 205, 224))
-        d.text((x + 14, yy + 6), val, font=sans(20, True), fill=(0, 123, 203))
-        d.text((x + 14, yy + 32), lab, font=sans(12), fill=(92, 107, 118))
+    def org_line(y, org, loc, date, lh):
+        loc_s = f" – {loc}" if loc else ""
+        dw = tw(date, f10i)
+        d.text((px1 - dw, y), date, font=f10i, fill=BLACK)
+        d.text((px0, y), org, font=f10b, fill=BLACK)
+        d.text((px0 + tw(org, f10b), y), loc_s, font=f10, fill=BLACK)
+        return y + lh
 
-    d.rectangle((8, 1090, W - 8, H - 8), fill=(243, 247, 250))
-    d.text(
-        (72, 1108),
-        "AI Resume   ·   Optimization   ·   Job-specific versions   ·   Quantification   ·   ATS   ·   Cover letters   ·   Career profile",
-        font=sans(16),
-        fill=(92, 107, 118),
-    )
+    def degree_line(y, degree, gpa, lh):
+        dw = tw(gpa, f10b)
+        d.text((px1 - dw, y), gpa, font=f10b, fill=BLACK)
+        d.text((px0, y), degree, font=f10i, fill=BLACK)
+        return y + lh
+
+    def subhead(y, title, lh):
+        d.text((px0, y), title, font=f10b, fill=BLACK)
+        return y + lh
+
+    def role(y, title, lh):
+        d.text((px0, y), title, font=f10i, fill=BLACK)
+        return y + lh
+
+    def bullets(y, items, lh):
+        indent, hang = 16, 14
+        for item in items:
+            lines = wrap(item, f10, page_w - indent - hang)
+            d.text((px0 + indent, y), "•", font=f10, fill=BLACK)
+            for line in lines:
+                d.text((px0 + indent + hang, y), line, font=f10, fill=BLACK)
+                y += lh
+        return y + 3
+
+    def honors_rows(y, rows, lh):
+        for label, rest in rows:
+            d.text((px0, y), label, font=f10b, fill=BLACK)
+            lw = tw(label, f10b)
+            for line in wrap(rest, f10, page_w - lw):
+                d.text((px0 + lw, y), line, font=f10, fill=BLACK)
+                y += lh
+                lw = 0
+        return y
+
+    def paint(lh):
+        y = py0
+        name = "ALEX CHEN"
+        d.text((px0 + (page_w - tw(name, nf)) / 2, y), name, font=nf, fill=BLACK)
+        y += 38
+        # Jack Kolb header: name bottom rule + thinThickLargeGap + contact + hairline
+        d.line((px0, y, px1, y), fill=BLACK, width=2)
+        y += 5
+        d.line((px0, y, px1, y), fill=BLACK, width=4)
+        y += 7
+        contact = "(646) 555-0192  ▪  alex.chen@email.com  ▪  New York, NY  ▪  github.com/alexchen"
+        d.text((px0 + (page_w - tw(contact, f10)) / 2, y), contact, font=f10, fill=BLACK)
+        y += lh + 2
+        d.line((px0, y, px1, y), fill=BLACK, width=1)
+        y += 8
+
+        y = section(y, "EDUCATION", lh)
+        y = org_line(y, "New York University", "Courant Institute", "May 2021", lh)
+        y = degree_line(y, "Bachelor of Science in Computer Science", "GPA: 3.82/4.00", lh)
+        y = subhead(y, "NYU Computer Science Honors Program", lh)
+        y = bullets(
+            y,
+            [
+                "Selected as 1 of 40 students for a research-intensive CS honors sequence covering algorithms, operating systems and distributed systems",
+                "Completed honors thesis on distributed cache consistency and presented findings at the undergraduate research symposium",
+            ],
+            lh,
+        )
+        y = subhead(y, "AWS Certified Solutions Architect – Associate", lh)
+        y = bullets(
+            y,
+            [
+                "Completed 40 hours of hands-on training covering VPC design, IAM, EC2/S3 and production incident response on AWS",
+                "Scored 90% on the certification exam; designed a three-tier web architecture from scratch in a timed lab",
+            ],
+            lh,
+        )
+
+        y = section(y, "EXPERIENCE", lh)
+        y = org_line(y, "Northstar Labs", "New York, NY", "August 2022 – Present", lh)
+        y = role(y, "Software Engineer", lh)
+        y = bullets(
+            y,
+            [
+                "Engineered customer-facing web platform serving 40,000 MAU, cutting p95 page load 35% and reducing infrastructure cost 18%",
+                "Shipped 12 production releases with PM and design; reduced defect escape 28% through tighter QA gates and staging checks",
+                "Owned AWS infrastructure for 4 production services; introduced CI/CD that cut deploy time from 45 minutes to 12 minutes",
+            ],
+            lh,
+        )
+        y = org_line(y, "Harbor Labs", "New York, NY", "June 2021 – August 2021", lh)
+        y = role(y, "Engineering Intern", lh)
+        y = bullets(
+            y,
+            [
+                "Built internal QA tooling that cut cycle time from 4 days to 1.5 days across a 6-person engineering team",
+                "Wrote TypeScript services and PostgreSQL migrations used in staging by 3 product squads during summer launch",
+            ],
+            lh,
+        )
+        y = org_line(y, "NYU Information Technology", "New York, NY", "January 2020 – May 2021", lh)
+        y = role(y, "Student Developer", lh)
+        y = bullets(
+            y,
+            [
+                "Maintained internal Python scripts supporting 3,000 campus users; reduced ticket backlog 22% over two semesters",
+                "Documented APIs and onboarding guides that cut new-hire ramp time on the student developer team from 4 weeks to 10 days",
+            ],
+            lh,
+        )
+
+        y = section(y, "LEADERSHIP", lh)
+        y = org_line(y, "NYU Computer Science Tutoring", "New York, NY", "September 2020 – May 2021", lh)
+        y = role(y, "Head Tutor", lh)
+        y = bullets(
+            y,
+            [
+                "Led 12 tutors supporting 80 students per semester in data structures and algorithms; raised average exam scores 11%",
+                "Standardized office-hour materials and a shared problem bank, cutting onboarding time for new tutors from 3 weeks to 1",
+            ],
+            lh,
+        )
+        y = org_line(y, "NYU Hackathon", "New York, NY", "October 2020", lh)
+        y = role(y, "Mentor", lh)
+        y = bullets(
+            y,
+            [
+                "Mentored 6 student teams over a 36-hour build; 2 teams placed in the top 10 of 48 submissions and one took first overall",
+            ],
+            lh,
+        )
+        y = org_line(y, "ACM Student Chapter", "New York, NY", "September 2019 – May 2021", lh)
+        y = role(y, "Vice President", lh)
+        y = bullets(
+            y,
+            [
+                "Organized 14 workshops and a 120-person recruiting night with 8 engineering employers; membership grew 40% year over year",
+            ],
+            lh,
+        )
+
+        y = section(y, "HONORS, ACTIVITIES & INTERESTS", lh)
+        y = honors_rows(
+            y,
+            [
+                ("Technical:  ", "Python, TypeScript, React, AWS, PostgreSQL, Docker, Git"),
+                ("Honors:  ", "Dean’s List (6 semesters), NYU Hackathon 1st Place, CS Department Tutoring Award"),
+                ("Activities:  ", "NYU Hackathon Mentor, Open-Source Contributor, CS Teaching Assistant"),
+                ("Interests:  ", "Distance running, jazz piano, New York City food maps"),
+            ],
+            lh,
+        )
+        return y
+
+    # pick line-height so the one-pager fills the AFTER card without clipping
+    best_lh, best_y = 18, 0
+    probe = Image.new("RGB", (8, 8))
+    probe_d = ImageDraw.Draw(probe)
+    saved_d = d
+    for trial in range(17, 23):
+        d = probe_d
+        end_y = paint(trial)
+        if end_y <= py1:
+            best_lh, best_y = trial, end_y
+        else:
+            break
+    d = saved_d
+    end_y = paint(best_lh)
+    # if a couple of lines remain, nudge the last honors block isn't needed; page is packed
 
     path = os.path.join(OUT, "resume_before_after.png")
     im.save(path, "PNG")
