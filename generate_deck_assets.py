@@ -1,0 +1,1186 @@
+#!/usr/bin/env python3
+"""Generate visual assets for the 51 Careers.AI investor deck."""
+from __future__ import annotations
+
+import json
+import math
+import os
+from io import BytesIO
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon as MplPolygon, FancyBboxPatch, Circle, FancyArrowPatch, Rectangle
+from matplotlib.path import Path
+from matplotlib.patches import PathPatch
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+ROOT = "/workspace/deck_assets"
+OUT = os.path.join(ROOT, "generated")
+os.makedirs(OUT, exist_ok=True)
+
+NAVY = "#10222F"
+BODY = "#1E2A33"
+BLUE = "#007BCB"
+BLUE_DEEP = "#0A5F9A"
+BLUE_MID = "#4FA3D4"
+BLUE_PALE = "#A9CDE0"
+CARD = "#F3F7FA"
+OCEAN = "#D5E8F3"
+LAND = "#A8C0CF"
+GLOW = "#8EC8E8"
+MUTED = "#5C6B76"
+WHITE = "#FFFFFF"
+
+ISO_NAME = {
+    "USA": "United States",
+    "CAN": "Canada",
+    "MEX": "Mexico",
+    "GTM": "Guatemala",
+    "HND": "Honduras",
+    "SLV": "El Salvador",
+    "NIC": "Nicaragua",
+    "CRI": "Costa Rica",
+    "PAN": "Panama",
+    "BLZ": "Belize",
+    "GBR": "United Kingdom",
+    "AUS": "Australia",
+    "CHN": "China",
+    "FRA": "France",
+    "DEU": "Germany",
+    "ITA": "Italy",
+    "ESP": "Spain",
+    "NLD": "Netherlands",
+    "BEL": "Belgium",
+    "SWE": "Sweden",
+    "NOR": "Norway",
+    "CHE": "Switzerland",
+    "AUT": "Austria",
+    "POL": "Poland",
+    "IRL": "Ireland",
+    "PRT": "Portugal",
+    "DNK": "Denmark",
+    "FIN": "Finland",
+    "CZE": "Czechia",
+    "GRC": "Greece",
+    "ROU": "Romania",
+    "HUN": "Hungary",
+    "ARE": "UAE",
+    "SAU": "Saudi Arabia",
+    "QAT": "Qatar",
+    "BHR": "Bahrain",
+    "KWT": "Kuwait",
+    "OMN": "Oman",
+    "ISR": "Israel",
+    "JOR": "Jordan",
+}
+
+HIGHLIGHT = {
+    "USA": BLUE,
+    "CAN": BLUE_MID,
+    "MEX": BLUE_PALE,
+    "GTM": BLUE_PALE,
+    "HND": BLUE_PALE,
+    "SLV": BLUE_PALE,
+    "NIC": BLUE_PALE,
+    "CRI": BLUE_PALE,
+    "PAN": BLUE_PALE,
+    "BLZ": BLUE_PALE,
+    "GBR": BLUE_MID,
+    "AUS": BLUE_MID,
+    "CHN": BLUE_DEEP,
+    "FRA": BLUE_PALE,
+    "DEU": BLUE_PALE,
+    "ITA": BLUE_PALE,
+    "ESP": BLUE_PALE,
+    "NLD": BLUE_PALE,
+    "BEL": BLUE_PALE,
+    "SWE": BLUE_PALE,
+    "NOR": BLUE_PALE,
+    "CHE": BLUE_PALE,
+    "AUT": BLUE_PALE,
+    "POL": BLUE_PALE,
+    "IRL": BLUE_PALE,
+    "PRT": BLUE_PALE,
+    "DNK": BLUE_PALE,
+    "FIN": BLUE_PALE,
+    "CZE": BLUE_PALE,
+    "GRC": BLUE_PALE,
+    "ROU": BLUE_PALE,
+    "HUN": BLUE_PALE,
+    "ARE": BLUE_PALE,
+    "SAU": BLUE_PALE,
+    "QAT": BLUE_PALE,
+    "BHR": BLUE_PALE,
+    "KWT": BLUE_PALE,
+    "OMN": BLUE_PALE,
+    "ISR": BLUE_PALE,
+    "JOR": BLUE_PALE,
+}
+
+
+def font(size, bold=False):
+    path = (
+        "/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf"
+        if bold
+        else "/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"
+    )
+    sans = (
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+        if bold
+        else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+    )
+    try:
+        return ImageFont.truetype(path, size)
+    except OSError:
+        return ImageFont.truetype(sans, size)
+
+
+def sans(size, bold=False):
+    path = (
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+        if bold
+        else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+    )
+    return ImageFont.truetype(path, size)
+
+
+def load_geo():
+    with open(os.path.join(ROOT, "maps/countries.geo.json")) as f:
+        return json.load(f)
+
+
+def iter_rings(geom):
+    if geom["type"] == "Polygon":
+        yield geom["coordinates"][0]
+    elif geom["type"] == "MultiPolygon":
+        for poly in geom["coordinates"]:
+            yield poly[0]
+
+
+def shift_lon(lon, center=0):
+    x = lon - center
+    while x < -180:
+        x += 360
+    while x > 180:
+        x -= 360
+    return x
+
+
+def split_ring(ring, center=0):
+    pts = [(shift_lon(lon, center), lat) for lon, lat in ring]
+    segs, cur = [], [pts[0]]
+    for i in range(1, len(pts)):
+        if abs(pts[i][0] - pts[i - 1][0]) > 180:
+            if len(cur) >= 3:
+                segs.append(cur)
+            cur = [pts[i]]
+        else:
+            cur.append(pts[i])
+    if len(cur) >= 3:
+        segs.append(cur)
+    return segs
+
+
+def great_circle(lat1, lon1, lat2, lon2, n=80):
+    p1 = np.array(
+        [
+            math.cos(math.radians(lat1)) * math.cos(math.radians(lon1)),
+            math.cos(math.radians(lat1)) * math.sin(math.radians(lon1)),
+            math.sin(math.radians(lat1)),
+        ]
+    )
+    p2 = np.array(
+        [
+            math.cos(math.radians(lat2)) * math.cos(math.radians(lon2)),
+            math.cos(math.radians(lat2)) * math.sin(math.radians(lon2)),
+            math.sin(math.radians(lat2)),
+        ]
+    )
+    omega = math.acos(max(-1.0, min(1.0, float(np.dot(p1, p2)))))
+    if omega < 1e-6:
+        return [(lon1, lat1), (lon2, lat2)]
+    pts = []
+    for i in range(n + 1):
+        t = i / n
+        a = math.sin((1 - t) * omega) / math.sin(omega)
+        b = math.sin(t * omega) / math.sin(omega)
+        p = a * p1 + b * p2
+        nrm = np.linalg.norm(p)
+        p = p / nrm
+        lat = math.degrees(math.asin(max(-1.0, min(1.0, p[2]))))
+        lon = math.degrees(math.atan2(p[1], p[0]))
+        pts.append((lon, lat))
+    return pts
+
+
+def collect_segments(geo, center=0, lon_lim=None, lat_lim=None, highlighted=False):
+    segs = []
+    fills = []
+    for feat in geo["features"]:
+        iso = feat.get("id")
+        if iso in ("ATA", "ATF", "GRL"):
+            continue
+        is_hi = iso in HIGHLIGHT
+        if highlighted and not is_hi:
+            continue
+        if not highlighted and is_hi:
+            continue
+        fill = HIGHLIGHT.get(iso, LAND)
+        for ring in iter_rings(feat["geometry"]):
+            for seg in split_ring(ring, center):
+                xs = [p[0] for p in seg]
+                ys = [p[1] for p in seg]
+                if lon_lim and (max(xs) < lon_lim[0] - 8 or min(xs) > lon_lim[1] + 8):
+                    continue
+                if lat_lim and (max(ys) < lat_lim[0] - 8 or min(ys) > lat_lim[1] + 8):
+                    continue
+                segs.append(seg)
+                fills.append(fill)
+    return segs, fills
+
+
+def ocean_backdrop(ax, xlim, ylim):
+    """North–south ocean wash in data coordinates (avoids imshow + equal-aspect banding)."""
+    n = 48
+    y0, y1 = ylim
+    c_north = np.array([236, 246, 251], dtype=float)
+    c_south = np.array([186, 214, 230], dtype=float)
+    span = xlim[1] - xlim[0]
+    step = (y1 - y0) / n
+    for i in range(n):
+        t = (i + 0.5) / n
+        rgb = (c_north * (1 - t) + c_south * t) / 255.0
+        ax.add_patch(
+            Rectangle(
+                (xlim[0] - 2, y0 + i * step - 0.05),
+                span + 4,
+                step + 0.12,
+                facecolor=rgb,
+                edgecolor="none",
+                linewidth=0,
+                zorder=0,
+            )
+        )
+
+
+def draw_world(ax, geo, center=0, lon_lim=None, lat_lim=None, lw=0.35, shadow=True):
+    base, base_c = collect_segments(geo, center, lon_lim, lat_lim, highlighted=False)
+    hi, hi_c = collect_segments(geo, center, lon_lim, lat_lim, highlighted=True)
+    land = base + hi
+    if shadow and land:
+        ax.add_collection(
+            PatchCollection(
+                [MplPolygon([(p[0] + 0.85, p[1] - 0.65) for p in s], closed=True) for s in land],
+                facecolor="#6E93A8",
+                edgecolor="none",
+                alpha=0.18,
+                zorder=1,
+            )
+        )
+    if base:
+        ax.add_collection(
+            PatchCollection(
+                [MplPolygon(s, closed=True) for s in base],
+                facecolor=base_c,
+                edgecolor="#F7FBFD",
+                linewidths=lw,
+                antialiased=True,
+                zorder=2,
+            )
+        )
+    if hi:
+        ax.add_collection(
+            PatchCollection(
+                [MplPolygon(s, closed=True) for s in hi],
+                facecolor="none",
+                edgecolor=GLOW,
+                linewidths=lw + 3.8,
+                alpha=0.48,
+                antialiased=True,
+                zorder=3,
+            )
+        )
+        ax.add_collection(
+            PatchCollection(
+                [MplPolygon(s, closed=True) for s in hi],
+                facecolor=hi_c,
+                edgecolor="white",
+                linewidths=lw + 0.25,
+                antialiased=True,
+                zorder=4,
+            )
+        )
+
+
+def pill(ax, x, y, text, sub=None, ha="center", va="center"):
+    label = text if not sub else f"{text}\n{sub}"
+    ax.annotate(
+        label,
+        xy=(x, y),
+        xytext=(0, 0),
+        textcoords="offset points",
+        ha=ha,
+        va=va,
+        fontsize=8.2 if not sub else 7.6,
+        color=NAVY,
+        fontweight="bold",
+        fontfamily="serif",
+        zorder=12,
+        bbox=dict(boxstyle="round,pad=0.35", fc="white", ec=BLUE, lw=0.9, alpha=0.96),
+        linespacing=1.25,
+    )
+
+
+def pin(ax, lon, lat, center=0):
+    x, y = shift_lon(lon, center), lat
+    ax.plot(x, y, "o", color=WHITE, markersize=8.5, zorder=10)
+    ax.plot(x, y, "o", color=BLUE, markersize=5.4, zorder=11)
+    ax.plot(x, y, "o", color=WHITE, markersize=2.2, zorder=12)
+    return x, y
+
+
+def world_map():
+    geo = load_geo()
+    xlim, ylim = (-168, 178), (-48, 74)
+    fig, ax = plt.subplots(figsize=(14.6, 5.05), dpi=200)
+    fig.patch.set_facecolor(OCEAN)
+    ax.set_facecolor(OCEAN)
+    ocean_backdrop(ax, xlim, ylim)
+    for lon in range(-150, 181, 30):
+        ax.plot([lon, lon], [ylim[0], ylim[1]], color="white", lw=0.45, alpha=0.18, zorder=0.5)
+    for lat in range(-40, 71, 20):
+        ax.plot([xlim[0], xlim[1]], [lat, lat], color="white", lw=0.45, alpha=0.18, zorder=0.5)
+    draw_world(ax, geo, center=0, lw=0.42)
+
+    pins = [
+        (-74.0, 40.7),
+        (-79.38, 43.65),
+        (-0.13, 51.5),
+        (103.8, 1.35),
+        (114.17, 22.32),
+        (121.47, 31.23),
+        (151.2, -33.87),
+        (55.27, 25.2),
+    ]
+    for lon, lat in pins:
+        pin(ax, lon, lat)
+
+    pill(ax, -97, 37, "United States", "First beachhead")
+    pill(ax, -105, 59, "Canada")
+    pill(ax, -89, 13, "Central America")
+    pill(ax, -9, 62, "United Kingdom")
+    pill(ax, 21, 45, "Europe", "Localized later")
+    pill(ax, 47, 23, "Middle East")
+    pill(ax, 103, 35, "China", "R&D and users")
+    pill(ax, 108, 5, "Singapore")
+    pill(ax, 129, 22, "Hong Kong")
+    pill(ax, 134, -24, "Australia")
+
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
+    ax.set_aspect("equal", adjustable="box")
+    ax.axis("off")
+    fig.subplots_adjust(0, 0, 1, 1)
+    path = os.path.join(OUT, "world_map.png")
+    fig.savefig(path, dpi=200, facecolor=fig.get_facecolor())
+    plt.close(fig)
+    return path
+
+
+def shanghai_ny_map():
+    geo = load_geo()
+    center = 170
+    xlim, ylim = (-68, 124), (10, 56)
+    fig, ax = plt.subplots(figsize=(14.6, 4.15), dpi=200)
+    fig.patch.set_facecolor(OCEAN)
+    ax.set_facecolor(OCEAN)
+    ocean_backdrop(ax, xlim, ylim)
+    for lon in range(-90, 91, 30):
+        ax.plot([lon, lon], [ylim[0], ylim[1]], color="white", lw=0.55, alpha=0.35, zorder=0.5)
+    draw_world(ax, geo, center=center, lon_lim=(-90, 90), lat_lim=(-10, 72), lw=0.55)
+
+    sh_lon, sh_lat = 121.47, 31.23
+    ny_lon, ny_lat = -74.0, 40.71
+    x0, y0 = shift_lon(sh_lon, center), sh_lat
+    x1, y1 = shift_lon(ny_lon, center), ny_lat
+    xc, yc = shift_lon(178.0, center), 44.0
+    ts = np.linspace(0, 1, 90)
+    xs = (1 - ts) ** 2 * x0 + 2 * (1 - ts) * ts * xc + ts ** 2 * x1
+    ys = (1 - ts) ** 2 * y0 + 2 * (1 - ts) * ts * yc + ts ** 2 * y1
+    ax.plot(xs, ys, color="#E7F4FB", linewidth=13.0, zorder=6, solid_capstyle="round")
+    ax.plot(xs, ys, color=GLOW, linewidth=6.2, zorder=7, solid_capstyle="round")
+    ax.plot(xs, ys, color=BLUE, linewidth=2.5, zorder=8, solid_capstyle="round")
+    for i in (22, 45, 68):
+        ax.annotate(
+            "",
+            xy=(xs[i + 3], ys[i + 3]),
+            xytext=(xs[i], ys[i]),
+            arrowprops=dict(arrowstyle="-|>", color=BLUE_DEEP, lw=1.25),
+            zorder=9,
+        )
+
+    pin(ax, sh_lon, sh_lat, center)
+    pin(ax, ny_lon, ny_lat, center)
+    ax.annotate(
+        "Shanghai\nR&D  ·  Product",
+        xy=(x0, y0),
+        xytext=(16, 14),
+        textcoords="offset points",
+        ha="left",
+        va="bottom",
+        fontsize=10,
+        color=NAVY,
+        fontweight="bold",
+        fontfamily="serif",
+        zorder=13,
+        bbox=dict(boxstyle="round,pad=0.5", fc="white", ec=BLUE, lw=1.1),
+        linespacing=1.35,
+    )
+    ax.annotate(
+        "New York\nU.S. GTM",
+        xy=(x1, y1),
+        xytext=(-16, 14),
+        textcoords="offset points",
+        ha="right",
+        va="bottom",
+        fontsize=10,
+        color=NAVY,
+        fontweight="bold",
+        fontfamily="serif",
+        zorder=13,
+        bbox=dict(boxstyle="round,pad=0.5", fc="white", ec=BLUE, lw=1.1),
+        linespacing=1.35,
+    )
+    mid = 44
+    ax.text(
+        (x0 + x1) / 2,
+        ys[mid] + 7.2,
+        "China builds   →   the U.S. commercializes",
+        ha="center",
+        va="center",
+        fontsize=10,
+        color=BLUE_DEEP,
+        fontfamily="serif",
+        fontstyle="italic",
+        zorder=12,
+        bbox=dict(boxstyle="round,pad=0.45", fc="white", ec=BLUE, lw=0.7, alpha=0.97),
+    )
+    ax.text(
+        (x0 + x1) / 2,
+        18.4,
+        "P A C I F I C    O C E A N",
+        ha="center",
+        va="center",
+        fontsize=9.5,
+        color=BLUE_DEEP,
+        alpha=0.32,
+        fontfamily="serif",
+        fontstyle="italic",
+        zorder=5,
+    )
+    ax.text(
+        xs[mid],
+        ys[mid] - 4.4,
+        "Pacific route  ·  7,350 mi",
+        ha="center",
+        va="center",
+        fontsize=8.4,
+        color=BLUE_DEEP,
+        fontfamily="serif",
+        zorder=12,
+        bbox=dict(boxstyle="round,pad=0.32", fc="white", ec=GLOW, lw=0.7, alpha=0.94),
+    )
+
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
+    ax.set_aspect("equal", adjustable="box")
+    ax.axis("off")
+    fig.subplots_adjust(0.0, 0.02, 1.0, 0.98)
+    path = os.path.join(OUT, "shanghai_ny_map.png")
+    fig.savefig(path, dpi=200, facecolor=fig.get_facecolor())
+    plt.close(fig)
+    return path
+
+
+def rounded_rect(draw, box, radius, fill, outline=None, width=1):
+    draw.rounded_rectangle(box, radius=radius, fill=fill, outline=outline, width=width)
+
+
+def round_png(path, radius=48):
+    im = Image.open(path).convert("RGBA")
+    mask = Image.new("L", im.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, im.size[0] - 1, im.size[1] - 1), radius=radius, fill=255)
+    im.putalpha(mask)
+    im.save(path)
+
+
+def times(size, bold=False, italic=False):
+    name = "LiberationSerif"
+    if bold and italic:
+        fname = f"{name}-BoldItalic.ttf"
+    elif bold:
+        fname = f"{name}-Bold.ttf"
+    elif italic:
+        fname = f"{name}-Italic.ttf"
+    else:
+        fname = f"{name}-Regular.ttf"
+    return ImageFont.truetype(f"/usr/share/fonts/truetype/liberation/{fname}", size)
+
+
+def resume_rewrite():
+    """Before/after using the Jack Kolb IB resume template for Alex."""
+    W, H = 2400, 1170
+    im = Image.new("RGB", (W, H), (243, 247, 250))
+    d = ImageDraw.Draw(im)
+    BLACK = (0, 0, 0)
+
+    rounded_rect(d, (8, 8, W - 8, H - 8), 26, (255, 255, 255), (214, 224, 232), 2)
+    d.rectangle((8, 8, W - 8, 68), fill=(243, 247, 250))
+    for i, col in enumerate([(255, 95, 86), (255, 189, 46), (39, 201, 63)]):
+        d.ellipse((28 + i * 24, 26, 46 + i * 24, 44), fill=col)
+    d.text((112, 24), "51careers.ai  /  resume", font=sans(18), fill=(92, 107, 118))
+    d.text((500, 18), "AI Resume Rewrite  ·  Software Engineer, New York", font=font(24, True), fill=(16, 34, 47))
+    d.rounded_rectangle((1988, 18, 2360, 52), 10, fill=(0, 123, 203))
+    d.text((2020, 24), "Illustrative output", font=sans(16, True), fill=(255, 255, 255))
+
+    def tw(text, fnt):
+        return d.textbbox((0, 0), text, font=fnt)[2] - d.textbbox((0, 0), text, font=fnt)[0]
+
+    def wrap(text, fnt, maxw):
+        words = text.split()
+        lines, cur = [], ""
+        for w in words:
+            trial = (cur + " " + w).strip()
+            if tw(trial, fnt) <= maxw:
+                cur = trial
+            else:
+                if cur:
+                    lines.append(cur)
+                cur = w
+        if cur:
+            lines.append(cur)
+        return lines or [""]
+
+    # ----- BEFORE: a bad, unstructured résumé -----
+    bx0, bx1, by0, by1 = 24, 1096, 80, 1098
+    rounded_rect(d, (bx0, by0, bx1, by1), 12, (252, 252, 248), (226, 233, 238), 1)
+    d.rounded_rectangle((bx0 + 14, by0 + 10, bx0 + 108, by0 + 34), 6, fill=(140, 151, 160))
+    d.text((bx0 + 28, by0 + 14), "BEFORE", font=sans(12, True), fill=(255, 255, 255))
+    d.text((bx0 + 118, by0 + 12), "Candidate résumé", font=font(15, True), fill=(16, 34, 47))
+
+    lx, rx = bx0 + 28, bx1 - 28
+    yy = by0 + 48
+    d.text((lx, yy), "My Resume", font=sans(28, True), fill=(40, 90, 180))
+    yy += 38
+    d.text((lx + 8, yy), "alex chen", font=sans(18), fill=(60, 60, 60))
+    yy += 24
+    d.text((lx + 8, yy), "new york   alex.chen@email.com   6465550192", font=sans(12), fill=(90, 90, 90))
+    yy += 22
+    d.line((lx, yy, rx - 80, yy), fill=(40, 90, 180), width=3)
+    yy += 16
+    d.text((lx, yy), "Objective", font=sans(16, True), fill=(40, 90, 180))
+    yy += 22
+    obj = "I am a hard worker looking for a software engineer job in NY where I can use my skills and grow with the company. I have experience with coding and teamwork."
+    for line in wrap(obj, sans(13), rx - lx):
+        d.text((lx + 4, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 14
+    d.text((lx + 12, yy), "Education", font=sans(16, True), fill=(40, 90, 180))
+    yy += 22
+    for line in wrap("I went to NYU. Computer science. GPA is pretty good. Took some coding classes.", sans(13), rx - lx - 20):
+        d.text((lx + 16, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 16
+    d.text((lx, yy), "Work Experience", font=sans(16, True), fill=(40, 90, 180))
+    yy += 24
+    d.text((lx + 4, yy), "Northstar Labs - software person  (2022-now)", font=sans(13, True), fill=(40, 40, 40))
+    yy += 20
+    for line in wrap(
+        "Worked at a startup doing coding. Helped with the company website. Worked with the team on projects. Used python and javascript. Did some cloud stuff on AWS. Made the site faster I think.",
+        sans(13),
+        rx - lx - 8,
+    ):
+        d.text((lx + 8, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 12
+    d.text((lx + 4, yy), "Harbor Labs intern", font=sans(13, True), fill=(40, 40, 40))
+    yy += 20
+    for line in wrap("Some intern work before that. Built tools. Wrote code for the team.", sans(13), rx - lx - 8):
+        d.text((lx + 8, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 12
+    d.text((lx + 4, yy), "school IT job", font=sans(13, True), fill=(40, 40, 40))
+    yy += 20
+    for line in wrap("I did scripts for the school. Helped people with tickets.", sans(13), rx - lx - 8):
+        d.text((lx + 8, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 18
+    d.text((lx, yy), "Skills", font=sans(16, True), fill=(40, 90, 180))
+    yy += 22
+    for line in wrap("coding, teamwork, python, javascript, AWS, microsoft office, communication, hard worker", sans(13), rx - lx):
+        d.text((lx + 4, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+    yy += 16
+    d.text((lx + 20, yy), "Other", font=sans(15, True), fill=(40, 90, 180))
+    yy += 22
+    for line in wrap("tutored other students. built a dashboard for PMs. want a software engineer role", sans(13), rx - lx - 24):
+        d.text((lx + 24, yy), line, font=sans(13), fill=(50, 50, 50))
+        yy += 18
+
+    # arrow — bad résumé to rewritten résumé
+    d.rounded_rectangle((1118, 548, 1254, 684), 68, fill=(0, 123, 203))
+    d.polygon([(1154, 580), (1226, 616), (1154, 652)], fill=(255, 255, 255))
+    d.text((1128, 698), "AI rewrite", font=sans(13, True), fill=(0, 123, 203))
+
+    # ----- AFTER: Jack Kolb IB template applied to Alex -----
+    ax0, ax1, ay0, ay1 = 1272, 2376, 80, 1098
+    rounded_rect(d, (ax0, ay0, ax1, ay1), 12, (255, 255, 255), (226, 233, 238), 1)
+    d.rounded_rectangle((ax0 + 14, ay0 + 10, ax0 + 108, ay0 + 34), 6, fill=(0, 123, 203))
+    d.text((ax0 + 32, ay0 + 14), "AFTER", font=sans(12, True), fill=(255, 255, 255))
+    d.text((ax0 + 118, ay0 + 12), "Rewritten résumé", font=font(15, True), fill=(16, 34, 47))
+
+    px0, py0 = ax0 + 22, ay0 + 42
+    px1, py1 = ax1 - 22, ay1 - 14
+    page_w = px1 - px0
+    f10 = times(14)
+    f10b = times(14, bold=True)
+    f10i = times(14, italic=True)
+    f11b = times(16, bold=True)
+    nf = times(28, bold=True)
+    date_samples = [
+        "May 2021",
+        "GPA: 3.82/4.00",
+        "August 2022 – Present",
+        "June 2021 – August 2021",
+        "January 2020 – May 2021",
+        "September 2020 – May 2021",
+        "October 2020",
+        "September 2019 – May 2021",
+    ]
+    DATE_W = max(tw(s, f10i) for s in date_samples) + 16
+
+    def section(draw, y, title, lh):
+        draw.text((px0, y), title, font=f11b, fill=BLACK)
+        y += lh
+        draw.line((px0, y, px1, y), fill=BLACK, width=2)
+        return y + 3
+
+    def org_line(draw, y, org, loc, date, lh):
+        loc_s = f" – {loc}" if loc else ""
+        dw = tw(date, f10i)
+        draw.text((px1 - dw, y), date, font=f10i, fill=BLACK)
+        draw.text((px0, y), org, font=f10b, fill=BLACK)
+        draw.text((px0 + tw(org, f10b), y), loc_s, font=f10, fill=BLACK)
+        return y + lh
+
+    def degree_line(draw, y, degree, gpa, lh):
+        dw = tw(gpa, f10b)
+        draw.text((px1 - dw, y), gpa, font=f10b, fill=BLACK)
+        draw.text((px0, y), degree, font=f10i, fill=BLACK)
+        return y + lh
+
+    def subhead(draw, y, title, lh):
+        draw.text((px0, y), title, font=f10b, fill=BLACK)
+        return y + lh
+
+    def role(draw, y, title, lh):
+        draw.text((px0, y), title, font=f10i, fill=BLACK)
+        return y + lh
+
+    def bullets(draw, y, items, lh):
+        indent, hang = 16, 14
+        wrap_w = page_w - indent - hang
+        for item in items:
+            lines = wrap(item, f10, wrap_w)
+            draw.text((px0 + indent, y), "•", font=f10, fill=BLACK)
+            for line in lines:
+                draw.text((px0 + indent + hang, y), line, font=f10, fill=BLACK)
+                y += lh
+        return y + 2
+
+    def honors_rows(draw, y, rows, lh):
+        for label, rest in rows:
+            draw.text((px0, y), label, font=f10b, fill=BLACK)
+            lw = tw(label, f10b)
+            for line in wrap(rest, f10, page_w - lw):
+                draw.text((px0 + lw, y), line, font=f10, fill=BLACK)
+                y += lh
+                lw = 0
+        return y
+
+    def paint(draw, lh):
+        y = py0
+        name = "ALEX CHEN"
+        draw.text((px0 + (page_w - tw(name, nf)) / 2, y), name, font=nf, fill=BLACK)
+        y += 32
+        draw.line((px0, y, px1, y), fill=BLACK, width=2)
+        y += 4
+        draw.line((px0, y, px1, y), fill=BLACK, width=4)
+        y += 6
+        contact = "(646) 555-0192  ▪  alex.chen@email.com  ▪  New York, NY  ▪  github.com/alexchen"
+        draw.text((px0 + (page_w - tw(contact, f10)) / 2, y), contact, font=f10, fill=BLACK)
+        y += lh + 1
+        draw.line((px0, y, px1, y), fill=BLACK, width=1)
+        y += 6
+
+        y = section(draw, y, "EDUCATION", lh)
+        y = org_line(draw, y, "New York University", "Courant Institute", "May 2021", lh)
+        y = degree_line(draw, y, "Bachelor of Science in Computer Science", "GPA: 3.82/4.00", lh)
+        y = subhead(draw, y, "NYU Computer Science Honors Program", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Selected as 1 of 40 students for a research-intensive CS honors sequence covering algorithms, operating systems, distributed systems and computer networks, with weekly faculty seminars",
+                "Completed honors thesis on distributed cache consistency; built a Go prototype and presented findings at the undergraduate research symposium to faculty and industry reviewers",
+            ],
+            lh,
+        )
+        y = subhead(draw, y, "AWS Certified Solutions Architect – Associate", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Completed 40 hours of hands-on training covering VPC design, IAM, EC2/S3, load balancing and production incident response, building three-tier architectures in timed labs",
+                "Scored 90% on the certification exam; designed a three-tier web architecture from scratch with auto-scaling, multi-AZ failover and least-privilege IAM in under 45 minutes",
+            ],
+            lh,
+        )
+
+        y = section(draw, y, "EXPERIENCE", lh)
+        y = org_line(draw, y, "Northstar Labs", "New York, NY", "August 2022 – Present", lh)
+        y = role(draw, y, "Software Engineer", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Engineered customer-facing web platform serving 40,000 MAU, cutting p95 page load 35% and reducing infrastructure cost 18% through query batching, CDN caching and image compression",
+                "Shipped 12 production releases with PM and design; reduced defect escape 28% by adding staging checks, tighter QA gates and a shared runbook for rollback within 10 minutes",
+                "Owned AWS infrastructure for 4 production services; introduced CI/CD that cut deploy time from 45 minutes to 12 minutes and restored 99.9% weekly uptime after a reliability cluster",
+            ],
+            lh,
+        )
+        y = org_line(draw, y, "Harbor Labs", "New York, NY", "June 2021 – August 2021", lh)
+        y = role(draw, y, "Engineering Intern", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Built internal QA tooling that cut cycle time from 4 days to 1.5 days across a 6-person engineering team by automating fixture setup, flake retries and screenshot diffs on pull requests",
+                "Wrote TypeScript services and PostgreSQL migrations used in staging by 3 product squads during summer launch, unblocking a 2-week slip on the checkout rewrite",
+            ],
+            lh,
+        )
+        y = org_line(draw, y, "NYU Information Technology", "New York, NY", "January 2020 – May 2021", lh)
+        y = role(draw, y, "Student Developer", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Maintained internal Python scripts supporting 3,000 campus users; reduced ticket backlog 22% over two semesters by automating account provisioning and password resets",
+                "Documented APIs and onboarding guides that cut new-hire ramp time on the student developer team from 4 weeks to 10 days and became the default training packet",
+            ],
+            lh,
+        )
+
+        y = section(draw, y, "LEADERSHIP", lh)
+        y = org_line(draw, y, "NYU Computer Science Tutoring", "New York, NY", "September 2020 – May 2021", lh)
+        y = role(draw, y, "Head Tutor", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Led 12 tutors supporting 80 students per semester in data structures and algorithms; raised average exam scores 11% by standardizing weekly problem sets and review sessions",
+                "Built a shared problem bank and office-hour materials that cut onboarding time for new tutors from 3 weeks to 1 and kept coverage across 6 weekday slots",
+            ],
+            lh,
+        )
+        y = org_line(draw, y, "NYU Hackathon", "New York, NY", "October 2020", lh)
+        y = role(draw, y, "Mentor", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Mentored 6 student teams over a 36-hour build on scoping, APIs and demo narrative; 2 teams placed in the top 10 of 48 submissions and one took first overall",
+            ],
+            lh,
+        )
+        y = org_line(draw, y, "ACM Student Chapter", "New York, NY", "September 2019 – May 2021", lh)
+        y = role(draw, y, "Vice President", lh)
+        y = bullets(
+            draw,
+            y,
+            [
+                "Organized 14 workshops and a 120-person recruiting night with 8 engineering employers; membership grew 40% year over year and workshop NPS held at 4.6 / 5.0",
+            ],
+            lh,
+        )
+
+        y = section(draw, y, "HONORS, ACTIVITIES & INTERESTS", lh)
+        y = honors_rows(
+            draw,
+            y,
+            [
+                ("Technical:  ", "Python, TypeScript, React, AWS, PostgreSQL, Docker, Git, CI/CD, REST APIs, Linux"),
+                ("Honors:  ", "Dean’s List (6 semesters), NYU Hackathon 1st Place, CS Department Tutoring Award, AWS Certified Solutions Architect"),
+                ("Activities:  ", "NYU Hackathon Mentor, Open-Source Contributor, CS Teaching Assistant, ACM Student Chapter"),
+                ("Interests:  ", "Distance running, jazz piano, New York City food maps, weekend hackathons"),
+            ],
+            lh,
+        )
+        return y
+
+    probe = Image.new("RGB", (8, 8))
+    probe_d = ImageDraw.Draw(probe)
+    lo, hi = 15.0, 22.0
+    best_lh = 15.0
+    for _ in range(14):
+        mid = (lo + hi) / 2
+        end_y = paint(probe_d, mid)
+        if end_y <= py1:
+            best_lh = mid
+            lo = mid
+        else:
+            hi = mid
+    end_y = paint(d, best_lh)
+
+    path = os.path.join(OUT, "resume_before_after.png")
+    im.save(path, "PNG")
+    return path
+
+
+def circle_crop(im, size):
+    im = im.convert("RGBA").resize((size, size), Image.Resampling.LANCZOS)
+    mask = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(mask).ellipse((1, 1, size - 2, size - 2), fill=255)
+    out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    out.paste(im, (0, 0))
+    out.putalpha(mask)
+    return out
+
+
+def headshots():
+    people = [
+        ("RC", "Rocky Chen", (10, 95, 155)),
+        ("SL", "Stephanie Li", (14, 70, 120)),
+        ("GD", "Gavin Ding", (0, 123, 203)),
+        ("RZ", "Robin Zhu", (20, 88, 140)),
+        ("CL", "Chris Lin", (8, 108, 168)),
+        ("JS", "Jon Serbin", (16, 52, 86)),
+    ]
+    paths = {}
+    size = 512
+    for initials, name, rgb in people:
+        im = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        # outer ring
+        d.ellipse((0, 0, size - 1, size - 1), fill=(255, 255, 255, 255))
+        d.ellipse((22, 22, size - 23, size - 23), fill=rgb + (255,))
+        overlay = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        od = ImageDraw.Draw(overlay)
+        od.pieslice((22, 22, size - 23, size - 23), 200, 340, fill=(255, 255, 255, 32))
+        im = Image.alpha_composite(im, overlay)
+        d = ImageDraw.Draw(im)
+        f = font(168, True)
+        bbox = d.textbbox((0, 0), initials, font=f)
+        tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        d.text(((size - tw) / 2, (size - th) / 2 - 18), initials, font=f, fill=(255, 255, 255, 255))
+        path = os.path.join(OUT, f"headshot_{initials.lower()}.png")
+        im.save(path, "PNG")
+        paths[name] = path
+    return paths
+
+
+def icon_base():
+    im = Image.new("RGBA", (256, 256), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    return im, d
+
+
+def stroke():
+    return (0, 123, 203, 255)
+
+
+def wline(d, pts, width=14):
+    d.line(pts, fill=stroke(), width=width, joint="curve")
+    # round caps
+    r = width // 2
+    for x, y in (pts[0:2], pts[-2:]):
+        d.ellipse((x - r, y - r, x + r, y + r), fill=stroke())
+
+
+def save_icon(im, name):
+    path = os.path.join(OUT, f"icon_{name}.png")
+    im.save(path, "PNG")
+    return path
+
+
+def make_icons():
+    paths = {}
+    # fragmented — three disconnected squares
+    im, d = icon_base()
+    for box in [(40, 48, 118, 126), (138, 40, 216, 118), (88, 138, 166, 216)]:
+        d.rounded_rectangle(box, 16, outline=stroke(), width=12)
+    paths["fragmented"] = save_icon(im, "fragmented")
+
+    # expensive — clock + coin
+    im, d = icon_base()
+    d.ellipse((36, 36, 220, 220), outline=stroke(), width=12)
+    d.line((128, 128, 128, 70), fill=stroke(), width=12)
+    d.line((128, 128, 176, 148), fill=stroke(), width=12)
+    paths["expensive"] = save_icon(im, "expensive")
+
+    # low-signal — weak bars
+    im, d = icon_base()
+    bars = [(48, 168, 88, 208), (104, 128, 144, 208), (160, 88, 200, 208)]
+    for i, box in enumerate(bars):
+        fill = stroke() if i == 0 else (0, 123, 203, 70)
+        d.rounded_rectangle(box, 8, fill=fill)
+    d.line((52, 60, 204, 60), fill=stroke(), width=10)
+    d.line((188, 44, 212, 68), fill=stroke(), width=10)
+    d.line((188, 76, 212, 52), fill=stroke(), width=10)
+    paths["lowsignal"] = save_icon(im, "lowsignal")
+
+    # AI / spark
+    im, d = icon_base()
+    star = [(128, 24), (148, 108), (232, 128), (148, 148), (128, 232), (108, 148), (24, 128), (108, 108)]
+    d.polygon(star, outline=stroke(), width=12)
+    d.line((128, 24, 128, 232), fill=stroke(), width=12)
+    d.line((24, 128, 232, 128), fill=stroke(), width=12)
+    paths["ai"] = save_icon(im, "ai")
+
+    # handshake / services — two users
+    im, d = icon_base()
+    d.ellipse((56, 40, 120, 104), outline=stroke(), width=12)
+    d.arc((28, 112, 148, 232), 200, 340, fill=stroke(), width=12)
+    d.ellipse((136, 40, 200, 104), outline=stroke(), width=12)
+    d.arc((108, 112, 228, 232), 200, 340, fill=stroke(), width=12)
+    paths["services"] = save_icon(im, "services")
+
+    # referral / share
+    im, d = icon_base()
+    for c in [(64, 64, 108, 108), (148, 40, 192, 84), (148, 172, 192, 216)]:
+        d.ellipse(c, outline=stroke(), width=12)
+    d.line((108, 86, 148, 62), fill=stroke(), width=12)
+    d.line((108, 96, 148, 194), fill=stroke(), width=12)
+    paths["referral"] = save_icon(im, "referral")
+
+    # building / B2B
+    im, d = icon_base()
+    d.rounded_rectangle((56, 48, 200, 220), 8, outline=stroke(), width=12)
+    for x in (88, 128, 168):
+        for y in (84, 124, 164):
+            d.rounded_rectangle((x - 10, y - 10, x + 10, y + 10), 3, fill=stroke())
+    paths["b2b"] = save_icon(im, "b2b")
+
+    # megaphone
+    im, d = icon_base()
+    d.polygon([(40, 100), (120, 80), (120, 176), (40, 156)], outline=stroke())
+    d.line(list(d.polygon([(40, 100), (120, 80), (120, 176), (40, 156)]) or []), fill=stroke(), width=1)
+    d.polygon([(40, 100), (120, 80), (120, 176), (40, 156)], fill=(0, 123, 203, 40), outline=stroke(), width=12)
+    d.polygon([(120, 80), (208, 48), (208, 208), (120, 176)], fill=(0, 123, 203, 40), outline=stroke(), width=12)
+    d.arc((150, 88, 210, 168), -50, 50, fill=stroke(), width=12)
+    paths["ads"] = save_icon(im, "ads")
+
+    # sponsorship / badge
+    im, d = icon_base()
+    d.regular_polygon((128, 120, 88), 6, rotation=30, outline=stroke())
+    try:
+        d.regular_polygon((128, 120, 88), 6, rotation=30, outline=stroke())
+    except Exception:
+        pass
+    d.ellipse((128 - 88, 120 - 88, 128 + 88, 120 + 88), outline=stroke(), width=12)
+    d.polygon([(128, 64), (148, 108), (196, 112), (160, 144), (172, 190), (128, 166), (84, 190), (96, 144), (60, 112), (108, 108)], outline=stroke(), width=10)
+    paths["sponsor"] = save_icon(im, "sponsor")
+
+    # extract
+    im, d = icon_base()
+    d.rounded_rectangle((48, 40, 176, 216), 16, outline=stroke(), width=12)
+    d.line((76, 88, 148, 88), fill=stroke(), width=12)
+    d.line((76, 128, 148, 128), fill=stroke(), width=12)
+    d.line((76, 168, 120, 168), fill=stroke(), width=12)
+    d.polygon([(168, 148), (228, 128), (228, 168)], fill=stroke())
+    paths["extract"] = save_icon(im, "extract")
+
+    # globe
+    im, d = icon_base()
+    d.ellipse((36, 36, 220, 220), outline=stroke(), width=12)
+    d.ellipse((86, 36, 170, 220), outline=stroke(), width=10)
+    d.arc((36, 86, 220, 130), 0, 180, fill=stroke(), width=10)
+    d.arc((36, 126, 220, 170), 180, 360, fill=stroke(), width=10)
+    paths["globe"] = save_icon(im, "globe")
+
+    # industry / grid
+    im, d = icon_base()
+    for i in range(2):
+        for j in range(2):
+            x, y = 48 + i * 92, 48 + j * 92
+            d.rounded_rectangle((x, y, x + 68, y + 68), 12, outline=stroke(), width=12)
+    paths["industry"] = save_icon(im, "industry")
+
+    # levels
+    im, d = icon_base()
+    d.polygon([(128, 40), (208, 200), (48, 200)], outline=stroke(), width=12)
+    d.line((80, 148, 176, 148), fill=stroke(), width=10)
+    paths["levels"] = save_icon(im, "levels")
+
+    # role / person
+    im, d = icon_base()
+    d.ellipse((88, 40, 168, 120), outline=stroke(), width=12)
+    d.arc((48, 128, 208, 248), 200, 340, fill=stroke(), width=12)
+    paths["role"] = save_icon(im, "role")
+
+    # employer / office
+    im, d = icon_base()
+    d.rectangle((48, 72, 208, 220), outline=stroke(), width=12)
+    d.polygon([(48, 72), (128, 28), (208, 72)], outline=stroke(), width=12)
+    d.rectangle((112, 160, 144, 220), outline=stroke(), width=10)
+    paths["employer"] = save_icon(im, "employer")
+
+    # search
+    im, d = icon_base()
+    d.ellipse((44, 44, 176, 176), outline=stroke(), width=12)
+    d.line((160, 160, 216, 216), fill=stroke(), width=16)
+    paths["search"] = save_icon(im, "search")
+
+    # university
+    im, d = icon_base()
+    d.polygon([(40, 100), (128, 52), (216, 100)], outline=stroke(), width=12)
+    d.line((128, 52, 128, 200), fill=stroke(), width=10)
+    d.line((64, 108, 64, 176), fill=stroke(), width=10)
+    d.line((192, 108, 192, 176), fill=stroke(), width=10)
+    d.line((40, 176, 216, 176), fill=stroke(), width=12)
+    paths["university"] = save_icon(im, "university")
+
+    # scoring
+    im, d = icon_base()
+    d.line((56, 200, 56, 80), fill=stroke(), width=12)
+    d.line((56, 200, 208, 200), fill=stroke(), width=12)
+    d.rectangle((80, 140, 112, 200), fill=stroke())
+    d.rectangle((124, 100, 156, 200), fill=stroke())
+    d.rectangle((168, 64, 200, 200), fill=stroke())
+    paths["scoring"] = save_icon(im, "scoring")
+
+    # jd / document
+    im, d = icon_base()
+    d.rounded_rectangle((64, 32, 192, 224), 16, outline=stroke(), width=12)
+    d.line((88, 80, 168, 80), fill=stroke(), width=10)
+    d.line((88, 116, 168, 116), fill=stroke(), width=10)
+    d.line((88, 152, 140, 152), fill=stroke(), width=10)
+    paths["jd"] = save_icon(im, "jd")
+
+    # resume page
+    im, d = icon_base()
+    d.rounded_rectangle((60, 28, 196, 228), 12, outline=stroke(), width=12)
+    d.ellipse((96, 52, 160, 116), outline=stroke(), width=10)
+    d.line((84, 140, 172, 140), fill=stroke(), width=10)
+    d.line((84, 168, 172, 168), fill=stroke(), width=10)
+    d.line((84, 196, 140, 196), fill=stroke(), width=10)
+    paths["resume"] = save_icon(im, "resume")
+
+    # terms
+    im, d = icon_base()
+    d.rounded_rectangle((40, 72, 216, 184), 20, outline=stroke(), width=12)
+    d.text((78, 100), "ATS", font=sans(48, True), fill=stroke())
+    paths["terms"] = save_icon(im, "terms")
+
+    # geo pin
+    im, d = icon_base()
+    d.ellipse((72, 40, 184, 152), outline=stroke(), width=12)
+    d.polygon([(92, 130), (128, 220), (164, 130)], outline=stroke(), width=12)
+    d.ellipse((108, 76, 148, 116), fill=stroke())
+    paths["geo"] = save_icon(im, "geo")
+
+    # ats check
+    im, d = icon_base()
+    d.rounded_rectangle((48, 48, 208, 208), 24, outline=stroke(), width=12)
+    d.line((84, 132, 118, 168), fill=stroke(), width=16)
+    d.line((118, 168, 176, 96), fill=stroke(), width=16)
+    paths["ats"] = save_icon(im, "ats")
+
+    # calendar / events
+    im, d = icon_base()
+    d.rounded_rectangle((48, 56, 208, 220), 16, outline=stroke(), width=12)
+    d.line((48, 100, 208, 100), fill=stroke(), width=12)
+    d.line((88, 36, 88, 76), fill=stroke(), width=12)
+    d.line((168, 36, 168, 76), fill=stroke(), width=12)
+    for x, y in ((84, 132), (128, 132), (172, 132), (84, 172), (128, 172)):
+        d.rounded_rectangle((x - 10, y - 10, x + 10, y + 10), 3, fill=stroke())
+    paths["calendar"] = save_icon(im, "calendar")
+
+    # link / affiliate
+    im, d = icon_base()
+    d.ellipse((36, 88, 140, 192), outline=stroke(), width=12)
+    d.ellipse((116, 64, 220, 168), outline=stroke(), width=12)
+    paths["link"] = save_icon(im, "link")
+
+    # content / article
+    im, d = icon_base()
+    d.rounded_rectangle((56, 36, 200, 220), 16, outline=stroke(), width=12)
+    d.line((84, 80, 172, 80), fill=stroke(), width=12)
+    d.line((84, 120, 172, 120), fill=stroke(), width=12)
+    d.line((84, 160, 148, 160), fill=stroke(), width=12)
+    paths["content"] = save_icon(im, "content")
+
+    return paths
+
+
+def tiktok_app_icon():
+    """Official-style TikTok mark: white note on black rounded square."""
+    src = Image.open(os.path.join(ROOT, "logos/png/tiktok.png")).convert("RGBA")
+    size = 256
+    im = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle((0, 0, size - 1, size - 1), 56, fill=(17, 17, 17, 255))
+    note = src.resize((170, 170), Image.Resampling.LANCZOS)
+    im.alpha_composite(note, (43, 43))
+    path = os.path.join(OUT, "logo_tiktok.png")
+    im.save(path, "PNG")
+    return path
+
+
+def copy_logos():
+    mapping = {
+        "google": os.path.join(ROOT, "logos/png/google_g.png"),
+        "linkedin": os.path.join(ROOT, "logos/png/linkedin.png"),
+        "youtube": os.path.join(ROOT, "logos/png/youtube.png"),
+        "meta": os.path.join(ROOT, "logos/png/meta_mark.png"),
+    }
+    out = {}
+    for name, src in mapping.items():
+        im = Image.open(src).convert("RGBA")
+        path = os.path.join(OUT, f"logo_{name}.png")
+        im.save(path, "PNG")
+        out[name] = path
+    out["tiktok"] = tiktok_app_icon()
+    return out
+
+
+def main():
+    print("maps...")
+    wm = world_map()
+    sm = shanghai_ny_map()
+    round_png(wm, 36)
+    round_png(sm, 28)
+    print(" ", wm)
+    print(" ", sm)
+    print("resume...")
+    print(" ", resume_rewrite())
+    print("headshots...")
+    for k, v in headshots().items():
+        print(" ", k, v)
+    print("icons...")
+    icons = make_icons()
+    print(" ", len(icons), "icons")
+    print("logos...")
+    logos = copy_logos()
+    print(" ", logos)
+    print("done")
+
+
+if __name__ == "__main__":
+    main()
