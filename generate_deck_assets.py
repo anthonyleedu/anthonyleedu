@@ -565,72 +565,38 @@ def resume_rewrite():
             lines.append(cur)
         return lines or [""]
 
-    # ----- BEFORE: unstructured notes -----
-    bx0, bx1, by0, by1 = 24, 600, 80, 1098
-    rounded_rect(d, (bx0, by0, bx1, by1), 14, (252, 253, 254), (226, 233, 238), 1)
-    d.rounded_rectangle((bx0 + 16, by0 + 14, bx0 + 118, by0 + 42), 8, fill=(140, 151, 160))
-    d.text((bx0 + 32, by0 + 18), "BEFORE", font=sans(14, True), fill=(255, 255, 255))
-    d.text((bx0 + 130, by0 + 16), "Candidate input", font=font(20, True), fill=(16, 34, 47))
-    yy = by0 + 56
-    d.text((bx0 + 16, yy), "Alex Chen", font=sans(22, True), fill=(16, 34, 47))
-    yy += 28
-    d.text((bx0 + 16, yy), "Looking for software job in NY", font=sans(14), fill=(92, 107, 118))
-    yy += 26
-    d.line((bx0 + 16, yy, bx1 - 16, yy), fill=(230, 236, 241), width=1)
-    yy += 10
-    d.text((bx0 + 16, yy), "NOTES  ·  UNSTRUCTURED INPUT", font=sans(12, True), fill=(140, 151, 160))
-    yy += 24
-    notes = [
-        "Startup — software person",
-        "Worked at a startup doing coding",
-        "Helped with the company website",
-        "Worked with the team on projects",
-        "Used python and javascript",
-        "Did some cloud stuff on AWS",
-        "Made the site faster I think",
-        "Some intern work before that",
-        "Tutored other students",
-        "Built a dashboard for PMs",
-    ]
-    for n in notes:
-        d.text((bx0 + 16, yy), n, font=sans(14), fill=(30, 42, 51))
-        yy += 22
-    yy += 6
-    d.line((bx0 + 16, yy, bx1 - 16, yy), fill=(230, 236, 241), width=1)
-    yy += 10
-    d.text((bx0 + 16, yy), "EDUCATION / SKILLS", font=sans(12, True), fill=(140, 151, 160))
-    yy += 24
-    for n in ("Graduated from a university", "Skills: coding, teamwork, python", "Want a software engineer role"):
-        d.text((bx0 + 16, yy), n, font=sans(14), fill=(30, 42, 51))
-        yy += 22
-    yy += 8
-    d.rounded_rectangle((bx0 + 16, yy, bx1 - 16, yy + 72), 10, outline=(214, 224, 232), width=2)
-    d.text((bx0 + 28, yy + 26), "Paste more career facts — dates, metrics…", font=sans(13), fill=(140, 151, 160))
-    yy += 86
-    while yy + 18 < by1 - 16:
-        d.rounded_rectangle((bx0 + 16, yy + 2, bx1 - 70, yy + 14), 4, fill=(232, 237, 241))
-        yy += 20
+    # ----- BEFORE: compact full-width candidate input -----
+    bx0, bx1, by0, by1 = 24, 2376, 80, 168
+    rounded_rect(d, (bx0, by0, bx1, by1), 12, (252, 253, 254), (226, 233, 238), 1)
+    d.rounded_rectangle((bx0 + 14, by0 + 12, bx0 + 108, by0 + 36), 7, fill=(140, 151, 160))
+    d.text((bx0 + 28, by0 + 16), "BEFORE", font=sans(12, True), fill=(255, 255, 255))
+    d.text((bx0 + 118, by0 + 14), "Candidate input", font=font(16, True), fill=(16, 34, 47))
+    notes = (
+        "Alex Chen — looking for software job in NY  ·  Startup software person  ·  Helped with the website  ·  "
+        "python / javascript / some AWS  ·  intern work  ·  tutored students  ·  built a dashboard for PMs  ·  "
+        "graduated from a university  ·  want a software engineer role"
+    )
+    ny = by0 + 44
+    for line in wrap(notes, sans(14), bx1 - bx0 - 28)[:2]:
+        d.text((bx0 + 14, ny), line, font=sans(14), fill=(30, 42, 51))
+        ny += 18
 
-    # arrow
-    d.rounded_rectangle((618, 548, 722, 652), 52, fill=(0, 123, 203))
-    d.polygon([(646, 576), (698, 600), (646, 624)], fill=(255, 255, 255))
-
-    # ----- AFTER: Jack Kolb IB template applied to Alex (fills the card) -----
-    ax0, ax1, ay0, ay1 = 740, 2376, 80, 1098
-    rounded_rect(d, (ax0, ay0, ax1, ay1), 14, (255, 255, 255), (226, 233, 238), 1)
+    # ----- AFTER: full-width Jack Kolb page, left margin to right margin -----
+    ax0, ax1, ay0, ay1 = 24, 2376, 180, 1098
+    rounded_rect(d, (ax0, ay0, ax1, ay1), 12, (255, 255, 255), (226, 233, 238), 1)
     d.rounded_rectangle((ax0 + 14, ay0 + 8, ax0 + 92, ay0 + 28), 6, fill=(0, 123, 203))
     d.text((ax0 + 26, ay0 + 11), "AFTER", font=sans(11, True), fill=(255, 255, 255))
     d.text((ax0 + 100, ay0 + 10), "51 Careers.AI rewrite", font=font(14, True), fill=(16, 34, 47))
 
-    # inner page uses the full AFTER card — Times, small-caps name, right-tab dates
-    px0, py0 = ax0 + 18, ay0 + 32
-    px1, py1 = ax1 - 18, ay1 - 10
+    # Jack Kolb page margins (~0.33") so rules and dates run margin-to-margin
+    px0, py0 = ax0 + 56, ay0 + 34
+    px1, py1 = ax1 - 56, ay1 - 16
     page_w = px1 - px0
-    f10 = times(17)
-    f10b = times(17, bold=True)
-    f10i = times(17, italic=True)
-    f11b = times(19, bold=True)
-    nf = times(36, bold=True)
+    f10 = times(22)
+    f10b = times(22, bold=True)
+    f10i = times(22, italic=True)
+    f11b = times(24, bold=True)
+    nf = times(44, bold=True)
     date_samples = [
         "May 2021",
         "GPA: 3.82/4.00",
@@ -696,7 +662,7 @@ def resume_rewrite():
         y = py0
         name = "ALEX CHEN"
         draw.text((px0 + (page_w - tw(name, nf)) / 2, y), name, font=nf, fill=BLACK)
-        y += 36
+        y += 46
         draw.line((px0, y, px1, y), fill=BLACK, width=2)
         y += 4
         draw.line((px0, y, px1, y), fill=BLACK, width=4)
@@ -816,8 +782,8 @@ def resume_rewrite():
 
     probe = Image.new("RGB", (8, 8))
     probe_d = ImageDraw.Draw(probe)
-    lo, hi = 16.0, 23.0
-    best_lh = 16.0
+    lo, hi = 18.0, 30.0
+    best_lh = 18.0
     for _ in range(14):
         mid = (lo + hi) / 2
         end_y = paint(probe_d, mid)
