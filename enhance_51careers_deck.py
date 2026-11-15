@@ -138,23 +138,14 @@ def edit_slide_3(slide):
 
 
 def edit_slide_8(slide):
-    """Wide before/after résumé rewrite occupying the right two-thirds."""
-    delete_ids(slide, list(range(321, 346)))
+    """Full-width before/after résumé rewrite — spans the content area."""
+    delete_ids(slide, list(range(312, 346)))
     slide.shapes.add_picture(
-        f"{GEN}/resume_before_after.png", Inches(4.78), Inches(1.42), width=Inches(7.65)
-    )
-    add_text(
-        slide,
-        4.78,
-        6.00,
-        7.65,
-        0.32,
-        "AI Resume  ·  Optimization  ·  Job-specific versions  ·  Quantification  ·  ATS  ·  Cover letters",
-        12,
-        False,
-        MUTED,
-        align=PP_ALIGN.CENTER,
-        anchor=MSO_ANCHOR.MIDDLE,
+        f"{GEN}/resume_before_after.png",
+        Inches(0.90),
+        Inches(1.38),
+        width=Inches(11.53),
+        height=Inches(5.62),
     )
 
 
@@ -175,30 +166,34 @@ def edit_slide_10(slide):
 
 
 def edit_slide_11(slide):
-    """World map with a compact legend of covered markets."""
+    """Full-width world map with a compact chip legend underneath."""
     delete_ids(slide, range(448, 478))
-    pic(slide, f"{GEN}/world_map.png", 0.90, 1.48, 7.78, 4.52)
-    add_round_rect(slide, 8.82, 1.42, 3.61, 4.62)
-    add_text(slide, 8.98, 1.52, 3.30, 0.28, "MARKETS IN VIEW", 11, True, BLUE)
+    pic(slide, f"{GEN}/world_map.png", 0.90, 1.38, 11.53, 3.90)
 
-    rows = [
-        ("#007BCB", "United States", "First beachhead"),
-        ("#4FA3D4", "Canada", "English-speaking NA"),
-        ("#7FB7D4", "Central America", "Adjacent expansion"),
-        ("#4FA3D4", "United Kingdom", "European English"),
-        ("#4FA3D4", "Australia", "APAC English"),
-        ("#007BCB", "Singapore", "APAC hub"),
-        ("#007BCB", "Hong Kong", "Greater China English"),
-        ("#0A5F9A", "China", "R&D and users"),
-        ("#7FB7D4", "Europe", "Localized later"),
-        ("#7FB7D4", "Middle East", "English professional"),
+    chips = [
+        ("#007BCB", "United States"),
+        ("#4FA3D4", "Canada"),
+        ("#7FB7D4", "Central America"),
+        ("#4FA3D4", "United Kingdom"),
+        ("#4FA3D4", "Australia"),
+        ("#007BCB", "Singapore"),
+        ("#007BCB", "Hong Kong"),
+        ("#0A5F9A", "China"),
+        ("#7FB7D4", "Europe"),
+        ("#7FB7D4", "Middle East"),
     ]
-    y = 1.86
-    for color, name, sub in rows:
-        add_oval(slide, 8.98, y + 0.10, 0.14, 0.14, rgb(color))
-        add_text(slide, 9.22, y, 3.05, 0.22, name, 13, True, NAVY)
-        add_text(slide, 9.22, y + 0.20, 3.05, 0.18, sub, 11, False, MUTED)
-        y += 0.40
+    x = 0.90
+    y = 5.36
+    w = 2.22
+    gap = 0.08
+    for i, (color, name) in enumerate(chips):
+        if i == 5:
+            x = 0.90
+            y = 5.76
+        add_round_rect(slide, x, y, w, 0.34, CARD)
+        add_oval(slide, x + 0.10, y + 0.10, 0.14, 0.14, rgb(color))
+        add_text(slide, x + 0.30, y, w - 0.38, 0.34, name, 12, True, NAVY, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.MIDDLE)
+        x += w + gap
 
 
 def edit_slide_12(slide):
@@ -260,8 +255,8 @@ def edit_slide_17(slide):
         (711, 712, 713, 714, 715, 2.99),
         (716, 717, 718, 719, 720, 4.57),
     ]
-    new_tops = [3.04, 4.10, 5.16]
-    new_h = 0.98
+    new_tops = [3.18, 4.18, 5.18]
+    new_h = 0.96
     for (card, circ, num, title, body, orig), new_top in zip(groups, new_tops):
         dy = new_top - orig
         pos(by_id(slide, card), t=new_top, h=new_h)
@@ -273,7 +268,7 @@ def edit_slide_17(slide):
         set_run_size(b, 13)
         set_run_size(by_id(slide, title), 16)
 
-    pic(slide, f"{GEN}/shanghai_ny_map.png", 0.90, 1.38, 11.53, 1.58)
+    pic(slide, f"{GEN}/shanghai_ny_map.png", 0.90, 1.36, 11.53, 1.74)
 
 
 def edit_slide_20(slide):
